@@ -10,6 +10,25 @@
 
 ---
 
+## 📸 Interface Preview
+
+<div align="center">
+  <img src="docs/images/finculator-sip-suite.png" alt="Finculator Wealth & Investment Suite" width="100%" />
+  <p><em>Wealth & Investment Suite: Interactive live sliders, instant compounding calculation, and Obsidian Hero Card.</em></p>
+
+  <br />
+
+  <img src="docs/images/finculator-growth-chart.png" alt="Growth Trajectory & Milestone Schedule" width="100%" />
+  <p><em>Interactive SVG Growth Trajectory: Dual balance curves, data point tooltips, and tabular milestone schedules.</em></p>
+
+  <br />
+
+  <img src="docs/images/finculator-footer-layout.png" alt="Institutional Footer & Layout Flow" width="100%" />
+  <p><em>Institutional Dark Slate Layout: Multi-column navigation, responsive sidebar, and newsletter integration.</em></p>
+</div>
+
+---
+
 ## 🏛️ Comprehensive Financial Modules
 
 ### 1. 💳 Loans & Mortgages
@@ -72,6 +91,8 @@ finance-calculator/
 ├── index.html                   # Clean semantic HTML5 layout shell
 ├── server.py                    # Multi-threaded local development server (Port 3000)
 ├── .gitignore                   # Git exclusion rules
+├── docs/
+│   └── images/                  # UI screenshot previews
 ├── css/
 │   ├── main.css                 # Design tokens, typography, header, sidebar, footer
 │   ├── components.css           # Buttons, inputs, tactile sliders, cards, badges
@@ -121,7 +142,7 @@ finance-calculator/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/<your-username>/finculator.git
+git clone https://github.com/prakharrai12/finculator.git
 cd finculator
 ```
 
