@@ -1,0 +1,108 @@
+/* ==========================================================================
+   FINCULATOR PRINT STYLESHEET (v2)
+   Light-mode ink-saving institutional print and PDF layout
+   ========================================================================== */
+
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    font-size: 10pt;
+  }
+
+  .app-header,
+  .app-sidebar,
+  .sidebar-backdrop,
+  .mobile-menu-toggle,
+  .calculator-actions,
+  .table-controls,
+  .table-pagination,
+  .slider-container,
+  .toggle-group,
+  .tab-bar,
+  .sticky-hero-bar,
+  .toast-notification,
+  .btn {
+    display: none !important;
+  }
+
+  .app-body {
+    display: block !important;
+  }
+
+  .app-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .calc-grid {
+    display: block !important;
+  }
+
+  .panel {
+    border: 1px solid #CCCCCC !important;
+    box-shadow: none !important;
+    margin-bottom: 1.25rem !important;
+    page-break-inside: avoid;
+    padding: 1rem !important;
+  }
+
+  /* Light Print Mode: Invert dark hero boxes to clean white cards */
+  .hero-metric-box,
+  .savings-banner,
+  .summary-card.highlight {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
+    padding: 1rem !important;
+  }
+
+  .hero-metric-box .metric-value,
+  .savings-banner .savings-amount,
+  .summary-card.highlight .metric-value {
+    color: #000000 !important;
+  }
+
+  .hero-metric-box .metric-label,
+  .savings-banner .savings-label,
+  .savings-subitem .sub-label,
+  .summary-card.highlight .metric-label {
+    color: #555555 !important;
+  }
+
+  .savings-subitem .sub-val {
+    color: #000000 !important;
+  }
+
+  .summary-card {
+    border: 1px solid #CCCCCC !important;
+    background: #FAFAFA !important;
+  }
+
+  .table-wrapper {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .data-table {
+    font-size: 8.5pt !important;
+  }
+
+  .data-table th {
+    background: #F0F0F0 !important;
+    color: #000000 !important;
+    border-bottom: 1px solid #000000 !important;
+  }
+
+  .print-header {
+    display: block !important;
+    border-bottom: 2px solid #000000;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+.print-header {
+  display: none;
+}

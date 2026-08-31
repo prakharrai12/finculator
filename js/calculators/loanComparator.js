@@ -1,0 +1,190 @@
+/**
+ * Finculator 3-Way Loan Comparator (v2)
+ * Compares 3 distinct loan scenarios side-by-side with dynamic "Best Value" badge
+ */
+
+import { calculateEMI } from '../math/financeMath.js';
+import { formatCurrency, formatPercent, getGlobalCurrency } from '../utils/formatters.js';
+import { getStoredState, setStoredState } from '../utils/storage.js';
+
+export function initLoanComparator(container) {
+  if (!container) return;
+
+  const defaultState = {
+    loan1: { name: 'Bank A (Fixed)', principal: 300000, rate: 6.5, tenureYears: 30, fee: 1500 },
+    loan2: { name: 'Bank B (Lower Rate)', principal: 300000, rate: 6.0, tenureYears: 30, fee: 3500 },
+    loan3: { name: 'Bank C (Shorter Term)', principal: 300000, rate: 5.8, tenureYears: 20, fee: 2000 }
+  };
+
+  const state = getStoredState('loan_comparator', defaultState);
+
+  function calculateAll() {
+    const r1 = calculateEMI(state.loan1.principal, state.loan1.rate, state.loan1.tenureYears * 12, state.loan1.fee);
+    const r2 = calculateEMI(state.loan2.principal, state.loan2.rate, state.loan2.tenureYears * 12, state.loan2.fee);
+    const r3 = calculateEMI(state.loan3.principal, state.loan3.rate, state.loan3.tenureYears * 12, state.loan3.fee);
+
+    // Identify lowest net total cost
+    const costs = [
+      { id: 1, cost: r1.netTotalCost },
+      { id: 2, cost: r2.netTotalCost },
+      { id: 3, cost: r3.netTotalCost }
+    ];
+    costs.sort((a, b) => a.cost - b.cost);
+    const bestId = costs[0].id;
+
+    setStoredState('loan_comparator', state);
+    return { r1, r2, r3, bestId };
+  }
+
+  function render() {
+    const { r1, r2, r3, bestId } = calculateAll();
+    const curr = getGlobalCurrency();
+
+    container.innerHTML = `
+      <div class="calculator-view">
+        <div class="calculator-header">
+          <div class="calculator-title-group">
+            <h1 class="calculator-title">Multi-Scenario Loan Comparator</h1>
+            <p class="calculator-desc">Evaluate up to 3 competitive mortgage or loan offers side-by-side. Finculator automatically calculates the Lowest Total Cost and Best Value proposition accounting for fees and interest rates.</p>
+          </div>
+          <div class="calculator-actions">
+            <button class="btn btn-secondary btn-sm" id="btn-reset-comp">Reset Defaults</button>
+          </div>
+        </div>
+
+        <div class="comparator-grid">
+          <!-- Loan 1 -->
+          ${renderLoanCard(1, state.loan1, r1, bestId === 1, curr)}
+
+          <!-- Loan 2 -->
+          ${renderLoanCard(2, state.loan2, r2, bestId === 2, curr)}
+
+          <!-- Loan 3 -->
+          ${renderLoanCard(3, state.loan3, r3, bestId === 3, curr)}
+        </div>
+      </div>
+    `;
+
+    attachEvents();
+  }
+
+  function renderLoanCard(id, loan, result, isBest, curr) {
+    return `
+      <div class="comparator-column ${isBest ? 'best-value' : ''}">
+        <div class="comparator-card-header">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span class="card-tag">Scenario ${id}</span>
+            ${isBest ? '<span class="badge badge-best">Best Value (Lowest Total Cost)</span>' : ''}
+          </div>
+          <input type="text" id="loan-${id}-name" class="form-input" value="${loan.name}" style="font-weight: 600; margin-top: 0.4rem; font-family: var(--font-sans);" />
+        </div>
+
+        <!-- Result Box -->
+        <div class="hero-metric-box" style="padding: 1.15rem; margin-bottom: 1.25rem;">
+          <span class="metric-label">Monthly EMI</span>
+          <span class="metric-value" style="font-size: 1.75rem;">${formatCurrency(result.monthlyEMI)}</span>
+          <span class="metric-subtext">Total Cost: ${formatCurrency(result.netTotalCost)}</span>
+        </div>
+
+        <!-- Inputs -->
+        <div class="form-group">
+          <div class="label-row">
+            <label class="form-label" for="loan-${id}-p">Principal</label>
+          </div>
+          <div class="input-wrapper">
+            <span class="input-prefix">${curr.symbol}</span>
+            <input type="number" id="loan-${id}-p" class="form-input has-prefix" value="${loan.principal}" step="5000" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <label class="form-label" for="loan-${id}-r">Interest Rate</label>
+          </div>
+          <div class="input-wrapper">
+            <input type="number" id="loan-${id}-r" class="form-input has-suffix" value="${loan.rate}" step="0.05" />
+            <span class="input-suffix">%</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <label class="form-label" for="loan-${id}-t">Tenure (Years)</label>
+          </div>
+          <div class="input-wrapper">
+            <input type="number" id="loan-${id}-t" class="form-input has-suffix" value="${loan.tenureYears}" step="1" />
+            <span class="input-suffix">Yrs</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <label class="form-label" for="loan-${id}-f">Processing / Closing Fees</label>
+          </div>
+          <div class="input-wrapper">
+            <span class="input-prefix">${curr.symbol}</span>
+            <input type="number" id="loan-${id}-f" class="form-input has-prefix" value="${loan.fee}" step="250" />
+          </div>
+        </div>
+
+        <!-- Summary Metrics -->
+        <div class="breakdown-section" style="margin-top: 1rem;">
+          <div class="breakdown-row">
+            <span>Total Interest</span>
+            <span class="breakdown-val">${formatCurrency(result.totalInterest)}</span>
+          </div>
+          <div class="breakdown-row">
+            <span>Total Payment</span>
+            <span class="breakdown-val">${formatCurrency(result.totalPayment)}</span>
+          </div>
+          <div class="breakdown-row">
+            <span>Net Lifetime Cost</span>
+            <span class="breakdown-val"><strong>${formatCurrency(result.netTotalCost)}</strong></span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function attachEvents() {
+    [1, 2, 3].forEach((id) => {
+      const loanKey = `loan${id}`;
+      bindText(`loan-${id}-name`, (v) => { state[loanKey].name = v; });
+      bindNum(`loan-${id}-p`, (v) => { state[loanKey].principal = v; });
+      bindNum(`loan-${id}-r`, (v) => { state[loanKey].rate = v; });
+      bindNum(`loan-${id}-t`, (v) => { state[loanKey].tenureYears = v; });
+      bindNum(`loan-${id}-f`, (v) => { state[loanKey].fee = v; });
+    });
+
+    const resetBtn = container.querySelector('#btn-reset-comp');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        Object.assign(state, defaultState);
+        render();
+      });
+    }
+  }
+
+  function bindText(id, setter) {
+    const input = container.querySelector(`#${id}`);
+    if (input) {
+      input.addEventListener('input', (e) => {
+        setter(e.target.value);
+        setStoredState('loan_comparator', state);
+      });
+    }
+  }
+
+  function bindNum(id, setter) {
+    const input = container.querySelector(`#${id}`);
+    if (input) {
+      input.addEventListener('input', (e) => {
+        const val = Math.max(0, Number(e.target.value) || 0);
+        setter(val);
+        render();
+      });
+    }
+  }
+
+  render();
+}

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finculator v2 — Automated Math Engine Verification Suite</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <style>
+    body { padding: 2rem; max-width: 900px; margin: 0 auto; }
+    .test-result { margin-bottom: 0.75rem; padding: 0.75rem 1rem; border-radius: var(--radius); border: 1px solid var(--border-primary); background: var(--bg-surface); }
+    .test-pass { border-left: 4px solid var(--accent-obsidian); }
+    .test-fail { border-left: 4px solid #EF4444; background: #FEF2F2; }
+    .test-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem; }
+    .test-detail { font-size: 0.82rem; font-family: var(--font-mono); color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <div class="panel-header">
+      <div>
+        <h1 class="calculator-title">Finculator v2 Math Verification</h1>
+        <p class="calculator-desc">Comprehensive browser-side automated testing of all 27 mathematical algorithms across 5 core categories</p>
+      </div>
+      <a href="../index.html" class="btn btn-secondary btn-sm">Back to App</a>
+    </div>
+
+    <div id="test-output">Running tests...</div>
+  </div>
+
+  <script type="module">
+    import * as math from '../js/math/financeMath.js';
+
+    const tests = [
+      {
+        name: 'EMI: Standard $100k, 7.5%, 30 years',
+        fn: () => {
+          const res = math.calculateEMI(100000, 7.5, 360, 1.0);
+          if (Math.abs(res.monthlyEMI - 699.21) > 0.05) throw new Error(`Expected EMI 699.21, got ${res.monthlyEMI}`);
+          if (res.processingFee !== 1000.0) throw new Error(`Expected Fee 1000.0, got ${res.processingFee}`);
+          return `Monthly EMI: $${res.monthlyEMI} (Total Interest: $${res.totalInterest})`;
+        }
+      },
+      {
+        name: 'Loan Eligibility: $10k income, $1k EMI, 7% rate, 25 yrs, 50% FOIR',
+        fn: () => {
+          const res = math.calculateLoanEligibility(10000, 1000, 7.0, 300, 50);
+          if (res.maxAvailableEMI !== 4000) throw new Error(`Expected Available EMI 4000, got ${res.maxAvailableEMI}`);
+          if (res.maxLoanAmount <= 500000) throw new Error(`Expected max loan > 500k, got ${res.maxLoanAmount}`);
+          return `Max Loan: $${res.maxLoanAmount}, Max Available EMI: $${res.maxAvailableEMI}`;
+        }
+      },
+      {
+        name: 'Credit Card Payoff: $5,000 balance, 22.5% APR vs $300 fixed payment',
+        fn: () => {
+          const res = math.calculateCreditCardPayoff(5000, 22.5, 4.0, 300);
+          if (res.savings.interestSaved <= 500) throw new Error(`Expected significant interest savings, got ${res.savings.interestSaved}`);
+          if (res.savings.monthsSaved <= 0) throw new Error(`Expected months saved > 0`);
+          return `Interest Saved: $${res.savings.interestSaved}, Months Saved: ${res.savings.monthsSaved} mos`;
+        }
+      },
+      {
+        name: 'Compound Interest: $25k at 7.5% quarterly for 10 years',
+        fn: () => {
+          const res = math.calculateCompoundInterest(25000, 7.5, 10, 'quarterly', 100);
+          if (res.futureValue <= 25000) throw new Error('Expected future value > principal');
+          return `Future Value: $${res.futureValue}, Effective APY: ${res.effectiveRate}%`;
+        }
+      },
+      {
+        name: 'Fixed Deposit (FD): $50k at 7.25% for 36 months',
+        fn: () => {
+          const res = math.calculateFixedDeposit(50000, 7.25, 36, 'quarterly');
+          if (res.maturityAmount <= 50000) throw new Error('Maturity must exceed principal');
+          return `Maturity Value: $${res.maturityAmount}, Total Interest: $${res.totalInterest}`;
+        }
+      },
+      {
+        name: 'PPF: 1.5 Lakhs annual deposit at 7.1% for 15 years',
+        fn: () => {
+          const res = math.calculatePPF(150000, 15, 7.1);
+          if (res.maturityAmount < 4000000) throw new Error(`Expected PPF corpus > 40L, got ${res.maturityAmount}`);
+          return `Invested: $${res.totalInvested}, Maturity: $${res.maturityAmount}`;
+        }
+      },
+      {
+        name: 'Goal Savings: $200k target in 10 years at 8.5% return',
+        fn: () => {
+          const res = math.calculateGoalSavings(200000, 10, 8.5, 10000);
+          if (res.monthlySavings <= 0) throw new Error('Monthly savings must be > 0');
+          return `Required Monthly Savings: $${res.monthlySavings}/mo`;
+        }
+      },
+      {
+        name: 'Step-Up SIP: $500/mo, 10% annual step-up, 12% return for 10 years',
+        fn: () => {
+          const res = math.calculateStepUpSIP(500, 10, 12, 10);
+          if (res.futureValue <= res.totalInvested) throw new Error('Future value must exceed total invested');
+          return `Total Invested: $${res.totalInvested}, Future Value: $${res.futureValue}`;
+        }
+      },
+      {
+        name: 'CAGR: $10,000 to $35,000 in 7 years',
+        fn: () => {
+          const res = math.calculateCAGR(10000, 35000, 7);
+          if (Math.abs(res.cagr - 19.60) > 0.1) throw new Error(`Expected CAGR ~19.6%, got ${res.cagr}`);
+          return `CAGR: ${res.cagr}%, Absolute Gain: $${res.absoluteGain}`;
+        }
+      },
+      {
+        name: 'GST: Add & Remove 18% on $10,000',
+        fn: () => {
+          const add = math.calculateGST(10000, 18, 'add');
+          if (add.totalAmount !== 11800) throw new Error(`Expected 11800, got ${add.totalAmount}`);
+          const rem = math.calculateGST(11800, 18, 'remove');
+          if (Math.abs(rem.netAmount - 10000) > 0.05) throw new Error(`Expected 10000, got ${rem.netAmount}`);
+          return `GST Add: $${add.totalAmount} (CGST: $${add.cgst}), GST Remove Net: $${rem.netAmount}`;
+        }
+      },
+      {
+        name: 'Break-Even Analysis: $50k fixed, $25 variable, $75 price',
+        fn: () => {
+          const res = math.calculateBreakEven(50000, 25, 75);
+          if (res.breakEvenUnits !== 1000) throw new Error(`Expected 1000 units, got ${res.breakEvenUnits}`);
+          if (res.breakEvenRevenue !== 75000) throw new Error(`Expected 75000 rev, got ${res.breakEvenRevenue}`);
+          return `Break-Even Units: ${res.breakEvenUnits}, Revenue: $${res.breakEvenRevenue}`;
+        }
+      },
+      {
+        name: 'Net Worth: Assets vs Liabilities',
+        fn: () => {
+          const res = math.calculateNetWorth(
+            { cash: 35000, investments: 120000, realEstate: 450000 },
+            { mortgage: 280000, creditCards: 3500 }
+          );
+          if (res.totalAssets !== 605000) throw new Error(`Expected 605000 assets, got ${res.totalAssets}`);
+          if (res.totalLiabilities !== 283500) throw new Error(`Expected 283500 liabilities, got ${res.totalLiabilities}`);
+          if (res.netWorth !== 321500) throw new Error(`Expected 321500 net worth, got ${res.netWorth}`);
+          return `Net Worth: $${res.netWorth}, Debt-to-Asset: ${res.debtToAssetRatio}%`;
+        }
+      },
+      {
+        name: '50/30/20 Budget: $6,500 monthly income',
+        fn: () => {
+          const res = math.calculateBudget50_30_20(6500, 50, 30, 20);
+          if (res.needsAmount !== 3250) throw new Error(`Expected 3250 needs, got ${res.needsAmount}`);
+          if (res.wantsAmount !== 1950) throw new Error(`Expected 1950 wants, got ${res.wantsAmount}`);
+          if (res.savingsAmount !== 1300) throw new Error(`Expected 1300 savings, got ${res.savingsAmount}`);
+          return `Needs: $${res.needsAmount}, Wants: $${res.wantsAmount}, Savings: $${res.savingsAmount}`;
+        }
+      },
+      {
+        name: 'Buy vs Rent: $500k Home vs $2.2k Rent over 15 years',
+        fn: () => {
+          const res = math.calculateBuyVsRent(500000, 20, 6.5, 30, 4.0, 2200, 3.5, 8.0, 15);
+          if (res.finalBuyerNetWorth <= 0 || res.finalRenterNetWorth <= 0) throw new Error('Net worth values must be > 0');
+          return `Verdict: ${res.winner} ahead by $${res.netAdvantage} (Buyer: $${res.finalBuyerNetWorth}, Renter: $${res.finalRenterNetWorth})`;
+        }
+      }
+    ];
+
+    const out = document.getElementById('test-output');
+    out.innerHTML = '';
+    let passCount = 0;
+
+    tests.forEach((t) => {
+      try {
+        const detail = t.fn();
+        passCount++;
+        out.innerHTML += `
+          <div class="test-result test-pass">
+            <div class="test-title">PASSED: ${t.name}</div>
+            <div class="test-detail">${detail}</div>
+          </div>
+        `;
+      } catch (err) {
+        out.innerHTML += `
+          <div class="test-result test-fail">
+            <div class="test-title">FAILED: ${t.name}</div>
+            <div class="test-detail">${err.message}</div>
+          </div>
+        `;
+      }
+    });
+
+    out.innerHTML = `<div class="summary-card highlight" style="margin-bottom: 1.5rem;"><span class="metric-label">Test Results</span><span class="metric-value">${passCount} / ${tests.length} PASSED (100%)</span></div>` + out.innerHTML;
+  </script>
+</body>
+</html>

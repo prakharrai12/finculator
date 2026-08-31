@@ -1,0 +1,267 @@
+/* ==========================================================================
+   FINCULATOR CALCULATOR VIEWS & TABLES (PREMIUM REFINED)
+   Amortization Tables, Side-by-Side Comparator, FIRE Grids, Trajectory Charts
+   ========================================================================== */
+
+/* Calculator Container */
+.calculator-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.85rem;
+}
+
+/* Amortization Table Section */
+.table-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-top: 1.5rem;
+  box-shadow: var(--shadow-subtle);
+}
+
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.35rem;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-primary);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.table-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.table-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.table-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.table-search {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  outline: none;
+  background: var(--bg-muted);
+  width: 130px;
+  transition: all var(--transition-fast);
+}
+
+.table-search:focus {
+  border-color: var(--brand-navy-dark);
+  background: var(--bg-surface);
+  width: 170px;
+}
+
+.table-wrapper {
+  max-height: 480px;
+  overflow-y: auto;
+  overflow-x: auto;
+  position: relative;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.data-table th {
+  background-color: var(--bg-subtle);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.7rem 0.95rem;
+  border-bottom: 1px solid var(--border-primary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.data-table th:first-child,
+.data-table td:first-child {
+  text-align: left;
+  padding-left: 1.35rem;
+}
+
+.data-table th:last-child,
+.data-table td:last-child {
+  padding-right: 1.35rem;
+}
+
+.data-table td {
+  padding: 0.65rem 0.95rem;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-family: var(--font-mono);
+}
+
+.data-table tr:hover td {
+  background-color: var(--bg-muted);
+  color: var(--text-primary);
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.35rem;
+  background-color: var(--bg-subtle);
+  border-top: 1px solid var(--border-primary);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Side-by-Side Comparison Cards */
+.comparison-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 768px) {
+  .comparison-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.comparison-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  padding: 1.35rem;
+}
+
+.comparison-card.highlight-card {
+  border-color: var(--brand-navy-dark);
+  background: var(--bg-muted);
+  box-shadow: var(--shadow-subtle);
+}
+
+.card-tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.18rem 0.55rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--border-primary);
+}
+
+.comparison-card.highlight-card .card-tag {
+  background: var(--brand-navy-dark);
+  color: #FFFFFF;
+  border-color: var(--brand-navy-dark);
+}
+
+/* FIRE Milestone Cards */
+.fire-tier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.85rem;
+  margin-top: 1.15rem;
+}
+
+.fire-tier-card {
+  background: var(--bg-muted);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.fire-tier-card.primary-tier {
+  background: var(--bg-surface);
+  border-color: var(--brand-navy-dark);
+  border-width: 1.5px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.fire-tier-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.fire-tier-val {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
+
+.fire-tier-desc {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+/* Multi-Scenario Comparator */
+.comparator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 1.35rem;
+}
+
+.comparator-column {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: var(--shadow-subtle);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.comparator-column.best-value {
+  border-color: var(--brand-navy-dark);
+  box-shadow: var(--shadow-card);
+}
+
+.comparator-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
