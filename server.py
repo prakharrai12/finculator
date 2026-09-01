@@ -46,6 +46,99 @@ def save_users(users):
     with open(USERS_FILE, 'w', encoding='utf-8') as f:
         json.dump(users, f, indent=2)
 
+def generate_welcome_email_html(name, email, password, token, user_id):
+    return f"""
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset="utf-8"/></head>
+    <body style="margin: 0; padding: 0; background-color: #0A0F1D; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+      <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 30px auto; background-color: #0D1526; border-radius: 16px; border: 1px solid #1E293B; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
+        
+        <!-- Big Logo Header -->
+        <tr>
+          <td align="center" style="padding: 40px 20px 24px 20px; background: linear-gradient(180deg, #131E36 0%, #0D1526 100%); border-bottom: 1px solid #1E293B;">
+            <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 48 10 A 38 38 0 1 0 86 48" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" />
+              <rect x="34" y="52" width="7.5" height="20" rx="3.75" fill="#2563EB" />
+              <rect x="46" y="40" width="7.5" height="32" rx="3.75" fill="#3B82F6" />
+              <rect x="58" y="28" width="7.5" height="44" rx="3.75" fill="#06B6D4" />
+              <path d="M 32 68 L 76 24" fill="none" stroke="#06B6D4" stroke-width="8" stroke-linecap="round" />
+              <path d="M 56 20 L 82 20 L 82 46 Z" fill="#06B6D4" stroke-linejoin="round" />
+            </svg>
+            <div style="font-size: 24px; font-weight: 800; color: #FFFFFF; letter-spacing: 1px; margin-top: 12px;">FINCULATOR</div>
+            <div style="font-size: 12px; color: #38BDF8; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 4px;">Smart Decisions. Stronger Futures.</div>
+          </td>
+        </tr>
+
+        <!-- Main Content -->
+        <tr>
+          <td style="padding: 36px 32px 24px 32px;">
+            <h1 style="color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 12px 0;">Thanks for Joining Finculator, {name}! 🎉</h1>
+            <p style="color: #94A3B8; font-size: 15px; line-height: 1.6; margin: 0 0 24px 0;">
+              We are delighted to welcome you. Finculator is your institutional financial computation and wealth optimization platform — engineered to help you simulate loans, compound investments, navigate taxes, and build advisory-grade portfolios with 100% mathematical precision.
+            </p>
+
+            <!-- Credentials Box -->
+            <div style="background-color: #131E36; border: 1px solid #2563EB; border-radius: 12px; padding: 24px; margin-bottom: 28px;">
+              <div style="font-size: 13px; font-weight: 700; color: #38BDF8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">
+                🔐 Your Account Credentials
+              </div>
+              <table width="100%" cellpadding="6" cellspacing="0">
+                <tr>
+                  <td width="38%" style="color: #94A3B8; font-size: 14px; font-weight: 600;">Registered Email:</td>
+                  <td style="color: #FFFFFF; font-size: 14px; font-family: monospace; font-weight: bold;">{email}</td>
+                </tr>
+                <tr>
+                  <td style="color: #94A3B8; font-size: 14px; font-weight: 600;">Account Password:</td>
+                  <td style="color: #10B981; font-size: 14px; font-family: monospace; font-weight: bold;">{password}</td>
+                </tr>
+                <tr>
+                  <td style="color: #94A3B8; font-size: 14px; font-weight: 600;">Security Status:</td>
+                  <td style="color: #38BDF8; font-size: 14px;">✓ Verified Active</td>
+                </tr>
+                <tr>
+                  <td style="color: #94A3B8; font-size: 14px; font-weight: 600;">Security User ID:</td>
+                  <td style="color: #64748B; font-size: 12px; font-family: monospace;">{user_id}</td>
+                </tr>
+              </table>
+            </div>
+
+            <!-- Call to Action -->
+            <div align="center" style="margin-bottom: 30px;">
+              <a href="http://localhost:3000/#/login" style="background: linear-gradient(135deg, #2563EB 0%, #06B6D4 100%); color: #FFFFFF; text-decoration: none; font-weight: 700; font-size: 15px; padding: 14px 32px; border-radius: 8px; display: inline-block; box-shadow: 0 6px 20px rgba(37,99,235,0.4);">
+                Access Your Financial Dashboard →
+              </a>
+            </div>
+
+            <!-- Getting Started Tips -->
+            <div style="border-top: 1px solid #1E293B; padding-top: 20px;">
+              <div style="color: #E2E8F0; font-size: 14px; font-weight: 700; margin-bottom: 8px;">What You Can Do Next:</div>
+              <ul style="color: #94A3B8; font-size: 13px; line-height: 1.6; padding-left: 20px; margin: 0;">
+                <li>Explore 13 calibrated calculators across Loans, SIPs, Taxes, and FIRE.</li>
+                <li>Build your itemized Net Worth & Investment Portfolio in seconds.</li>
+                <li>Export institutional wealth management statements in printable PDF.</li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td align="center" style="padding: 24px; background-color: #0A0F1D; border-top: 1px solid #1E293B;">
+            <p style="color: #64748B; font-size: 12px; margin: 0 0 6px 0;">
+              Finculator Security Team • 256-Bit Encrypted Financial Architecture
+            </p>
+            <p style="color: #475569; font-size: 11px; margin: 0;">
+              © 2026 Finculator. All rights reserved.
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </body>
+    </html>
+    """
+
 def log_sent_email(to_email, subject, body_html, body_text):
     emails = []
     try:
@@ -66,7 +159,6 @@ def log_sent_email(to_email, subject, body_html, body_text):
         'status': 'DELIVERED'
     }
     emails.insert(0, email_record)
-    # Keep last 50 emails
     emails = emails[:50]
     with open(EMAILS_FILE, 'w', encoding='utf-8') as f:
         json.dump(emails, f, indent=2)
@@ -141,26 +233,15 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
             users.append(new_user)
             save_users(users)
 
-            # Send welcome credentials email
-            subject = "Welcome to Finculator — Your Account Credentials"
-            body_text = f"Hello {name},\n\nWelcome to Finculator! Your account has been registered.\n\nEmail: {email}\nAccount ID: {user_id}\n\nKeep your password secure.\n\nBest regards,\nFinculator Team"
-            body_html = f"""
-            <div style="font-family: Arial, sans-serif; background: #0A0F1D; color: #FFFFFF; padding: 24px; border-radius: 12px;">
-                <h2 style="color: #38BDF8; margin-top: 0;">Welcome to Finculator, {name}!</h2>
-                <p style="color: #94A3B8; font-size: 14px;">Your account has been successfully created with institutional-grade security.</p>
-                <div style="background: #131E36; border: 1px solid #1E293B; padding: 16px; border-radius: 8px; margin: 20px 0;">
-                    <p style="margin: 4px 0; color: #E2E8F0;"><strong>Registered Email:</strong> <span style="color: #38BDF8;">{email}</span></p>
-                    <p style="margin: 4px 0; color: #E2E8F0;"><strong>Account Status:</strong> <span style="color: #10B981;">✓ Verified Active</span></p>
-                    <p style="margin: 4px 0; color: #E2E8F0;"><strong>Access Token:</strong> <code style="color: #F59E0B;">{token[:16]}...</code></p>
-                </div>
-                <p style="color: #64748B; font-size: 12px;">If you did not request this account, please ignore this message.</p>
-            </div>
-            """
+            # Send rich welcome credentials email
+            subject = f"Thanks for Joining Finculator! Here Are Your Login Credentials"
+            body_text = f"Thanks for Joining Finculator, {name}!\n\nHere are your login credentials:\nEmail: {email}\nPassword: {password}\n\nLogin at: http://localhost:3000/#/login\n\n— Finculator Team"
+            body_html = generate_welcome_email_html(name, email, password, token, user_id)
             email_rec = log_sent_email(email, subject, body_html, body_text)
 
             self.respond_json({
                 'success': True,
-                'message': 'Account created successfully. Login credentials sent to email.',
+                'message': f"Account created! Login credentials dispatched directly to {email}",
                 'user': {
                     'id': user_id,
                     'name': name,
@@ -207,8 +288,8 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
             }, 200)
             return
 
-        # 3. SEND CREDENTIALS EMAIL
-        if self.path == '/api/auth/send-credentials':
+        # 3. SEND CREDENTIALS EMAIL / FORGOT PASSWORD
+        if self.path == '/api/auth/send-credentials' or self.path == '/api/auth/forgot-password':
             email = payload.get('email', '').strip().lower()
             if not email:
                 self.respond_json({'error': 'Email is required to send credentials.'}, 400)
@@ -233,54 +314,21 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
                 }
                 users.append(user_match)
                 save_users(users)
+            else:
+                # Reset password to temporary pass
+                user_match['passwordHash'] = hash_pw(temp_pass)
+                save_users(users)
+                user_id = user_match.get('id', str(uuid.uuid4()))
 
-            subject = "Your Finculator Login Credentials & Access Key"
-            body_text = f"Hello {name},\n\nHere are your requested Finculator login credentials:\n\nEmail: {email}\nTemporary Access Pass: {temp_pass}\n\nLogin directly at: http://localhost:3000/#/login\n\nFinculator Security Team"
-            body_html = f"""
-            <div style="font-family: Arial, sans-serif; background: #0A0F1D; color: #FFFFFF; padding: 24px; border-radius: 12px;">
-                <h2 style="color: #38BDF8; margin-top: 0;">Finculator Security — Your Login Credentials</h2>
-                <p style="color: #94A3B8; font-size: 14px;">Hello <strong>{name}</strong>, here are your access credentials requested for Finculator:</p>
-                <div style="background: #131E36; border: 1px solid #1E293B; padding: 18px; border-radius: 8px; margin: 20px 0;">
-                    <p style="margin: 6px 0; color: #E2E8F0;"><strong>Login Email:</strong> <span style="color: #38BDF8; font-family: monospace;">{email}</span></p>
-                    <p style="margin: 6px 0; color: #E2E8F0;"><strong>Access Code / Password:</strong> <span style="background: #1E293B; padding: 3px 8px; border-radius: 4px; color: #10B981; font-family: monospace; font-weight: bold;">{temp_pass}</span></p>
-                    <p style="margin: 6px 0; color: #E2E8F0;"><strong>Dispatch Server:</strong> <span style="color: #94A3B8;">auth-gateway.finculator.internal (256-bit TLS)</span></p>
-                </div>
-                <p style="color: #64748B; font-size: 12px;">Please sign in and update your security credentials from your Account Settings.</p>
-            </div>
-            """
+            subject = "Your Finculator Login Credentials & Access Pass"
+            body_text = f"Hello {name},\n\nHere are your Finculator login credentials:\nEmail: {email}\nPassword: {temp_pass}\n\nLogin at: http://localhost:3000/#/login\n\n— Finculator Team"
+            token = f"fin_tok_{hash_pw(user_id + str(time.time()))[:32]}"
+            body_html = generate_welcome_email_html(name, email, temp_pass, token, user_id)
             email_rec = log_sent_email(email, subject, body_html, body_text)
 
             self.respond_json({
                 'success': True,
-                'message': f"Credentials securely dispatched to {email}",
-                'emailPreview': email_rec
-            }, 200)
-            return
-
-        # 4. FORGOT PASSWORD
-        if self.path == '/api/auth/forgot-password':
-            email = payload.get('email', '').strip().lower()
-            if not email:
-                self.respond_json({'error': 'Email is required.'}, 400)
-                return
-
-            reset_token = f"rst_{hash_pw(email + str(time.time()))[:16]}"
-            subject = "Finculator — Password Reset Security Code"
-            body_text = f"Use reset code {reset_token} to reset your Finculator password."
-            body_html = f"""
-            <div style="font-family: Arial, sans-serif; background: #0A0F1D; color: #FFFFFF; padding: 24px; border-radius: 12px;">
-                <h3 style="color: #F59E0B; margin-top: 0;">Password Reset Request</h3>
-                <p style="color: #94A3B8;">A password reset request was received for <strong>{email}</strong>.</p>
-                <div style="background: #131E36; padding: 14px; border-radius: 8px; margin: 16px 0;">
-                    <p style="margin: 0; color: #E2E8F0;">Your One-Time Reset Code: <strong style="color: #38BDF8; font-size: 16px;">{reset_token}</strong></p>
-                </div>
-            </div>
-            """
-            email_rec = log_sent_email(email, subject, body_html, body_text)
-
-            self.respond_json({
-                'success': True,
-                'message': f"Password reset instructions sent to {email}",
+                'message': f"Login credentials sent directly to {email}",
                 'emailPreview': email_rec
             }, 200)
             return

@@ -1,7 +1,7 @@
 /**
- * Finculator Authentication Modal & Credential Dispatch Component
- * Interactive modal supporting Sign In, Sign Up, Send Credentials to Email,
- * and an in-app Live Email Delivery Preview.
+ * Finculator Authentication Modal Component
+ * Streamlined 2-tab glassmorphic modal (Sign In / Create Account)
+ * Dispatches rich credentials email directly to user on registration or forgot-password.
  */
 
 import { auth } from '../utils/auth.js';
@@ -9,7 +9,7 @@ import { auth } from '../utils/auth.js';
 export class AuthModal {
   constructor(app) {
     this.app = app;
-    this.activeTab = 'signin'; // 'signin' | 'signup' | 'credentials' | 'inbox'
+    this.activeTab = 'signin'; // 'signin' | 'signup'
     this.isOpen = false;
     this.initDOM();
     this.attachEvents();
@@ -50,14 +50,10 @@ export class AuthModal {
           </button>
         </div>
 
-        <!-- Navigation Tabs -->
+        <!-- Navigation Tabs: Only Sign In & Create Account -->
         <div class="auth-tabs">
-          <button type="button" class="auth-tab-btn active" data-tab="signin">Sign In</button>
-          <button type="button" class="auth-tab-btn" data-tab="signup">Create Account</button>
-          <button type="button" class="auth-tab-btn" data-tab="credentials">Email Credentials</button>
-          <button type="button" class="auth-tab-btn" data-tab="inbox">
-            Sent Inbox <span class="auth-badge-counter" id="auth-inbox-count">0</span>
-          </button>
+          <button type="button" class="auth-tab-btn active" data-tab="signin">Login (Existing User)</button>
+          <button type="button" class="auth-tab-btn" data-tab="signup">Create Account (New User)</button>
         </div>
 
         <!-- Body Area -->
@@ -102,9 +98,9 @@ export class AuthModal {
   }
 
   setTab(tab) {
-    this.activeTab = tab;
+    this.activeTab = tab === 'signup' ? 'signup' : 'signin';
     this.backdrop.querySelectorAll('.auth-tab-btn').forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.tab === tab);
+      btn.classList.toggle('active', btn.dataset.tab === this.activeTab);
     });
     this.renderForm();
   }
@@ -113,22 +109,11 @@ export class AuthModal {
     this.setTab(tab);
     this.backdrop.classList.add('active');
     this.isOpen = true;
-    this.refreshInboxCount();
   }
 
   close() {
     this.backdrop.classList.remove('active');
     this.isOpen = false;
-  }
-
-  async refreshInboxCount() {
-    try {
-      const emails = await auth.getSentEmails();
-      const badge = this.backdrop.querySelector('#auth-inbox-count');
-      if (badge) {
-        badge.textContent = emails.length;
-      }
-    } catch {}
   }
 
   renderForm() {
@@ -148,7 +133,7 @@ export class AuthModal {
           <div class="auth-form-group">
             <div class="auth-helper-row" style="margin-bottom: 0.4rem;">
               <label class="auth-label" for="auth-signin-pw" style="margin-bottom: 0;">Password</label>
-              <button type="button" class="auth-link" id="btn-goto-forgot">Forgot Password?</button>
+              <button type="button" class="auth-link" id="btn-forgot-credentials">Forgot Password? Email Credentials</button>
             </div>
             <div class="auth-input-wrap">
               <input type="password" id="auth-signin-pw" class="auth-input" placeholder="••••••••" required autocomplete="current-password" />
@@ -162,18 +147,18 @@ export class AuthModal {
             <label style="display:flex; align-items:center; gap: 0.4rem; cursor:pointer; font-size: 0.8rem; color: #94A3B8;">
               <input type="checkbox" id="auth-remember-me" checked style="accent-color: #38BDF8;" /> Remember Session
             </label>
-            <button type="button" class="auth-link" id="btn-goto-credentials">Send Credentials to Email</button>
+            <button type="button" class="auth-link" id="btn-switch-to-signup">New here? Create Account</button>
           </div>
 
           <button type="submit" class="auth-submit-btn" id="btn-submit-signin">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
-            Sign In to Finculator
+            Sign In & Unlock Workspace
           </button>
         </form>
       `;
 
       this.bindSignInEvents(container);
-    } else if (this.activeTab === 'signup') {
+    } else {
       container.innerHTML = `
         <form id="form-auth-signup">
           <div class="auth-form-group">
@@ -197,92 +182,30 @@ export class AuthModal {
             </div>
           </div>
 
-          <div style="font-size: 0.75rem; color: #94A3B8; margin-top: 0.5rem; line-height: 1.4;">
-            By signing up, account login credentials and security tokens will be dispatched to your email address.
+          <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; padding: 12px; margin-top: 0.75rem; font-size: 0.78rem; color: #38BDF8; line-height: 1.45;">
+            ✉️ <strong>Direct Credentials Dispatch:</strong> A formal welcome email with your verified login credentials and security tokens will be sent directly to your email address.
           </div>
 
           <button type="submit" class="auth-submit-btn" id="btn-submit-signup">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
             Create Account & Send Credentials
           </button>
+
+          <div style="text-align:center; margin-top: 1rem;">
+            <button type="button" class="auth-link" id="btn-switch-to-signin">Already have an account? Sign In</button>
+          </div>
         </form>
       `;
 
       this.bindSignUpEvents(container);
-    } else if (this.activeTab === 'credentials') {
-      container.innerHTML = `
-        <div class="auth-dispatch-box">
-          <div class="auth-dispatch-title">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-            Instant Email Credentials Sender
-          </div>
-          <div class="auth-dispatch-desc">
-            Enter your email to receive an institutional security email containing your verified account login credentials, one-time access token, and active session keys.
-          </div>
-        </div>
-
-        <form id="form-auth-credentials">
-          <div class="auth-form-group">
-            <label class="auth-label" for="auth-dispatch-email">Destination Email Address</label>
-            <div class="auth-input-wrap">
-              <input type="email" id="auth-dispatch-email" class="auth-input" placeholder="user@company.com" required />
-            </div>
-          </div>
-
-          <button type="submit" class="auth-submit-btn" id="btn-submit-dispatch">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            Send My Credentials to Email
-          </button>
-        </form>
-      `;
-
-      this.bindCredentialsEvents(container);
-    } else if (this.activeTab === 'inbox') {
-      this.renderInboxView(container);
     }
-  }
-
-  async renderInboxView(container) {
-    container.innerHTML = `<div style="text-align:center; padding: 2rem; color: #94A3B8;">Loading sent emails...</div>`;
-    const emails = await auth.getSentEmails();
-
-    if (!emails || emails.length === 0) {
-      container.innerHTML = `
-        <div class="inbox-empty">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.5" style="margin-bottom: 0.75rem;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-          <div>No sent credentials logged yet.</div>
-          <div style="font-size: 0.75rem; margin-top: 0.25rem;">Use the "Email Credentials" tab to dispatch access credentials to your email.</div>
-        </div>
-      `;
-      return;
-    }
-
-    container.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
-        <span style="font-size:0.8rem; font-weight:600; color:#94A3B8;">Live Delivered Emails (${emails.length})</span>
-        <span style="font-size:0.7rem; color:#10B981;">● 256-Bit Encrypted Delivery</span>
-      </div>
-      <div class="inbox-list">
-        ${emails.map((em) => `
-          <div class="inbox-item">
-            <div class="inbox-item-header">
-              <span class="inbox-item-subj">${em.subject}</span>
-              <span class="inbox-item-time">${em.sentAt}</span>
-            </div>
-            <div class="inbox-item-to">To: <strong>${em.to}</strong></div>
-            <div class="inbox-item-preview">
-              ${em.bodyHtml || em.bodyText}
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    `;
   }
 
   bindSignInEvents(container) {
     const form = container.querySelector('#form-auth-signin');
     const togglePw = container.querySelector('#toggle-pw-btn');
     const pwInput = container.querySelector('#auth-signin-pw');
+    const emailInput = container.querySelector('#auth-signin-email');
 
     if (togglePw && pwInput) {
       togglePw.addEventListener('click', () => {
@@ -290,20 +213,33 @@ export class AuthModal {
       });
     }
 
-    const forgotBtn = container.querySelector('#btn-goto-forgot');
-    if (forgotBtn) {
-      forgotBtn.addEventListener('click', () => this.setTab('credentials'));
+    const switchBtn = container.querySelector('#btn-switch-to-signup');
+    if (switchBtn) {
+      switchBtn.addEventListener('click', () => this.setTab('signup'));
     }
 
-    const credBtn = container.querySelector('#btn-goto-credentials');
-    if (credBtn) {
-      credBtn.addEventListener('click', () => this.setTab('credentials'));
+    const forgotBtn = container.querySelector('#btn-forgot-credentials');
+    if (forgotBtn) {
+      forgotBtn.addEventListener('click', async () => {
+        const email = (emailInput && emailInput.value.trim()) || prompt('Enter your registered email address:');
+        if (!email) return;
+
+        forgotBtn.textContent = 'Sending credentials...';
+        try {
+          const res = await auth.sendCredentials({ email });
+          this.showToast(res.message || `Credentials sent directly to ${email}!`);
+        } catch (err) {
+          alert(err.message || 'Could not send credentials.');
+        } finally {
+          forgotBtn.textContent = 'Forgot Password? Email Credentials';
+        }
+      });
     }
 
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const email = container.querySelector('#auth-signin-email').value;
+        const email = emailInput.value;
         const password = pwInput.value;
         const submitBtn = container.querySelector('#btn-submit-signin');
 
@@ -318,7 +254,7 @@ export class AuthModal {
           alert(err.message || 'Login failed.');
         } finally {
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Sign In to Finculator';
+          submitBtn.textContent = 'Sign In & Unlock Workspace';
         }
       });
     }
@@ -326,6 +262,11 @@ export class AuthModal {
 
   bindSignUpEvents(container) {
     const form = container.querySelector('#form-auth-signup');
+    const switchBtn = container.querySelector('#btn-switch-to-signin');
+    if (switchBtn) {
+      switchBtn.addEventListener('click', () => this.setTab('signin'));
+    }
+
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -339,39 +280,13 @@ export class AuthModal {
 
         try {
           const res = await auth.register({ name, email, password });
-          this.showToast(`Account created! Credentials sent to ${email}`);
-          this.refreshInboxCount();
+          this.showToast(`🎉 Account created! Credentials sent directly to ${email}`);
           this.close();
         } catch (err) {
           alert(err.message || 'Registration failed.');
         } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = 'Create Account & Send Credentials';
-        }
-      });
-    }
-  }
-
-  bindCredentialsEvents(container) {
-    const form = container.querySelector('#form-auth-credentials');
-    if (form) {
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = container.querySelector('#auth-dispatch-email').value;
-        const submitBtn = container.querySelector('#btn-submit-dispatch');
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Dispatching Credentials Email...';
-
-        try {
-          const res = await auth.sendCredentials({ email });
-          this.showToast(res.message || `Credentials sent to ${email}!`);
-          this.setTab('inbox');
-        } catch (err) {
-          alert(err.message || 'Failed to dispatch email.');
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Send My Credentials to Email';
         }
       });
     }
@@ -397,25 +312,21 @@ export class AuthModal {
         <button type="button" class="header-user-btn" id="header-user-menu-btn" title="Account Menu">
           <div class="header-user-avatar">${initials}</div>
           <span class="header-user-name">${user.name || user.email.split('@')[0]}</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0F172A" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
 
         <div class="header-auth-dropdown" id="header-auth-dropdown">
-          <div style="padding: 0.4rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 0.25rem;">
-            <div style="font-size:0.8rem; font-weight:700; color:#FFFFFF;">${user.name || 'Investor'}</div>
-            <div style="font-size:0.7rem; color:#94A3B8; overflow:hidden; text-overflow:ellipsis;">${user.email}</div>
+          <div style="padding: 0.5rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 0.35rem;">
+            <div style="font-size:0.85rem; font-weight:700; color:#FFFFFF;">${user.name || 'Investor'}</div>
+            <div style="font-size:0.72rem; color:#94A3B8; overflow:hidden; text-overflow:ellipsis;">${user.email}</div>
           </div>
           <button type="button" class="header-dropdown-item" id="btn-hdr-open-portfolio">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
             My Portfolio
           </button>
-          <button type="button" class="header-dropdown-item" id="btn-hdr-open-inbox">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-            Delivered Credentials
-          </button>
           <button type="button" class="header-dropdown-item logout-item" id="btn-hdr-logout">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            Sign Out
+            Sign Out & Lock
           </button>
         </div>
       `;
@@ -439,20 +350,15 @@ export class AuthModal {
         if (portBtn) portBtn.click();
       });
 
-      authWrap.querySelector('#btn-hdr-open-inbox').addEventListener('click', () => {
-        dropdown.classList.remove('active');
-        this.open('inbox');
-      });
-
       authWrap.querySelector('#btn-hdr-logout').addEventListener('click', () => {
         dropdown.classList.remove('active');
         auth.logout();
-        this.showToast('Signed out successfully.');
+        this.showToast('Signed out. Website locked.');
       });
     } else {
       authWrap.innerHTML = `
-        <button type="button" class="btn btn-secondary btn-sm" id="btn-header-signin" style="border-color: rgba(56, 189, 248, 0.4); color: #38BDF8;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-header-signin" style="border-color: #CBD5E1; color: #0F172A; font-weight: 700; background: #F8FAFC;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
           Sign In / Register
         </button>
       `;
