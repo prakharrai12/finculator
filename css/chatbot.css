@@ -1,6 +1,6 @@
 /* ==========================================================================
-   FINCULATOR FINBOT — AI ASSISTANT & SITE CONTROLLER STYLES
-   Ultra-Clean, High Z-Index, Non-Obscuring Docked Capsule & Drawer
+   FINCULATOR FINBOT — AI ASSISTANT & ACTIVE CONTROLLER
+   Frosted Glassmorphism, Fluid Responsiveness & Non-Obscuring Dock
    ========================================================================== */
 
 /* Floating Launcher Capsule Button */
@@ -12,12 +12,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  background: linear-gradient(135deg, #0D1526 0%, #1E293B 100%);
+  background: rgba(13, 21, 38, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: #FFFFFF;
-  border: 1.5px solid rgba(6, 182, 212, 0.5);
-  padding: 0.6rem 1.1rem;
+  border: 1.5px solid rgba(6, 182, 212, 0.45);
+  padding: 0.6rem 1.15rem;
   border-radius: 9999px;
-  box-shadow: 0 8px 24px rgba(13, 21, 38, 0.35), 0 0 16px rgba(6, 182, 212, 0.2);
+  box-shadow: 0 8px 28px rgba(13, 21, 38, 0.35), 0 0 16px rgba(6, 182, 212, 0.2);
   cursor: pointer;
   font-family: var(--font-sans, -apple-system, sans-serif);
   font-size: 0.84rem;
@@ -30,7 +32,8 @@
 .finbot-launcher:hover {
   transform: translateY(-2px);
   border-color: #06B6D4;
-  box-shadow: 0 12px 28px rgba(13, 21, 38, 0.45), 0 0 22px rgba(6, 182, 212, 0.35);
+  background: rgba(13, 21, 38, 0.98);
+  box-shadow: 0 12px 32px rgba(13, 21, 38, 0.45), 0 0 24px rgba(6, 182, 212, 0.35);
 }
 
 .finbot-launcher:active {
@@ -69,19 +72,21 @@
   color: #FFFFFF;
 }
 
-/* Chat Drawer Window (Bottom-Right Docked) */
+/* Chat Drawer Window (Frosted Glass Docked Panel) */
 .finbot-drawer {
   position: fixed;
   bottom: 4.6rem;
   right: 1.5rem;
   width: 360px;
   max-width: calc(100vw - 2rem);
-  height: 480px;
+  height: 485px;
   max-height: calc(100vh - 6rem);
-  background: #FFFFFF;
-  border: 1.5px solid #CBD5E1;
-  border-radius: 12px;
-  box-shadow: 0 16px 40px -8px rgba(13, 21, 38, 0.35), 0 0 24px rgba(6, 182, 212, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(203, 213, 225, 0.85);
+  border-radius: 14px;
+  box-shadow: 0 20px 48px -8px rgba(13, 21, 38, 0.25), 0 0 24px rgba(6, 182, 212, 0.08);
   display: none;
   flex-direction: column;
   z-index: 999999;
@@ -105,7 +110,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1rem;
-  background: linear-gradient(135deg, #0D1526 0%, #1A2538 100%);
+  background: linear-gradient(135deg, rgba(13, 21, 38, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%);
   color: #FFFFFF;
   border-bottom: 1.5px solid rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
@@ -158,6 +163,7 @@
 .finbot-header-ctrls {
   display: flex;
   align-items: center;
+  gap: 0.25rem;
 }
 
 .finbot-ctrl-btn {
@@ -184,8 +190,8 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.5rem 0.75rem;
-  background: #F8FAFC;
-  border-bottom: 1px solid #E2E8F0;
+  background: rgba(248, 250, 252, 0.8);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.85);
   overflow-x: auto;
   scrollbar-width: none;
   flex-shrink: 0;
@@ -223,7 +229,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
-  background: #F8FAFC;
+  background: rgba(248, 250, 252, 0.65);
   scrollbar-width: thin;
 }
 
@@ -242,15 +248,17 @@
   color: #FFFFFF;
   border-bottom-right-radius: 2px;
   font-weight: 500;
+  box-shadow: 0 2px 8px rgba(13, 21, 38, 0.15);
 }
 
 .finbot-bot-bubble {
   align-self: flex-start;
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
   color: #0D1526;
-  border: 1px solid #E2E8F0;
+  border: 1px solid rgba(226, 232, 240, 0.9);
   border-bottom-left-radius: 2px;
-  box-shadow: 0 1px 3px rgba(13, 21, 38, 0.04);
+  box-shadow: 0 2px 8px rgba(13, 21, 38, 0.04);
 }
 
 .finbot-bot-bubble strong {
@@ -270,7 +278,7 @@
 .finbot-card-action {
   margin-top: 0.65rem;
   padding-top: 0.55rem;
-  border-top: 1px solid #E2E8F0;
+  border-top: 1px solid rgba(226, 232, 240, 0.85);
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -292,7 +300,7 @@
   color: #FFFFFF;
   border: 1px solid #0D1526;
   border-radius: 6px;
-  padding: 0.45rem 0.75rem;
+  padding: 0.48rem 0.75rem;
   font-size: 0.77rem;
   font-weight: 700;
   cursor: pointer;
@@ -332,13 +340,15 @@
   40% { transform: scale(1.1); opacity: 1; }
 }
 
-/* Form Input Bar */
+/* Form Input Bar with Frosted Glass */
 .finbot-form {
   display: flex;
   align-items: center;
-  padding: 0.6rem 0.75rem;
-  background: #FFFFFF;
-  border-top: 1.5px solid #E2E8F0;
+  padding: 0.65rem 0.75rem;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1.5px solid rgba(226, 232, 240, 0.9);
   gap: 0.45rem;
   flex-shrink: 0;
 }
@@ -348,7 +358,7 @@
   border: 1px solid #CBD5E1;
   background: #F8FAFC;
   border-radius: 6px;
-  padding: 0.5rem 0.7rem;
+  padding: 0.52rem 0.75rem;
   font-size: 0.82rem;
   color: #0D1526;
   outline: none;
@@ -382,19 +392,20 @@
   color: #FFFFFF;
 }
 
-/* Mobile Responsive */
+/* Enhanced Mobile Responsiveness */
 @media (max-width: 640px) {
   .finbot-drawer {
     right: 0.75rem;
     left: 0.75rem;
     width: auto;
     bottom: 4.5rem;
-    height: 420px;
+    height: min(490px, 80vh);
+    border-radius: 12px;
   }
   .finbot-launcher {
     right: 1rem;
     bottom: 1rem;
-    padding: 0.5rem 0.9rem;
-    font-size: 0.78rem;
+    padding: 0.52rem 0.95rem;
+    font-size: 0.8rem;
   }
 }

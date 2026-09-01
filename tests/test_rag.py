@@ -42,5 +42,14 @@ class TestFinancialRAG(unittest.TestCase):
         for route in valid_routes:
             self.assertIn(f"route: '{route}'", rag_content, f"Route {route} not properly bound in RAG")
 
+    def test_dynamic_math_evaluator_present(self):
+        """Verify dynamic math evaluation for EMI, SIP, and Budget requests"""
+        self.assertIn('evaluateDynamicMathQuery', rag_content)
+        self.assertIn('calculateEMI', rag_content)
+        self.assertIn('calculateSIP', rag_content)
+        self.assertIn('type: \'emi_calc\'', rag_content)
+        self.assertIn('type: \'sip_calc\'', rag_content)
+        self.assertIn('type: \'budget_calc\'', rag_content)
+
 if __name__ == '__main__':
     unittest.main()

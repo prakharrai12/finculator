@@ -1,9 +1,10 @@
 /**
  * Finculator FinBot — AI Financial Assistant & Active Site Controller
- * Powered by Financial RAG Semantic Knowledge Engine
+ * Powered by Financial RAG Semantic Knowledge & Live Math Evaluation Engine
  */
 
 import { queryFinancialKnowledge } from './financialRAG.js';
+import { getStoredState, setStoredState } from '../utils/storage.js';
 
 export class FinBot {
   constructor(app) {
@@ -15,8 +16,13 @@ export class FinBot {
   init() {
     this.createDOM();
     this.attachEvents();
+    this.sendGreeting();
+  }
+
+  sendGreeting() {
+    this.msgList.innerHTML = '';
     this.addBotMessage(
-      "Hello! I am **FinBot**, your financial advisor & navigation assistant.\n\nAsk me any doubt (*e.g., 'Which tax regime is better?', 'How much loan can I get on 200k?', 'How does SIP compound?'*), and I will explain the math and take you directly to the calculator!"
+      "Hello! I am **FinBot**, your financial advisor & navigation assistant.\n\nAsk me any doubt or calculation request:\n• *'Calculate EMI for 60 lakhs at 8.5% for 20 years'*\n• *'Which tax regime is better for 24L salary?'*\n• *'SIP of 25000 for 15 years'*\n• *'How does 50/30/20 budget work?'*\n\nI will calculate the math live and take you directly to the tool with your values applied!"
     );
   }
 
@@ -34,7 +40,7 @@ export class FinBot {
     launcher.setAttribute('aria-label', 'Open FinBot Financial AI Assistant');
     launcher.innerHTML = `
       <span class="finbot-pulse-dot"></span>
-      <svg class="finbot-launcher-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <svg class="finbot-launcher-svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
       </svg>
       <span class="finbot-launcher-label" id="finbot-launcher-label">Ask FinBot</span>
@@ -47,7 +53,7 @@ export class FinBot {
     drawer.setAttribute('role', 'dialog');
     drawer.setAttribute('aria-label', 'FinBot Financial Intelligence Assistant');
     drawer.innerHTML = `
-      <!-- Header -->
+      <!-- Header with Frosted Glass -->
       <div class="finbot-header">
         <div class="finbot-header-info">
           <div class="finbot-avatar-badge">✦</div>
@@ -57,6 +63,9 @@ export class FinBot {
           </div>
         </div>
         <div class="finbot-header-ctrls">
+          <button type="button" class="finbot-ctrl-btn" id="finbot-reset-btn" title="Restart conversation" aria-label="Restart">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg>
+          </button>
           <button type="button" class="finbot-ctrl-btn" id="finbot-close-btn" title="Close FinBot" aria-label="Close">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
@@ -65,12 +74,13 @@ export class FinBot {
 
       <!-- Quick Suggestion Chips -->
       <div class="finbot-chips-bar" id="finbot-chips-bar">
+        <button type="button" class="finbot-chip" data-q="Calculate EMI for 60 lakhs at 8.5% for 20 years">EMI for 60 Lakhs</button>
         <button type="button" class="finbot-chip" data-q="Which tax regime is better for 24L salary?">Old vs New Tax</button>
+        <button type="button" class="finbot-chip" data-q="SIP of 25000 for 15 years">SIP 25k Compounding</button>
         <button type="button" class="finbot-chip" data-q="How to reduce home loan interest and tenure?">Prepay Mortgage</button>
         <button type="button" class="finbot-chip" data-q="How much loan can I get on 200k salary?">Loan Eligibility</button>
-        <button type="button" class="finbot-chip" data-q="How does 50/30/20 budget work?">50/30/20 Budget</button>
+        <button type="button" class="finbot-chip" data-q="50/30/20 budget for 200k salary">50/30/20 Budget</button>
         <button type="button" class="finbot-chip" data-q="How to calculate retirement corpus and FIRE number?">FIRE Number</button>
-        <button type="button" class="finbot-chip" data-q="How much will 25000 monthly SIP grow to?">SIP Compounding</button>
       </div>
 
       <!-- Messages Log -->
@@ -82,7 +92,7 @@ export class FinBot {
           type="text"
           id="finbot-input-field"
           class="finbot-input-field"
-          placeholder="Ask a financial doubt or where to go..."
+          placeholder="Ask a doubt or e.g. 'EMI for 70L @ 8.5%'..."
           autocomplete="off"
           required
         />
@@ -102,6 +112,7 @@ export class FinBot {
     this.input = drawer.querySelector('#finbot-input-field');
     this.form = drawer.querySelector('#finbot-form');
     this.closeBtn = drawer.querySelector('#finbot-close-btn');
+    this.resetBtn = drawer.querySelector('#finbot-reset-btn');
     this.chipsBar = drawer.querySelector('#finbot-chips-bar');
   }
 
@@ -112,6 +123,10 @@ export class FinBot {
 
     this.closeBtn.addEventListener('click', () => {
       this.toggleChat(false);
+    });
+
+    this.resetBtn.addEventListener('click', () => {
+      this.sendGreeting();
     });
 
     this.form.addEventListener('submit', (e) => {
@@ -135,8 +150,17 @@ export class FinBot {
       const actionBtn = e.target.closest('.finbot-nav-action-btn');
       if (actionBtn) {
         const route = actionBtn.getAttribute('data-route');
+        const rawParams = actionBtn.getAttribute('data-params');
+        let params = null;
+        if (rawParams) {
+          try {
+            params = JSON.parse(decodeURIComponent(rawParams));
+          } catch (err) {
+            params = null;
+          }
+        }
         if (route) {
-          this.navigateTo(route);
+          this.navigateTo(route, params);
         }
       }
     });
@@ -178,10 +202,14 @@ export class FinBot {
 
     let html = this.renderMarkdown(markdownText);
     if (action) {
+      const paramsAttr = action.params
+        ? `data-params="${encodeURIComponent(JSON.stringify(action.params))}"`
+        : '';
+
       html += `
         <div class="finbot-card-action">
           <div class="finbot-card-action-title">Direct Action:</div>
-          <button type="button" class="finbot-nav-action-btn" data-route="${action.route}">
+          <button type="button" class="finbot-nav-action-btn" data-route="${action.route}" ${paramsAttr}>
             <span>${action.label}</span>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
           </button>
@@ -209,20 +237,33 @@ export class FinBot {
       .replace(/\n/g, '<br>');
   }
 
-  navigateTo(route) {
+  navigateTo(route, params = null) {
+    // If parameters were passed, update the target calculator's state in localStorage
+    if (params && params.storeKey && params.stateUpdates) {
+      const currentState = getStoredState(params.storeKey, {});
+      const merged = { ...currentState, ...params.stateUpdates };
+      setStoredState(params.storeKey, merged);
+    }
+
     window.location.hash = `#/${route}`;
+    if (this.app && this.app.renderCurrentCalculator) {
+      this.app.renderCurrentCalculator();
+    }
+
     const toast = document.getElementById('app-toast');
     if (toast) {
-      toast.textContent = `Navigated to ${route.toUpperCase()} Calculator`;
+      toast.textContent = params
+        ? `Navigated to ${route.toUpperCase()} with your values applied!`
+        : `Navigated to ${route.toUpperCase()} Calculator`;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2200);
+      setTimeout(() => toast.classList.remove('show'), 2400);
     }
   }
 
   handleQuery(query) {
     this.addUserMessage(query);
 
-    // Show typing dots
+    // Show typing indicator
     const typing = document.createElement('div');
     typing.className = 'finbot-msg finbot-bot-bubble finbot-typing-dots';
     typing.innerHTML = '<span></span><span></span><span></span>';
@@ -232,14 +273,15 @@ export class FinBot {
     setTimeout(() => {
       typing.remove();
 
-      // Retrieve financial answer from RAG
+      // Retrieve financial answer from RAG / Live Math
       const ragResult = queryFinancialKnowledge(query);
 
       if (ragResult && ragResult.doc) {
         const doc = ragResult.doc;
         this.addBotMessage(doc.answer, {
           label: doc.actionLabel,
-          route: doc.route
+          route: doc.route,
+          params: doc.params || null
         });
       } else {
         // Fallback intelligent responder
@@ -251,6 +293,6 @@ export class FinBot {
           }
         );
       }
-    }, 320);
+    }, 280);
   }
 }

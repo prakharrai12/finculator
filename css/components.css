@@ -3,13 +3,15 @@
    Distinct Section Boundaries, High Visual Hierarchy, Obsidian Navy & Cyan
    ========================================================================== */
 
-/* Distinctly Bordered Card Panels */
+/* Distinctly Bordered Frosted Glass Panels */
 .panel {
-  background-color: var(--bg-surface);
-  border: 1.5px solid var(--border-medium);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(203, 213, 225, 0.85);
   border-radius: var(--radius-md);
   padding: 1.75rem;
-  box-shadow: 0 2px 8px rgba(13, 21, 38, 0.04);
+  box-shadow: 0 4px 20px -2px rgba(13, 21, 38, 0.05);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
   position: relative;
   overflow: hidden;
@@ -17,18 +19,20 @@
 
 .panel:hover {
   border-color: #94A3B8;
-  box-shadow: 0 4px 16px rgba(13, 21, 38, 0.06);
+  box-shadow: 0 8px 28px -4px rgba(13, 21, 38, 0.08);
 }
 
-/* Crisp Distinct Panel Header with Light Surface Fill */
+/* Crisp Distinct Panel Header with Frosted Surface Fill */
 .panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin: -1.75rem -1.75rem 1.4rem -1.75rem;
   padding: 1rem 1.75rem;
-  background-color: var(--bg-subtle);
-  border-bottom: 1.5px solid var(--border-primary);
+  background: rgba(241, 245, 249, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1.5px solid rgba(226, 232, 240, 0.85);
   flex-wrap: wrap;
   gap: 0.5rem;
 }
@@ -364,9 +368,11 @@
   box-shadow: 0 1px 4px rgba(13, 21, 38, 0.15);
 }
 
-/* Hero Result Card */
+/* Hero Result Card with Deep Obsidian Glassmorphism */
 .hero-metric-box {
-  background: linear-gradient(150deg, #0D1526 0%, #162035 100%);
+  background: linear-gradient(145deg, rgba(13, 21, 38, 0.96) 0%, rgba(30, 41, 59, 0.94) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   color: var(--text-inverse);
   border-radius: var(--radius-md);
   padding: 1.65rem 1.75rem;
@@ -376,8 +382,8 @@
   gap: 0.35rem;
   position: relative;
   overflow: hidden;
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
-  box-shadow: var(--shadow-elevated);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  box-shadow: 0 12px 32px -4px rgba(13, 21, 38, 0.3), 0 0 16px rgba(6, 182, 212, 0.08);
 }
 
 .hero-metric-box .metric-label {
@@ -402,7 +408,7 @@
   font-size: 0.82rem;
 }
 
-/* Secondary Summary Grid with Crisp Distinct Borders */
+/* Secondary Summary Grid with Minimalist Glassmorphic Cards */
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -411,8 +417,10 @@
 }
 
 .summary-card {
-  background: var(--bg-surface);
-  border: 1.5px solid var(--border-primary);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(226, 232, 240, 0.85);
   border-radius: var(--radius);
   padding: 1.15rem 1.25rem;
   display: flex;
@@ -422,15 +430,18 @@
 }
 
 .summary-card:hover {
-  border-color: var(--brand-navy-dark);
-  box-shadow: 0 2px 8px rgba(13, 21, 38, 0.06);
+  border-color: #94A3B8;
+  box-shadow: 0 4px 14px rgba(13, 21, 38, 0.06);
   transform: translateY(-1px);
 }
 
 .summary-card.highlight {
-  background: var(--brand-navy-dark);
-  border-color: var(--brand-navy-dark);
+  background: linear-gradient(135deg, rgba(13, 21, 38, 0.96) 0%, rgba(30, 41, 59, 0.94) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(6, 182, 212, 0.35);
   color: var(--text-inverse);
+  box-shadow: 0 4px 16px -2px rgba(13, 21, 38, 0.2);
 }
 
 .summary-card.highlight .metric-label {

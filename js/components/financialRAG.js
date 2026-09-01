@@ -1,8 +1,11 @@
 /**
  * Finculator Financial RAG (Retrieval-Augmented Generation) Knowledge Engine
  * Comprehensive institutional knowledge base covering all financial domains,
- * formulas, options, Indian tax laws, loan underwriting, and site navigation.
+ * formulas, options, Indian tax laws, loan underwriting, and dynamic parameter parsing.
  */
+
+import { calculateEMI, calculateSIP, calculateLumpSum } from '../math/financeMath.js';
+import { formatCurrency } from '../utils/formatters.js';
 
 export const FINANCIAL_KNOWLEDGE_BASE = [
   {
@@ -13,7 +16,7 @@ export const FINANCIAL_KNOWLEDGE_BASE = [
     keywords: ['tax', 'regime', 'old', 'new', '80c', '80d', 'hra', 'deduction', 'standard deduction', 'cess', 'slab', '24l', '24 lakh', '200k', 'which regime'],
     summary: 'Comprehensive analysis of Old vs New Tax Regime under Indian Finance Act.',
     answer: `**Old vs. New Tax Regime Guidance:**
-• **New Tax Regime (Default):** Features lower, concessional tax slab rates and an increased **Standard Deduction of ₹75,000** (for salaried employees). However, most traditional deductions (Section 80C, 80D, HRA) are forgone.
+• **New Tax Regime (Default):** Features lower, concessional tax slab rates and an increased **Standard Deduction of ₹75,000** (for salaried employees). Traditional exemptions (Section 80C, 80D, HRA) are not applicable.
 • **Old Tax Regime:** Allows claiming Section 80C (up to ₹1.5L), Section 80D (health insurance up to ₹25k-₹50k), HRA, and home loan interest (Section 24b up to ₹2L), with a ₹50,000 standard deduction.
 
 **For a ₹24 Lakhs/yr (₹200k/month) Salary Earner:**
@@ -78,7 +81,7 @@ export const FINANCIAL_KNOWLEDGE_BASE = [
 • \`E = P × r × (1+r)^n / ((1+r)^n - 1)\`
 • For a **₹50 Lakhs Home Loan** at 8.5% annual interest over a 20-year tenure (240 months):
   - **Monthly EMI:** **₹43,391**
-  - **Total Interest Paid:** **₹54,13,879** (more than the principal itself!)
+  - **Total Interest Paid:** **₹54,13,879**
   - **Total Lifetime Repayment:** **₹1,04,13,879**
 • You can review the full year-by-year amortization step-down in our tool:`
   },
@@ -133,9 +136,9 @@ export const FINANCIAL_KNOWLEDGE_BASE = [
     summary: 'Simulates annual percentage increases in monthly SIP to match professional salary increments.',
     answer: `**Why You Should Use a Step-Up SIP:**
 • As your salary grows each year, your monthly investment should too.
-• If you start at **₹25,000 / month** and increase your SIP by **10% every year** (matching an annual salary hike) at 12% returns:
+• If you start at **₹25,000 / month** and increase your SIP by **10% every year** at 12% returns:
   - After 15 years, your portfolio reaches **₹2.05 Crore**!
-  - That is **nearly ₹80 Lakhs more** than a fixed flat SIP!`
+  - That is **nearly ₹80 Lakhs more** than a flat SIP!`
   },
   {
     id: 'lump_sum_compound',
@@ -146,7 +149,6 @@ export const FINANCIAL_KNOWLEDGE_BASE = [
     summary: 'Calculates exponential compound interest across Daily, Monthly, Quarterly, and Annual frequencies.',
     answer: `**Exponential Compound Interest Math:**
 • \`A = P × (1 + r/n)^(nt)\`
-• Compounding frequency (*n*) dictates how often earned interest starts earning interest of its own.
 • Under the **Rule of 72**, dividing 72 by your expected annual return tells you how fast your money doubles:
   - At **12% return**, your money doubles every **6 years** (72 / 12 = 6).
   - A one-time lump sum of **₹5 Lakhs** grows to **₹20 Lakhs in 12 years**!`
@@ -163,7 +165,6 @@ export const FINANCIAL_KNOWLEDGE_BASE = [
   1. Deposit is tax-deductible under Section 80C (up to ₹1.5 Lakhs/year).
   2. Interest earned is completely tax-free.
   3. Maturity proceeds are 100% tax-free!
-• **Lock-in:** 15-year tenure with partial withdrawal and loan facilities after year 6.
 • Maxing out ₹1.5 Lakhs every year for 15 years yields **over ₹40 Lakhs completely tax-free**!`
   },
   {
@@ -176,12 +177,11 @@ export const FINANCIAL_KNOWLEDGE_BASE = [
     answer: `**FIRE (Financial Independence, Retire Early) Calculation:**
 • **The 25x–30x Rule:** Your target retirement corpus is determined by your annual living expenses divided by your **Safe Withdrawal Rate (SWR)**:
   - \`FIRE Corpus = Annual Living Expenses × 25\` (based on a 4.0% SWR).
-  - In India with higher inflation, a **3.3%–3.5% SWR (30x expenses)** is safer.
+  - In India with higher inflation, a **3.3%–3.5% SWR (30x expenses)** is recommended.
 
 **Example for ₹80,000/month (₹9.6 Lakhs/year) Living Expenses:**
 • **Standard FIRE Target:** **₹2.88 Crore to ₹3.0 Crore**.
-• **Lean FIRE (75% expenses):** **₹2.16 Crore**.
-• **Fat FIRE (130% expenses):** **₹3.9 Crore**.`
+• **Lean FIRE (75% expenses):** **₹2.16 Crore**.`
   },
   {
     id: 'budget_50_30_20',
@@ -191,9 +191,9 @@ export const FINANCIAL_KNOWLEDGE_BASE = [
     keywords: ['budget', '50/30/20', 'needs', 'wants', 'savings', 'cash flow', 'spending', 'money management'],
     summary: 'Allocates monthly net in-hand income into 50% Essential Needs, 30% Discretionary Wants, and 20% Financial Savings.',
     answer: `**The 50/30/20 Budget Framework:**
-• **50% Needs:** Non-negotiable essentials — Rent, Home Loan EMI, Groceries, Utilities, Healthcare, School Fees.
-• **30% Wants:** Lifestyle enhancements — Dining out, entertainment, vacations, electronics, subscriptions.
-• **20% Savings:** Wealth acceleration — SIPs, emergency funds, debt payoff, retirement funds.
+• **50% Needs:** Non-negotiable essentials — Rent, Home Loan EMI, Groceries, Utilities, Healthcare.
+• **30% Wants:** Lifestyle enhancements — Dining out, entertainment, vacations, shopping.
+• **20% Savings:** Wealth acceleration — SIPs, emergency funds, debt payoff.
 
 **For a ₹200k/month Salary:**
 • **Needs (50%):** **₹1,00,000**
@@ -210,8 +210,7 @@ export const FINANCIAL_KNOWLEDGE_BASE = [
     answer: `**Understanding the Hidden Tax of Inflation:**
 • At a historical **6.0% annual inflation rate**:
   - Purchasing power drops by **50% every 12 years**!
-  - What costs **₹1,00,000 today** will require **₹1,79,000 in 10 years** and **₹3,20,000 in 20 years** to buy the exact same lifestyle!
-• Keeping surplus funds in traditional savings accounts (earning 3%) guarantees real wealth loss.`
+  - What costs **₹1,00,000 today** will require **₹1,79,000 in 10 years** and **₹3,20,000 in 20 years** to buy the exact same lifestyle!`
   },
   {
     id: 'buy_vs_rent',
@@ -221,11 +220,8 @@ export const FINANCIAL_KNOWLEDGE_BASE = [
     keywords: ['buy vs rent', 'rent vs buy', 'homeownership', 'renting', 'real estate', 'down payment'],
     summary: 'Simulates net wealth outcomes of purchasing property vs renting and compounding the difference.',
     answer: `**The True Math of Buy vs. Rent:**
-• Buying builds equity, but entails:
-  - Down payment opportunity cost (which could have compounded in equities).
-  - Mortgage interest payments, property taxes, maintenance (1%–2%/year), and registration fees.
-• Renting preserves capital liquidity:
-  - If you rent and diligently invest the savings (down payment + EMI difference) into index funds, renting can match or exceed homeownership wealth over a 15–20 year horizon.`
+• Buying builds equity, but entails down payment opportunity cost, interest payments, property taxes, maintenance, and registration fees.
+• Renting preserves capital liquidity: investing the surplus difference into index funds can match or exceed homeownership wealth over 15–20 years.`
   },
   {
     id: 'gst_and_business',
@@ -235,16 +231,144 @@ export const FINANCIAL_KNOWLEDGE_BASE = [
     keywords: ['gst', 'cgst', 'sgst', 'igst', 'add gst', 'remove gst', 'tax invoice', 'margin', 'markup'],
     summary: 'Computes GST additions, removals, and split CGST/SGST amounts across 5%, 12%, 18%, and 28% slabs.',
     answer: `**GST Calculations Made Easy:**
-• **Add GST (Price Exclusive of Tax):** \`GST Amount = (Price × GST Rate) / 100\`
-• **Remove GST (Price Inclusive of Tax):** \`Base Price = Price / (1 + GST Rate / 100)\`
-• For intra-state transactions, the GST is divided 50/50 into **CGST** and **SGST**.`
+• **Add GST (Price Exclusive):** \`GST Amount = (Price × GST Rate) / 100\`
+• **Remove GST (Price Inclusive):** \`Base Price = Price / (1 + GST Rate / 100)\`
+• For intra-state sales, GST is split 50/50 into **CGST** and **SGST**.`
   }
 ];
+
+/**
+ * Parses user questions for dynamic mathematical calculation requests
+ * e.g. "Calculate EMI for 60 lakhs at 8.5% for 20 years"
+ */
+export function evaluateDynamicMathQuery(q) {
+  const query = q.toLowerCase();
+
+  // 1. Dynamic EMI Calculation Request
+  if (query.includes('emi') || (query.includes('loan') && (query.includes('lakh') || query.includes('cr') || query.includes('%')))) {
+    const amountMatch = query.match(/(\d+(?:\.\d+)?)\s*(lakh|lakhs|l|crore|crores|cr|k)?/i);
+    const rateMatch = query.match(/(\d+(?:\.\d+)?)\s*%/);
+    const yearMatch = query.match(/(\d+)\s*(?:years|year|yrs|yr)/);
+
+    if (amountMatch) {
+      let principal = parseFloat(amountMatch[1]);
+      const unit = (amountMatch[2] || '').toLowerCase();
+      if (unit.startsWith('l')) principal *= 100000;
+      else if (unit.startsWith('c')) principal *= 10000000;
+      else if (unit.startsWith('k')) principal *= 1000;
+      else if (principal < 1000) principal *= 100000; // default assumption for "60 loan" -> 60 Lakhs
+
+      const rate = rateMatch ? parseFloat(rateMatch[1]) : 8.5;
+      const years = yearMatch ? parseInt(yearMatch[1], 10) : 20;
+      const months = years * 12;
+
+      const emiRes = calculateEMI(principal, rate, months);
+
+      return {
+        type: 'emi_calc',
+        answer: `**Live EMI Calculation for ${formatCurrency(principal)}:**\n• **Monthly EMI:** **${formatCurrency(emiRes.monthlyEMI)}**\n• **Interest Rate:** ${rate}% per annum\n• **Tenure:** ${years} Years (${months} months)\n• **Total Interest:** **${formatCurrency(emiRes.totalInterest)}**\n• **Total Repayment:** **${formatCurrency(emiRes.totalPayment)}**`,
+        actionLabel: `Apply ${formatCurrency(principal, undefined, false)} in EMI Calculator`,
+        route: 'emi',
+        params: {
+          storeKey: 'emi',
+          stateUpdates: {
+            loanAmount: principal,
+            interestRate: rate,
+            tenureValue: years,
+            isYears: true
+          }
+        }
+      };
+    }
+  }
+
+  // 2. Dynamic SIP Calculation Request
+  if (query.includes('sip') || (query.includes('invest') && (query.includes('monthly') || query.includes('/mo')))) {
+    const amountMatch = query.match(/(\d+(?:\.\d+)?)\s*(k|thousand|lakh|l)?/i);
+    const rateMatch = query.match(/(\d+(?:\.\d+)?)\s*%/);
+    const yearMatch = query.match(/(\d+)\s*(?:years|year|yrs|yr)/);
+
+    if (amountMatch) {
+      let monthly = parseFloat(amountMatch[1]);
+      const unit = (amountMatch[2] || '').toLowerCase();
+      if (unit.startsWith('k') || unit.startsWith('t')) monthly *= 1000;
+      else if (unit.startsWith('l')) monthly *= 100000;
+      else if (monthly < 100) monthly *= 1000; // e.g. "SIP of 25" -> ₹25,000
+
+      const rate = rateMatch ? parseFloat(rateMatch[1]) : 12;
+      const years = yearMatch ? parseInt(yearMatch[1], 10) : 15;
+
+      const sipRes = calculateSIP(monthly, rate, years);
+
+      return {
+        type: 'sip_calc',
+        answer: `**Live SIP Projection for ${formatCurrency(monthly)} / month:**\n• **Accumulated Corpus:** **${formatCurrency(sipRes.futureValue)}**\n• **Total Capital Invested:** ${formatCurrency(sipRes.totalInvested)}\n• **Compound Gains Earned:** **${formatCurrency(sipRes.estimatedReturns)}**\n• **Wealth Multiple:** ${sipRes.wealthGainMultiple}x over ${years} years (@ ${rate}% CAGR)`,
+        actionLabel: `Apply ${formatCurrency(monthly, undefined, false)} in SIP Calculator`,
+        route: 'invest-sip',
+        params: {
+          storeKey: 'investments',
+          stateUpdates: {
+            activeTab: 'sip',
+            sipMonthly: monthly,
+            sipRate: rate,
+            sipYears: years
+          }
+        }
+      };
+    }
+  }
+
+  // 3. Dynamic Budget Allocation Request
+  if (query.includes('budget') || query.includes('50/30/20') || query.includes('salary')) {
+    const salaryMatch = query.match(/(\d+(?:\.\d+)?)\s*(k|lakh|lakhs|l|cr)?/i);
+    if (salaryMatch && (query.includes('salary') || query.includes('budget') || query.includes('income'))) {
+      let salary = parseFloat(salaryMatch[1]);
+      const unit = (salaryMatch[2] || '').toLowerCase();
+      if (unit.startsWith('k')) salary *= 1000;
+      else if (unit.startsWith('l')) salary *= 100000;
+      else if (salary < 1000) salary *= 1000; // e.g. "budget for 200k" -> ₹200,000
+
+      const needs = salary * 0.5;
+      const wants = salary * 0.3;
+      const savings = salary * 0.2;
+
+      return {
+        type: 'budget_calc',
+        answer: `**50/30/20 Budget Breakdown for ${formatCurrency(salary)} / month:**\n• **Needs (50%):** **${formatCurrency(needs)}** (Rent, EMIs, Groceries, Utilities)\n• **Wants (30%):** **${formatCurrency(wants)}** (Dining, Shopping, Entertainment)\n• **Savings (20%):** **${formatCurrency(savings)}** (SIPs, Emergency Reserve, PPF)`,
+        actionLabel: `Load ${formatCurrency(salary, undefined, false)} into Budget Planner`,
+        route: 'budget',
+        params: {
+          storeKey: 'budget',
+          stateUpdates: {
+            monthlyIncome: salary
+          }
+        }
+      };
+    }
+  }
+
+  return null;
+}
 
 /**
  * Perform Semantic / BM25-style keyword retrieval on query
  */
 export function queryFinancialKnowledge(rawQuery) {
+  // First check if user is asking for a live computation
+  const dynamicCalc = evaluateDynamicMathQuery(rawQuery);
+  if (dynamicCalc) {
+    return {
+      doc: {
+        title: 'Instant Financial Calculation',
+        route: dynamicCalc.route,
+        actionLabel: dynamicCalc.actionLabel,
+        answer: dynamicCalc.answer,
+        params: dynamicCalc.params
+      },
+      score: 100
+    };
+  }
+
   const query = rawQuery.toLowerCase().trim();
   const tokens = query.split(/[\s,?.!]+/).filter((t) => t.length > 1);
 
