@@ -1,6 +1,6 @@
 /**
- * Finculator Application Coordinator & Router (v2.3)
- * Full 5 Category / 20+ Financial Calculator Engine
+ * Finculator Application Coordinator & Router (v2.4)
+ * Full 5 Category / 20+ Financial Calculator Engine + FinBot AI Controller
  */
 
 import { setGlobalCurrency, getGlobalCurrency } from './utils/formatters.js';
@@ -29,6 +29,9 @@ import { initNetWorthCalculator } from './calculators/netWorthCalculator.js';
 import { initBudgetPlanner } from './calculators/budgetPlanner.js';
 import { initBuyVsRentCalculator } from './calculators/buyVsRentCalculator.js';
 
+// FinBot AI Assistant
+import { FinBot } from './components/chatbot.js';
+
 class FinculatorApp {
   constructor() {
     this.contentContainer = document.getElementById('main-content');
@@ -48,11 +51,15 @@ class FinculatorApp {
     this.initNavigation();
     this.initMobileMenu();
     this.initPrint();
+    this.initFooterEvents();
     this.handleRoute();
+
+    // Initialize FinBot AI Assistant & Site Controller
+    this.finBot = new FinBot(this);
   }
 
   initCurrency() {
-    const savedCurrency = getStoredState('global_currency', 'USD');
+    const savedCurrency = getStoredState('global_currency', 'INR');
     if (this.currencySelect) {
       this.currencySelect.value = savedCurrency;
       setGlobalCurrency(savedCurrency);
@@ -96,6 +103,70 @@ class FinculatorApp {
       this.printBtn.addEventListener('click', () => {
         window.print();
       });
+    }
+  }
+
+  initFooterEvents() {
+    // Copy Email to Clipboard
+    const copyEmailBtn = document.getElementById('footer-copy-email-btn');
+    const emailLabel = document.getElementById('footer-email-label');
+    if (copyEmailBtn && emailLabel) {
+      copyEmailBtn.addEventListener('click', async () => {
+        const email = copyEmailBtn.getAttribute('data-email') || 'prakharrai12@gmail.com';
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(email);
+          } else {
+            const temp = document.createElement('textarea');
+            temp.value = email;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            temp.remove();
+          }
+
+          emailLabel.textContent = 'Copied to Clipboard!';
+          this.showToast(`Email ${email} copied to clipboard!`);
+
+          setTimeout(() => {
+            emailLabel.textContent = email;
+          }, 2400);
+        } catch (err) {
+          this.showToast(`Contact: ${email}`);
+        }
+      });
+    }
+
+    // Back to Top Button
+    const backToTopBtn = document.getElementById('footer-back-to-top');
+    if (backToTopBtn) {
+      backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // Newsletter Subscribe Form
+    const newsletterForm = document.getElementById('footer-newsletter-form');
+    if (newsletterForm) {
+      newsletterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = document.getElementById('newsletter-email-input');
+        if (input && input.value) {
+          this.showToast('Subscribed to Finculator institutional intelligence updates!');
+          input.value = '';
+        }
+      });
+    }
+  }
+
+  showToast(message) {
+    const toast = document.getElementById('app-toast');
+    if (toast) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
     }
   }
 
