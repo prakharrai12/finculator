@@ -29,13 +29,16 @@ import { initNetWorthCalculator } from './calculators/netWorthCalculator.js';
 import { initBudgetPlanner } from './calculators/budgetPlanner.js';
 import { initBuyVsRentCalculator } from './calculators/buyVsRentCalculator.js';
 
-// AI Copilot & Portfolio Builder
+// AI Copilot, Portfolio Builder, Auth & Hero Section
 import { FinBot } from './components/chatbot.js';
 import { PortfolioModal } from './components/portfolioModal.js';
+import { AuthModal } from './components/authModal.js';
+import { renderHeroSection } from './components/heroSection.js';
 
 class FinculatorApp {
   constructor() {
     this.contentContainer = document.getElementById('main-content');
+    this.heroContainer = document.getElementById('hero-mount-container');
     this.currencySelect = document.getElementById('global-currency-select');
     this.navLinks = document.querySelectorAll('.nav-item');
     this.mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -45,9 +48,11 @@ class FinculatorApp {
     this.portfolioBtn = document.getElementById('btn-open-portfolio');
 
     this.currentRoute = 'emi';
-    this.init();
+    this.authModal = new AuthModal(this);
     this.finbot = new FinBot(this);
     this.portfolio = new PortfolioModal(this);
+
+    this.init();
     this.initPortfolioButton();
   }
 
@@ -65,7 +70,18 @@ class FinculatorApp {
     this.initMobileMenu();
     this.initPrint();
     this.initFooterEvents();
+    this.initHeroSection();
     this.handleRoute();
+  }
+
+  initHeroSection() {
+    if (this.heroContainer) {
+      renderHeroSection(this.heroContainer, {
+        openAuth: (tab) => {
+          if (this.authModal) this.authModal.open(tab);
+        }
+      });
+    }
   }
 
   initCurrency() {
@@ -182,6 +198,21 @@ class FinculatorApp {
 
   handleRoute() {
     const rawHash = window.location.hash.slice(2) || 'emi';
+
+    if (rawHash === 'login' || rawHash === 'signin') {
+      if (this.authModal) this.authModal.open('signin');
+      return;
+    } else if (rawHash === 'register' || rawHash === 'signup') {
+      if (this.authModal) this.authModal.open('signup');
+      return;
+    } else if (rawHash === 'credentials') {
+      if (this.authModal) this.authModal.open('credentials');
+      return;
+    } else if (rawHash === 'inbox') {
+      if (this.authModal) this.authModal.open('inbox');
+      return;
+    }
+
     this.currentRoute = rawHash;
 
     // Update active nav link

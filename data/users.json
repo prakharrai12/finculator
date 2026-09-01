@@ -1,0 +1,10 @@
+[
+  {
+    "id": "f2781b28-dc2b-46e9-b8bd-bd5fbc410cdd",
+    "name": "Test User",
+    "email": "test@finculator.io",
+    "passwordHash": "008c70392e3abfbd0fa47bbc2ed96aa99bd49e159727fcba0f2e6abeb3a9d601",
+    "createdAt": "2026-09-01 09:07:01 UTC",
+    "lastLogin": "2026-09-01 09:07:01 UTC"
+  }
+]

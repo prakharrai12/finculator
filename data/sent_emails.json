@@ -1,0 +1,22 @@
+[
+  {
+    "id": "2e63cedf-0772-42d2-9089-199a0cd330d3",
+    "to": "test@finculator.io",
+    "from": "auth@finculator.io",
+    "subject": "Your Finculator Login Credentials & Access Key",
+    "bodyHtml": "\n            <div style=\"font-family: Arial, sans-serif; background: #0A0F1D; color: #FFFFFF; padding: 24px; border-radius: 12px;\">\n                <h2 style=\"color: #38BDF8; margin-top: 0;\">Finculator Security \u2014 Your Login Credentials</h2>\n                <p style=\"color: #94A3B8; font-size: 14px;\">Hello <strong>Test User</strong>, here are your access credentials requested for Finculator:</p>\n                <div style=\"background: #131E36; border: 1px solid #1E293B; padding: 18px; border-radius: 8px; margin: 20px 0;\">\n                    <p style=\"margin: 6px 0; color: #E2E8F0;\"><strong>Login Email:</strong> <span style=\"color: #38BDF8; font-family: monospace;\">test@finculator.io</span></p>\n                    <p style=\"margin: 6px 0; color: #E2E8F0;\"><strong>Access Code / Password:</strong> <span style=\"background: #1E293B; padding: 3px 8px; border-radius: 4px; color: #10B981; font-family: monospace; font-weight: bold;\">Fin@3623</span></p>\n                    <p style=\"margin: 6px 0; color: #E2E8F0;\"><strong>Dispatch Server:</strong> <span style=\"color: #94A3B8;\">auth-gateway.finculator.internal (256-bit TLS)</span></p>\n                </div>\n                <p style=\"color: #64748B; font-size: 12px;\">Please sign in and update your security credentials from your Account Settings.</p>\n            </div>\n            ",
+    "bodyText": "Hello Test User,\n\nHere are your requested Finculator login credentials:\n\nEmail: test@finculator.io\nTemporary Access Pass: Fin@3623\n\nLogin directly at: http://localhost:3000/#/login\n\nFinculator Security Team",
+    "sentAt": "2026-09-01 09:07:03 UTC",
+    "status": "DELIVERED"
+  },
+  {
+    "id": "797c520c-7ce8-497e-b97f-bba807cd0839",
+    "to": "test@finculator.io",
+    "from": "auth@finculator.io",
+    "subject": "Welcome to Finculator \u2014 Your Account Credentials",
+    "bodyHtml": "\n            <div style=\"font-family: Arial, sans-serif; background: #0A0F1D; color: #FFFFFF; padding: 24px; border-radius: 12px;\">\n                <h2 style=\"color: #38BDF8; margin-top: 0;\">Welcome to Finculator, Test User!</h2>\n                <p style=\"color: #94A3B8; font-size: 14px;\">Your account has been successfully created with institutional-grade security.</p>\n                <div style=\"background: #131E36; border: 1px solid #1E293B; padding: 16px; border-radius: 8px; margin: 20px 0;\">\n                    <p style=\"margin: 4px 0; color: #E2E8F0;\"><strong>Registered Email:</strong> <span style=\"color: #38BDF8;\">test@finculator.io</span></p>\n                    <p style=\"margin: 4px 0; color: #E2E8F0;\"><strong>Account Status:</strong> <span style=\"color: #10B981;\">\u2713 Verified Active</span></p>\n                    <p style=\"margin: 4px 0; color: #E2E8F0;\"><strong>Access Token:</strong> <code style=\"color: #F59E0B;\">fin_tok_3465f077...</code></p>\n                </div>\n                <p style=\"color: #64748B; font-size: 12px;\">If you did not request this account, please ignore this message.</p>\n            </div>\n            ",
+    "bodyText": "Hello Test User,\n\nWelcome to Finculator! Your account has been registered.\n\nEmail: test@finculator.io\nAccount ID: f2781b28-dc2b-46e9-b8bd-bd5fbc410cdd\n\nKeep your password secure.\n\nBest regards,\nFinculator Team",
+    "sentAt": "2026-09-01 09:07:01 UTC",
+    "status": "DELIVERED"
+  }
+]
