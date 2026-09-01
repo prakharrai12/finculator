@@ -20,26 +20,26 @@ export function initTaxBusinessSuite(container) {
 
   const defaultState = {
     activeTab: 'tax', // 'tax' | 'gst' | 'salary' | 'margin' | 'breakeven'
-    // Tax (Default ₹200k/month = ₹24,00,000 / year)
-    taxGross: 2400000,
-    taxDeductions: 150000,
+    // Tax
+    taxGross: 0,
+    taxDeductions: 0,
     taxRegime: 'new',
     // GST
-    gstAmount: 25000,
+    gstAmount: 0,
     gstRate: 18,
     gstMode: 'add',
-    // Salary (Default ₹200k/month = ₹24,00,000 / year CTC)
-    salaryCTC: 2400000,
-    salaryBasicPct: 40,
-    salaryHraPct: 20,
+    // Salary
+    salaryCTC: 0,
+    salaryBasicPct: 0,
+    salaryHraPct: 0,
     // Margin
-    marginCost: 65,
-    marginPrice: 100,
-    marginUnits: 500,
+    marginCost: 0,
+    marginPrice: 0,
+    marginUnits: 0,
     // Break-even
-    beFixedCosts: 50000,
-    beVariableCost: 25,
-    bePrice: 75
+    beFixedCosts: 0,
+    beVariableCost: 0,
+    bePrice: 0
   };
 
   const state = getStoredState('tax_business', defaultState);
@@ -173,14 +173,10 @@ export function initTaxBusinessSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="tb-tax-g-input" class="form-input has-prefix" min="100000" max="50000000" step="50000" value="${state.taxGross}" />
+            <input type="number" id="tb-tax-g-input" class="form-input has-prefix" min="0" max="50000000" step="50000" placeholder="0" value="${state.taxGross ? state.taxGross : ''}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="tb-tax-g-slider" class="range-slider" min="300000" max="10000000" step="50000" value="${Math.min(state.taxGross, 10000000)}" />
-          </div>
-          <div class="slider-limits">
-            <span>₹3 Lakh</span>
-            <span>₹1 Crore</span>
+            <input type="range" id="tb-tax-g-slider" class="range-slider" min="0" max="10000000" step="50000" value="${state.taxGross || 0}" />
           </div>
         </div>
 
@@ -191,10 +187,10 @@ export function initTaxBusinessSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="tb-tax-d-input" class="form-input has-prefix" min="0" max="2000000" step="10000" value="${state.taxDeductions}" />
+            <input type="number" id="tb-tax-d-input" class="form-input has-prefix" min="0" max="2000000" step="10000" placeholder="0" value="${state.taxDeductions ? state.taxDeductions : ''}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="tb-tax-d-slider" class="range-slider" min="0" max="500000" step="10000" value="${Math.min(state.taxDeductions, 500000)}" />
+            <input type="range" id="tb-tax-d-slider" class="range-slider" min="0" max="500000" step="10000" value="${state.taxDeductions || 0}" />
           </div>
         </div>
 
@@ -217,15 +213,10 @@ export function initTaxBusinessSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="tb-sal-ctc-input" class="form-input has-prefix" min="100000" max="50000000" step="50000" value="${state.salaryCTC}" />
+            <input type="number" id="tb-sal-ctc-input" class="form-input has-prefix" min="0" max="50000000" step="50000" placeholder="0" value="${state.salaryCTC ? state.salaryCTC : ''}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="tb-sal-ctc-slider" class="range-slider" min="300000" max="10000000" step="50000" value="${Math.min(state.salaryCTC, 10000000)}" />
-          </div>
-          <div class="slider-limits">
-            <span>₹3 Lakh</span>
-            <span>₹24 Lakh (₹200k/mo)</span>
-            <span>₹1 Crore</span>
+            <input type="range" id="tb-sal-ctc-slider" class="range-slider" min="0" max="10000000" step="50000" value="${state.salaryCTC || 0}" />
           </div>
         </div>
 
@@ -235,11 +226,11 @@ export function initTaxBusinessSuite(container) {
             <span class="form-hint">${state.salaryBasicPct}%</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="tb-sal-b-input" class="form-input has-suffix" min="20" max="60" step="5" value="${state.salaryBasicPct}" />
+            <input type="number" id="tb-sal-b-input" class="form-input has-suffix" min="0" max="60" step="5" placeholder="0" value="${state.salaryBasicPct ? state.salaryBasicPct : ''}" />
             <span class="input-suffix">%</span>
           </div>
           <div class="slider-container">
-            <input type="range" id="tb-sal-b-slider" class="range-slider" min="30" max="50" step="5" value="${state.salaryBasicPct}" />
+            <input type="range" id="tb-sal-b-slider" class="range-slider" min="0" max="60" step="5" value="${state.salaryBasicPct || 0}" />
           </div>
         </div>
       `;
@@ -252,10 +243,10 @@ export function initTaxBusinessSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="tb-gst-a-input" class="form-input has-prefix" min="10" max="10000000" step="100" value="${state.gstAmount}" />
+            <input type="number" id="tb-gst-a-input" class="form-input has-prefix" min="0" max="10000000" step="100" placeholder="0" value="${state.gstAmount ? state.gstAmount : ''}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="tb-gst-a-slider" class="range-slider" min="500" max="500000" step="1000" value="${Math.min(state.gstAmount, 500000)}" />
+            <input type="range" id="tb-gst-a-slider" class="range-slider" min="0" max="500000" step="1000" value="${state.gstAmount || 0}" />
           </div>
         </div>
 
@@ -292,7 +283,7 @@ export function initTaxBusinessSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="tb-m-c-input" class="form-input has-prefix" min="1" max="1000000" step="5" value="${state.marginCost}" />
+            <input type="number" id="tb-m-c-input" class="form-input has-prefix" min="0" max="1000000" step="5" placeholder="0" value="${state.marginCost ? state.marginCost : ''}" />
           </div>
         </div>
 
@@ -303,7 +294,7 @@ export function initTaxBusinessSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="tb-m-p-input" class="form-input has-prefix" min="1" max="1000000" step="5" value="${state.marginPrice}" />
+            <input type="number" id="tb-m-p-input" class="form-input has-prefix" min="0" max="1000000" step="5" placeholder="0" value="${state.marginPrice ? state.marginPrice : ''}" />
           </div>
         </div>
 
@@ -313,7 +304,7 @@ export function initTaxBusinessSuite(container) {
             <span class="form-hint">${state.marginUnits} Units</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="tb-m-u-input" class="form-input" min="1" max="1000000" step="10" value="${state.marginUnits}" />
+            <input type="number" id="tb-m-u-input" class="form-input" min="0" max="1000000" step="10" placeholder="0" value="${state.marginUnits ? state.marginUnits : ''}" />
           </div>
         </div>
       `;
@@ -327,7 +318,7 @@ export function initTaxBusinessSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="tb-be-fc-input" class="form-input has-prefix" min="100" max="10000000" step="1000" value="${state.beFixedCosts}" />
+            <input type="number" id="tb-be-fc-input" class="form-input has-prefix" min="0" max="10000000" step="1000" placeholder="0" value="${state.beFixedCosts ? state.beFixedCosts : ''}" />
           </div>
         </div>
 
@@ -338,7 +329,7 @@ export function initTaxBusinessSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="tb-be-vc-input" class="form-input has-prefix" min="0" max="100000" step="5" value="${state.beVariableCost}" />
+            <input type="number" id="tb-be-vc-input" class="form-input has-prefix" min="0" max="100000" step="5" placeholder="0" value="${state.beVariableCost ? state.beVariableCost : ''}" />
           </div>
         </div>
 
@@ -349,7 +340,7 @@ export function initTaxBusinessSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="tb-be-p-input" class="form-input has-prefix" min="1" max="100000" step="5" value="${state.bePrice}" />
+            <input type="number" id="tb-be-p-input" class="form-input has-prefix" min="0" max="100000" step="5" placeholder="0" value="${state.bePrice ? state.bePrice : ''}" />
           </div>
         </div>
       `;
@@ -589,7 +580,7 @@ export function initTaxBusinessSuite(container) {
         state.beFixedCosts = 0;
         state.beVariableCost = 0;
         state.bePrice = 0;
-        setStoredState('tax_business_suite', state);
+        setStoredState('tax_business', state);
         render();
       });
     }

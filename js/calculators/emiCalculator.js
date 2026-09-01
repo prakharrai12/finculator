@@ -13,11 +13,11 @@ export function initEMICalculator(container) {
   if (!container) return;
 
   const defaultState = {
-    loanAmount: 5000000, // ₹50 Lakhs home loan default
-    interestRate: 8.5,
-    tenureValue: 20,
+    loanAmount: 0,
+    interestRate: 0,
+    tenureValue: 0,
     isYears: true,
-    processingFeePct: 0.5
+    processingFeePct: 0
   };
 
   const state = getStoredState('emi', defaultState);
@@ -74,7 +74,7 @@ export function initEMICalculator(container) {
                   max="50000000"
                   step="50000"
                   placeholder="0"
-                  value="${state.loanAmount}"
+                  value="${state.loanAmount ? state.loanAmount : ''}"
                 />
               </div>
               <div class="slider-container">
@@ -82,15 +82,15 @@ export function initEMICalculator(container) {
                   type="range"
                   id="emi-amount-slider"
                   class="range-slider"
-                  min="100000"
+                  min="0"
                   max="15000000"
                   step="50000"
-                  value="${Math.min(state.loanAmount, 15000000)}"
+                  value="${state.loanAmount || 0}"
                 />
               </div>
               <div class="slider-limits">
-                <span>₹1 Lakh</span>
-                <span>₹50 Lakh (Target)</span>
+                <span>₹0</span>
+                <span>₹50 Lakh</span>
                 <span>₹1.5 Crore</span>
               </div>
             </div>
@@ -110,7 +110,7 @@ export function initEMICalculator(container) {
                   max="30"
                   step="0.05"
                   placeholder="0"
-                  value="${state.interestRate}"
+                  value="${state.interestRate ? state.interestRate : ''}"
                 />
                 <span class="input-suffix">%</span>
               </div>
@@ -119,16 +119,16 @@ export function initEMICalculator(container) {
                   type="range"
                   id="emi-rate-slider"
                   class="range-slider"
-                  min="5.0"
-                  max="18.0"
+                  min="0"
+                  max="25.0"
                   step="0.1"
-                  value="${state.interestRate}"
+                  value="${state.interestRate || 0}"
                 />
               </div>
               <div class="slider-limits">
-                <span>5.0%</span>
-                <span>8.5% (Home Loan)</span>
-                <span>18.0%</span>
+                <span>0%</span>
+                <span>8.5%</span>
+                <span>25.0%</span>
               </div>
             </div>
 
@@ -146,11 +146,11 @@ export function initEMICalculator(container) {
                   type="number"
                   id="emi-tenure-input"
                   class="form-input has-suffix"
-                  min="1"
+                  min="0"
                   max="${state.isYears ? 40 : 480}"
                   step="1"
-                  placeholder="1"
-                  value="${state.tenureValue}"
+                  placeholder="0"
+                  value="${state.tenureValue ? state.tenureValue : ''}"
                 />
                 <span class="input-suffix" id="emi-tenure-suffix">${state.isYears ? 'Years' : 'Months'}</span>
               </div>
@@ -159,14 +159,14 @@ export function initEMICalculator(container) {
                   type="range"
                   id="emi-tenure-slider"
                   class="range-slider"
-                  min="1"
+                  min="0"
                   max="${state.isYears ? 30 : 360}"
                   step="1"
-                  value="${state.tenureValue}"
+                  value="${state.tenureValue || 0}"
                 />
               </div>
               <div class="slider-limits">
-                <span id="emi-limit-min">1 ${state.isYears ? 'Yr' : 'Mo'}</span>
+                <span id="emi-limit-min">0 ${state.isYears ? 'Yr' : 'Mo'}</span>
                 <span>20 Yrs (Standard)</span>
                 <span id="emi-limit-max">${state.isYears ? '30 Yrs' : '360 Mos'}</span>
               </div>
@@ -187,7 +187,7 @@ export function initEMICalculator(container) {
                   max="5"
                   step="0.1"
                   placeholder="0"
-                  value="${state.processingFeePct}"
+                  value="${state.processingFeePct ? state.processingFeePct : ''}"
                 />
                 <span class="input-suffix">%</span>
               </div>
@@ -415,13 +415,11 @@ export function initEMICalculator(container) {
     // Reset Defaults to 0
     const resetBtn = container.querySelector('#btn-reset-emi');
     resetBtn.addEventListener('click', () => {
-      state.principal = 0;
-      state.rate = 0;
-      state.tenureYears = 0;
+      state.loanAmount = 0;
+      state.interestRate = 0;
+      state.tenureValue = 0;
       state.processingFeePct = 0;
-      state.prepaymentMonthly = 0;
-      state.prepaymentLumpSum = 0;
-      setStoredState('emi_calculator', state);
+      setStoredState('emi', state);
       render();
     });
   }

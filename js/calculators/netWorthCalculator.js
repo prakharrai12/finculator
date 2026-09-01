@@ -12,17 +12,17 @@ export function initNetWorthCalculator(container) {
   if (!container) return;
 
   const defaultState = {
-    cash: 500000,
-    investments: 2500000,
-    realEstate: 8000000,
-    retirement: 1500000,
-    vehicles: 800000,
-    otherAssets: 400000,
+    cash: 0,
+    investments: 0,
+    realEstate: 0,
+    retirement: 0,
+    vehicles: 0,
+    otherAssets: 0,
     // Liabilities
-    mortgage: 4500000,
-    autoLoans: 350000,
+    mortgage: 0,
+    autoLoans: 0,
     studentLoans: 0,
-    creditCards: 45000,
+    creditCards: 0,
     otherDebts: 0
   };
 
@@ -85,7 +85,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Cash, Savings & Emergency Funds</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-cash-input" class="form-input has-prefix" placeholder="0" value="${state.cash}" step="10000" />
+                <input type="number" id="nw-cash-input" class="form-input has-prefix" placeholder="0" value="${state.cash ? state.cash : ''}" step="10000" />
               </div>
             </div>
 
@@ -93,7 +93,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Brokerage, Stocks & Mutual Funds</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-inv-input" class="form-input has-prefix" placeholder="0" value="${state.investments}" step="25000" />
+                <input type="number" id="nw-inv-input" class="form-input has-prefix" placeholder="0" value="${state.investments ? state.investments : ''}" step="25000" />
               </div>
             </div>
 
@@ -101,7 +101,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Primary Real Estate & Property</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-re-input" class="form-input has-prefix" placeholder="0" value="${state.realEstate}" step="50000" />
+                <input type="number" id="nw-re-input" class="form-input has-prefix" placeholder="0" value="${state.realEstate ? state.realEstate : ''}" step="50000" />
               </div>
             </div>
 
@@ -109,7 +109,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Retirement Accounts (EPF, PPF, NPS, Superannuation, 401k)</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-ret-input" class="form-input has-prefix" placeholder="0" value="${state.retirement}" step="25000" />
+                <input type="number" id="nw-ret-input" class="form-input has-prefix" placeholder="0" value="${state.retirement ? state.retirement : ''}" step="25000" />
               </div>
             </div>
 
@@ -117,7 +117,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Vehicles & Personal Valuables</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-veh-input" class="form-input has-prefix" placeholder="0" value="${state.vehicles}" step="10000" />
+                <input type="number" id="nw-veh-input" class="form-input has-prefix" placeholder="0" value="${state.vehicles ? state.vehicles : ''}" step="10000" />
               </div>
             </div>
           </div>
@@ -133,7 +133,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Mortgage / Home Loan Balance</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-mort-input" class="form-input has-prefix" placeholder="0" value="${state.mortgage}" step="50000" />
+                <input type="number" id="nw-mort-input" class="form-input has-prefix" placeholder="0" value="${state.mortgage ? state.mortgage : ''}" step="50000" />
               </div>
             </div>
 
@@ -141,7 +141,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Auto Loans</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-auto-input" class="form-input has-prefix" placeholder="0" value="${state.autoLoans}" step="5000" />
+                <input type="number" id="nw-auto-input" class="form-input has-prefix" placeholder="0" value="${state.autoLoans ? state.autoLoans : ''}" step="5000" />
               </div>
             </div>
 
@@ -149,7 +149,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Student & Personal Loans</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-stu-input" class="form-input has-prefix" placeholder="0" value="${state.studentLoans}" step="5000" />
+                <input type="number" id="nw-stu-input" class="form-input has-prefix" placeholder="0" value="${state.studentLoans ? state.studentLoans : ''}" step="5000" />
               </div>
             </div>
 
@@ -157,7 +157,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Credit Card Debt</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-cc-input" class="form-input has-prefix" placeholder="0" value="${state.creditCards}" step="1000" />
+                <input type="number" id="nw-cc-input" class="form-input has-prefix" placeholder="0" value="${state.creditCards ? state.creditCards : ''}" step="1000" />
               </div>
             </div>
 

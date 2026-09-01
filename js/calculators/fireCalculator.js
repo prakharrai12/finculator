@@ -12,13 +12,13 @@ export function initFIRECalculator(container) {
   if (!container) return;
 
   const defaultState = {
-    currentAge: 30,
-    targetAge: 50,
-    currentSavings: 1500000,
-    monthlyExpenses: 80000,
-    inflationRate: 6.0,
-    expectedReturn: 12.0,
-    swrPercent: 3.5
+    currentAge: 0,
+    targetAge: 0,
+    currentSavings: 0,
+    monthlyExpenses: 0,
+    inflationRate: 0,
+    expectedReturn: 0,
+    swrPercent: 0
   };
 
   const state = getStoredState('fire', defaultState);
@@ -69,7 +69,7 @@ export function initFIRECalculator(container) {
                   <span class="form-hint" id="fire-cur-age-hint">${state.currentAge} Yrs</span>
                 </div>
                 <div class="input-wrapper">
-                  <input type="number" id="fire-cur-age-input" class="form-input" min="18" max="75" step="1" placeholder="30" value="${state.currentAge}" />
+                  <input type="number" id="fire-cur-age-input" class="form-input" min="0" max="75" step="1" placeholder="0" value="${state.currentAge ? state.currentAge : ''}" />
                 </div>
               </div>
 
@@ -79,7 +79,7 @@ export function initFIRECalculator(container) {
                   <span class="form-hint" id="fire-tgt-age-hint">${state.targetAge} Yrs</span>
                 </div>
                 <div class="input-wrapper">
-                  <input type="number" id="fire-tgt-age-input" class="form-input" min="19" max="80" step="1" placeholder="50" value="${state.targetAge}" />
+                  <input type="number" id="fire-tgt-age-input" class="form-input" min="0" max="80" step="1" placeholder="0" value="${state.targetAge ? state.targetAge : ''}" />
                 </div>
               </div>
             </div>
@@ -92,10 +92,10 @@ export function initFIRECalculator(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="fire-savings-input" class="form-input has-prefix" min="0" max="50000000" step="25000" placeholder="0" value="${state.currentSavings}" />
+                <input type="number" id="fire-savings-input" class="form-input has-prefix" min="0" max="50000000" step="25000" placeholder="0" value="${state.currentSavings ? state.currentSavings : ''}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="fire-savings-slider" class="range-slider" min="0" max="10000000" step="25000" value="${Math.min(state.currentSavings, 10000000)}" />
+                <input type="range" id="fire-savings-slider" class="range-slider" min="0" max="10000000" step="25000" value="${state.currentSavings || 0}" />
               </div>
             </div>
 
@@ -107,10 +107,10 @@ export function initFIRECalculator(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="fire-expenses-input" class="form-input has-prefix" min="0" max="500000" step="2500" placeholder="0" value="${state.monthlyExpenses}" />
+                <input type="number" id="fire-expenses-input" class="form-input has-prefix" min="0" max="500000" step="2500" placeholder="0" value="${state.monthlyExpenses ? state.monthlyExpenses : ''}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="fire-expenses-slider" class="range-slider" min="10000" max="250000" step="2500" value="${Math.min(state.monthlyExpenses, 250000)}" />
+                <input type="range" id="fire-expenses-slider" class="range-slider" min="0" max="250000" step="2500" value="${state.monthlyExpenses || 0}" />
               </div>
             </div>
 
@@ -122,7 +122,7 @@ export function initFIRECalculator(container) {
                   <span class="form-hint" id="fire-inf-hint">${state.inflationRate}%</span>
                 </div>
                 <div class="input-wrapper">
-                  <input type="number" id="fire-inf-input" class="form-input has-suffix" min="0" max="15" step="0.1" placeholder="6" value="${state.inflationRate}" />
+                  <input type="number" id="fire-inf-input" class="form-input has-suffix" min="0" max="15" step="0.1" placeholder="0" value="${state.inflationRate ? state.inflationRate : ''}" />
                   <span class="input-suffix">%</span>
                 </div>
               </div>
@@ -133,7 +133,7 @@ export function initFIRECalculator(container) {
                   <span class="form-hint" id="fire-ret-hint">${state.expectedReturn}%</span>
                 </div>
                 <div class="input-wrapper">
-                  <input type="number" id="fire-ret-input" class="form-input has-suffix" min="0" max="25" step="0.1" placeholder="12" value="${state.expectedReturn}" />
+                  <input type="number" id="fire-ret-input" class="form-input has-suffix" min="0" max="25" step="0.1" placeholder="0" value="${state.expectedReturn ? state.expectedReturn : ''}" />
                   <span class="input-suffix">%</span>
                 </div>
               </div>
@@ -146,7 +146,7 @@ export function initFIRECalculator(container) {
                 <span class="form-hint" id="fire-swr-hint">${state.swrPercent}% (${(100 / Math.max(0.1, state.swrPercent)).toFixed(1)}x Rule)</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="fire-swr-input" class="form-input has-suffix" min="1" max="10.0" step="0.1" placeholder="3.5" value="${state.swrPercent}" />
+                <input type="number" id="fire-swr-input" class="form-input has-suffix" min="0" max="10.0" step="0.1" placeholder="0" value="${state.swrPercent ? state.swrPercent : ''}" />
                 <span class="input-suffix">%</span>
               </div>
             </div>
@@ -395,7 +395,7 @@ export function initFIRECalculator(container) {
         state.inflationRate = 0;
         state.expectedReturn = 0;
         state.swrPercent = 0;
-        setStoredState('fire_calculator', state);
+        setStoredState('fire', state);
         render();
       });
     }

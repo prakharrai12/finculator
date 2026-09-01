@@ -12,15 +12,15 @@ export function initBuyVsRentCalculator(container) {
   if (!container) return;
 
   const defaultState = {
-    homePrice: 7500000,
-    downPaymentPct: 20,
-    mortgageRate: 8.5,
-    mortgageYears: 20,
-    homeAppreciationRate: 5.0,
-    monthlyRent: 25000,
-    rentInflationRate: 5.0,
-    investmentReturnRate: 12.0,
-    timeHorizonYears: 15
+    homePrice: 0,
+    downPaymentPct: 0,
+    mortgageRate: 0,
+    mortgageYears: 0,
+    homeAppreciationRate: 0,
+    monthlyRent: 0,
+    rentInflationRate: 0,
+    investmentReturnRate: 0,
+    timeHorizonYears: 0
   };
 
   const state = getStoredState('buy_vs_rent', defaultState);
@@ -91,10 +91,10 @@ export function initBuyVsRentCalculator(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="bvr-hp-input" class="form-input has-prefix" min="0" max="50000000" step="50000" placeholder="0" value="${state.homePrice}" />
+                <input type="number" id="bvr-hp-input" class="form-input has-prefix" min="0" max="50000000" step="50000" placeholder="0" value="${state.homePrice ? state.homePrice : ''}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="bvr-hp-slider" class="range-slider" min="1000000" max="20000000" step="50000" value="${Math.min(state.homePrice, 20000000)}" />
+                <input type="range" id="bvr-hp-slider" class="range-slider" min="0" max="20000000" step="50000" value="${state.homePrice || 0}" />
               </div>
             </div>
 
@@ -105,7 +105,7 @@ export function initBuyVsRentCalculator(container) {
                 <span class="form-hint" id="bvr-dp-hint">${state.downPaymentPct}% (${formatCurrency(res.initialDownPayment, undefined, false)})</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bvr-dp-input" class="form-input has-suffix" min="0" max="90" step="5" placeholder="20" value="${state.downPaymentPct}" />
+                <input type="number" id="bvr-dp-input" class="form-input has-suffix" min="0" max="90" step="5" placeholder="0" value="${state.downPaymentPct ? state.downPaymentPct : ''}" />
                 <span class="input-suffix">%</span>
               </div>
             </div>
@@ -117,7 +117,7 @@ export function initBuyVsRentCalculator(container) {
                 <span class="form-hint" id="bvr-mr-hint">${state.mortgageRate}%</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bvr-mr-input" class="form-input has-suffix" min="0" max="25" step="0.1" placeholder="8.5" value="${state.mortgageRate}" />
+                <input type="number" id="bvr-mr-input" class="form-input has-suffix" min="0" max="25" step="0.1" placeholder="0" value="${state.mortgageRate ? state.mortgageRate : ''}" />
                 <span class="input-suffix">%</span>
               </div>
             </div>
@@ -129,7 +129,7 @@ export function initBuyVsRentCalculator(container) {
                 <span class="form-hint" id="bvr-ha-hint">${state.homeAppreciationRate}% / yr</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bvr-ha-input" class="form-input has-suffix" min="0" max="20" step="0.5" placeholder="5" value="${state.homeAppreciationRate}" />
+                <input type="number" id="bvr-ha-input" class="form-input has-suffix" min="0" max="20" step="0.5" placeholder="0" value="${state.homeAppreciationRate ? state.homeAppreciationRate : ''}" />
                 <span class="input-suffix">%</span>
               </div>
             </div>
@@ -150,10 +150,10 @@ export function initBuyVsRentCalculator(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="bvr-rent-input" class="form-input has-prefix" min="0" max="300000" step="1000" placeholder="0" value="${state.monthlyRent}" />
+                <input type="number" id="bvr-rent-input" class="form-input has-prefix" min="0" max="300000" step="1000" placeholder="0" value="${state.monthlyRent ? state.monthlyRent : ''}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="bvr-rent-slider" class="range-slider" min="10000" max="100000" step="1000" value="${Math.min(state.monthlyRent, 100000)}" />
+                <input type="range" id="bvr-rent-slider" class="range-slider" min="0" max="100000" step="1000" value="${state.monthlyRent || 0}" />
               </div>
             </div>
 
@@ -164,7 +164,7 @@ export function initBuyVsRentCalculator(container) {
                 <span class="form-hint" id="bvr-ri-hint">${state.rentInflationRate}% / yr</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bvr-ri-input" class="form-input has-suffix" min="0" max="20" step="0.5" placeholder="5" value="${state.rentInflationRate}" />
+                <input type="number" id="bvr-ri-input" class="form-input has-suffix" min="0" max="20" step="0.5" placeholder="0" value="${state.rentInflationRate ? state.rentInflationRate : ''}" />
                 <span class="input-suffix">%</span>
               </div>
             </div>
@@ -176,7 +176,7 @@ export function initBuyVsRentCalculator(container) {
                 <span class="form-hint" id="bvr-ir-hint">${state.investmentReturnRate}% / yr</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bvr-ir-input" class="form-input has-suffix" min="0" max="30" step="0.5" placeholder="12" value="${state.investmentReturnRate}" />
+                <input type="number" id="bvr-ir-input" class="form-input has-suffix" min="0" max="30" step="0.5" placeholder="0" value="${state.investmentReturnRate ? state.investmentReturnRate : ''}" />
                 <span class="input-suffix">%</span>
               </div>
             </div>
@@ -188,11 +188,11 @@ export function initBuyVsRentCalculator(container) {
                 <span class="form-hint" id="bvr-th-hint">${state.timeHorizonYears} Years</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bvr-th-input" class="form-input has-suffix" min="1" max="40" step="1" placeholder="15" value="${state.timeHorizonYears}" />
+                <input type="number" id="bvr-th-input" class="form-input has-suffix" min="0" max="40" step="1" placeholder="0" value="${state.timeHorizonYears ? state.timeHorizonYears : ''}" />
                 <span class="input-suffix">Years</span>
               </div>
               <div class="slider-container">
-                <input type="range" id="bvr-th-slider" class="range-slider" min="5" max="30" step="1" value="${state.timeHorizonYears}" />
+                <input type="range" id="bvr-th-slider" class="range-slider" min="0" max="30" step="1" value="${state.timeHorizonYears || 0}" />
               </div>
             </div>
           </div>
@@ -272,6 +272,7 @@ export function initBuyVsRentCalculator(container) {
         state.homePrice = 0;
         state.downPaymentPct = 0;
         state.mortgageRate = 0;
+        state.mortgageYears = 0;
         state.homeAppreciationRate = 0;
         state.monthlyRent = 0;
         state.rentInflationRate = 0;

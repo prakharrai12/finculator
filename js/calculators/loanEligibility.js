@@ -13,11 +13,11 @@ export function initLoanEligibility(container) {
   if (!container) return;
 
   const defaultState = {
-    monthlyIncome: 200000, // Calibrated for ₹200k/month salary
-    existingEMIs: 20000,
-    interestRate: 8.5,
-    tenureYears: 20,
-    foirPct: 50
+    monthlyIncome: 0,
+    existingEMIs: 0,
+    interestRate: 0,
+    tenureYears: 0,
+    foirPct: 0
   };
 
   const state = getStoredState('loan_eligibility', defaultState);
@@ -44,7 +44,7 @@ export function initLoanEligibility(container) {
         <div class="calculator-header">
           <div class="calculator-title-group">
             <h1 class="calculator-title">Loan Eligibility Calculator</h1>
-            <p class="calculator-desc">Determine maximum borrowing power based on net monthly income (₹200k/month baseline), existing debt obligations, and institutional FOIR limits.</p>
+            <p class="calculator-desc">Determine maximum borrowing power based on net monthly income, existing debt obligations, and institutional FOIR limits.</p>
           </div>
           <div class="calculator-actions">
             <button class="btn btn-secondary btn-sm" id="btn-reset-eligibility">Reset Defaults</button>
@@ -70,15 +70,10 @@ export function initLoanEligibility(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="elig-income-input" class="form-input has-prefix" min="0" max="5000000" step="5000" placeholder="0" value="${state.monthlyIncome}" />
+                <input type="number" id="elig-income-input" class="form-input has-prefix" min="0" max="5000000" step="5000" placeholder="0" value="${state.monthlyIncome ? state.monthlyIncome : ''}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="elig-income-slider" class="range-slider" min="25000" max="1000000" step="5000" value="${Math.min(state.monthlyIncome, 1000000)}" />
-              </div>
-              <div class="slider-limits">
-                <span>₹25,000 / mo</span>
-                <span>₹200,000 / mo (Target)</span>
-                <span>₹10 Lakh / mo</span>
+                <input type="range" id="elig-income-slider" class="range-slider" min="0" max="1000000" step="5000" value="${state.monthlyIncome || 0}" />
               </div>
             </div>
 
@@ -90,10 +85,10 @@ export function initLoanEligibility(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="elig-existing-input" class="form-input has-prefix" min="0" max="500000" step="1000" placeholder="0" value="${state.existingEMIs}" />
+                <input type="number" id="elig-existing-input" class="form-input has-prefix" min="0" max="500000" step="1000" placeholder="0" value="${state.existingEMIs ? state.existingEMIs : ''}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="elig-existing-slider" class="range-slider" min="0" max="100000" step="1000" value="${Math.min(state.existingEMIs, 100000)}" />
+                <input type="range" id="elig-existing-slider" class="range-slider" min="0" max="100000" step="1000" value="${state.existingEMIs || 0}" />
               </div>
             </div>
 
@@ -104,11 +99,11 @@ export function initLoanEligibility(container) {
                 <span class="form-hint" id="elig-rate-hint">${state.interestRate}%</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="elig-rate-input" class="form-input has-suffix" min="0" max="20.0" step="0.1" placeholder="0" value="${state.interestRate}" />
+                <input type="number" id="elig-rate-input" class="form-input has-suffix" min="0" max="20.0" step="0.1" placeholder="0" value="${state.interestRate ? state.interestRate : ''}" />
                 <span class="input-suffix">%</span>
               </div>
               <div class="slider-container">
-                <input type="range" id="elig-rate-slider" class="range-slider" min="6.0" max="15.0" step="0.1" value="${state.interestRate}" />
+                <input type="range" id="elig-rate-slider" class="range-slider" min="0" max="20.0" step="0.1" value="${state.interestRate || 0}" />
               </div>
             </div>
 
@@ -119,11 +114,11 @@ export function initLoanEligibility(container) {
                 <span class="form-hint" id="elig-tenure-hint">${state.tenureYears} Years (${state.tenureYears * 12} Mos)</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="elig-tenure-input" class="form-input has-suffix" min="1" max="30" step="1" placeholder="1" value="${state.tenureYears}" />
+                <input type="number" id="elig-tenure-input" class="form-input has-suffix" min="0" max="30" step="1" placeholder="0" value="${state.tenureYears ? state.tenureYears : ''}" />
                 <span class="input-suffix">Years</span>
               </div>
               <div class="slider-container">
-                <input type="range" id="elig-tenure-slider" class="range-slider" min="5" max="30" step="1" value="${state.tenureYears}" />
+                <input type="range" id="elig-tenure-slider" class="range-slider" min="0" max="30" step="1" value="${state.tenureYears || 0}" />
               </div>
             </div>
 
@@ -134,7 +129,7 @@ export function initLoanEligibility(container) {
                 <span class="form-hint" id="elig-foir-hint">${state.foirPct}% limit</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="elig-foir-input" class="form-input has-suffix" min="1" max="80" step="1" placeholder="50" value="${state.foirPct}" />
+                <input type="number" id="elig-foir-input" class="form-input has-suffix" min="0" max="80" step="1" placeholder="0" value="${state.foirPct ? state.foirPct : ''}" />
                 <span class="input-suffix">%</span>
               </div>
               <div class="slider-container">

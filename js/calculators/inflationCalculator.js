@@ -12,9 +12,9 @@ export function initInflationCalculator(container) {
   if (!container) return;
 
   const defaultState = {
-    amount: 100000,
-    inflationRate: 6.0,
-    years: 20,
+    amount: 0,
+    inflationRate: 0,
+    years: 0,
     direction: 'future_cost' // 'future_cost' | 'purchasing_power'
   };
 
@@ -64,10 +64,10 @@ export function initInflationCalculator(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="inf-amount-input" class="form-input has-prefix" min="0" max="10000000" step="1000" placeholder="0" value="${state.amount}" />
+                <input type="number" id="inf-amount-input" class="form-input has-prefix" min="0" max="10000000" step="1000" placeholder="0" value="${state.amount ? state.amount : ''}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="inf-amount-slider" class="range-slider" min="5000" max="1000000" step="5000" value="${Math.min(state.amount, 1000000)}" />
+                <input type="range" id="inf-amount-slider" class="range-slider" min="0" max="1000000" step="5000" value="${state.amount || 0}" />
               </div>
             </div>
 
@@ -78,11 +78,11 @@ export function initInflationCalculator(container) {
                 <span class="form-hint" id="inf-rate-hint">${state.inflationRate}%</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="inf-rate-input" class="form-input has-suffix" min="0" max="25" step="0.1" placeholder="6" value="${state.inflationRate}" />
+                <input type="number" id="inf-rate-input" class="form-input has-suffix" min="0" max="25" step="0.1" placeholder="0" value="${state.inflationRate ? state.inflationRate : ''}" />
                 <span class="input-suffix">%</span>
               </div>
               <div class="slider-container">
-                <input type="range" id="inf-rate-slider" class="range-slider" min="0.5" max="15" step="0.1" value="${state.inflationRate}" />
+                <input type="range" id="inf-rate-slider" class="range-slider" min="0" max="15" step="0.1" value="${state.inflationRate || 0}" />
               </div>
             </div>
 
@@ -93,11 +93,11 @@ export function initInflationCalculator(container) {
                 <span class="form-hint" id="inf-years-hint">${state.years} Years</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="inf-years-input" class="form-input has-suffix" min="1" max="50" step="1" placeholder="20" value="${state.years}" />
+                <input type="number" id="inf-years-input" class="form-input has-suffix" min="0" max="50" step="1" placeholder="0" value="${state.years ? state.years : ''}" />
                 <span class="input-suffix">Years</span>
               </div>
               <div class="slider-container">
-                <input type="range" id="inf-years-slider" class="range-slider" min="1" max="40" step="1" value="${state.years}" />
+                <input type="range" id="inf-years-slider" class="range-slider" min="0" max="40" step="1" value="${state.years || 0}" />
               </div>
             </div>
           </div>
@@ -267,7 +267,7 @@ export function initInflationCalculator(container) {
         state.amount = 0;
         state.inflationRate = 0;
         state.years = 0;
-        setStoredState('inflation_calc', state);
+        setStoredState('inflation', state);
         render();
       });
     }

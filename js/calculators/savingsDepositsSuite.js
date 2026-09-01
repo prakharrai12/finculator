@@ -22,33 +22,33 @@ export function initSavingsDepositsSuite(container) {
   const defaultState = {
     activeTab: 'compound', // 'compound' | 'simple' | 'fd' | 'rd' | 'ppf' | 'goal'
     // Compound
-    compoundPrincipal: 500000,
-    compoundRate: 7.5,
-    compoundYears: 10,
+    compoundPrincipal: 0,
+    compoundRate: 0,
+    compoundYears: 0,
     compoundFrequency: 'quarterly',
-    compoundRecurring: 10000,
+    compoundRecurring: 0,
     // Simple
-    simplePrincipal: 100000,
-    simpleRate: 6.0,
-    simpleYears: 5,
+    simplePrincipal: 0,
+    simpleRate: 0,
+    simpleYears: 0,
     // FD
-    fdPrincipal: 500000,
-    fdRate: 7.25,
-    fdMonths: 36,
+    fdPrincipal: 0,
+    fdRate: 0,
+    fdMonths: 0,
     fdFrequency: 'quarterly',
     // RD
-    rdMonthly: 10000,
-    rdRate: 6.8,
-    rdMonths: 36,
+    rdMonthly: 0,
+    rdRate: 0,
+    rdMonths: 0,
     // PPF
-    ppfAnnual: 150000,
-    ppfYears: 15,
-    ppfRate: 7.1,
+    ppfAnnual: 0,
+    ppfYears: 0,
+    ppfRate: 0,
     // Goal
-    goalCorpus: 2500000,
-    goalYears: 10,
-    goalReturn: 8.5,
-    goalInitial: 200000
+    goalCorpus: 0,
+    goalYears: 0,
+    goalReturn: 0,
+    goalInitial: 0
   };
 
   const state = getStoredState('savings_deposits', defaultState);
@@ -677,7 +677,7 @@ export function initSavingsDepositsSuite(container) {
         state.goalYears = 0;
         state.goalReturn = 0;
         state.goalInitial = 0;
-        setStoredState('savings_suite', state);
+        setStoredState('savings_deposits', state);
         render();
       });
     }

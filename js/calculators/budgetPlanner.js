@@ -13,10 +13,10 @@ export function initBudgetPlanner(container) {
   if (!container) return;
 
   const defaultState = {
-    monthlyIncome: 200000, // Calibrated for ₹200k/month salary
-    needsPct: 50,
-    wantsPct: 30,
-    savingsPct: 20
+    monthlyIncome: 0,
+    needsPct: 0,
+    wantsPct: 0,
+    savingsPct: 0
   };
 
   const state = getStoredState('budget_planner', defaultState);
@@ -41,7 +41,7 @@ export function initBudgetPlanner(container) {
         <div class="calculator-header">
           <div class="calculator-title-group">
             <h1 class="calculator-title">50/30/20 Budget Rule Planner</h1>
-            <p class="calculator-desc">Structure monthly cash flows into Essential Needs (50%), Discretionary Wants (30%), and Financial Savings / Investments (20%) based on your ₹200k/month salary.</p>
+            <p class="calculator-desc">Structure monthly cash flows into Essential Needs (50%), Discretionary Wants (30%), and Financial Savings / Investments (20%).</p>
           </div>
           <div class="calculator-actions">
             <button class="btn btn-secondary btn-sm" id="btn-reset-budget">Reset Defaults</button>
@@ -67,15 +67,10 @@ export function initBudgetPlanner(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="bud-income-input" class="form-input has-prefix" min="0" max="5000000" step="5000" placeholder="0" value="${state.monthlyIncome}" />
+                <input type="number" id="bud-income-input" class="form-input has-prefix" min="0" max="5000000" step="5000" placeholder="0" value="${state.monthlyIncome ? state.monthlyIncome : ''}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="bud-income-slider" class="range-slider" min="20000" max="1000000" step="5000" value="${Math.min(state.monthlyIncome, 1000000)}" />
-              </div>
-              <div class="slider-limits">
-                <span>₹20k / mo</span>
-                <span>₹200k / mo (Target)</span>
-                <span>₹10 Lakh / mo</span>
+                <input type="range" id="bud-income-slider" class="range-slider" min="0" max="1000000" step="5000" value="${state.monthlyIncome || 0}" />
               </div>
             </div>
 
@@ -86,11 +81,11 @@ export function initBudgetPlanner(container) {
                 <span class="form-hint" id="bud-needs-hint">${state.needsPct}% (${formatCurrency(res.needsAmount)})</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bud-needs-input" class="form-input has-suffix" min="0" max="100" step="1" placeholder="50" value="${state.needsPct}" />
+                <input type="number" id="bud-needs-input" class="form-input has-suffix" min="0" max="100" step="1" placeholder="0" value="${state.needsPct ? state.needsPct : ''}" />
                 <span class="input-suffix">%</span>
               </div>
               <div class="slider-container">
-                <input type="range" id="bud-needs-slider" class="range-slider" min="10" max="80" step="1" value="${state.needsPct}" />
+                <input type="range" id="bud-needs-slider" class="range-slider" min="0" max="100" step="1" value="${state.needsPct || 0}" />
               </div>
             </div>
 
@@ -101,11 +96,11 @@ export function initBudgetPlanner(container) {
                 <span class="form-hint" id="bud-wants-hint">${state.wantsPct}% (${formatCurrency(res.wantsAmount)})</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bud-wants-input" class="form-input has-suffix" min="0" max="100" step="1" placeholder="30" value="${state.wantsPct}" />
+                <input type="number" id="bud-wants-input" class="form-input has-suffix" min="0" max="100" step="1" placeholder="0" value="${state.wantsPct ? state.wantsPct : ''}" />
                 <span class="input-suffix">%</span>
               </div>
               <div class="slider-container">
-                <input type="range" id="bud-wants-slider" class="range-slider" min="5" max="60" step="1" value="${state.wantsPct}" />
+                <input type="range" id="bud-wants-slider" class="range-slider" min="0" max="100" step="1" value="${state.wantsPct || 0}" />
               </div>
             </div>
 
@@ -116,11 +111,11 @@ export function initBudgetPlanner(container) {
                 <span class="form-hint" id="bud-savings-hint">${state.savingsPct}% (${formatCurrency(res.savingsAmount)})</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bud-savings-input" class="form-input has-suffix" min="0" max="100" step="1" placeholder="20" value="${state.savingsPct}" />
+                <input type="number" id="bud-savings-input" class="form-input has-suffix" min="0" max="100" step="1" placeholder="0" value="${state.savingsPct ? state.savingsPct : ''}" />
                 <span class="input-suffix">%</span>
               </div>
               <div class="slider-container">
-                <input type="range" id="bud-savings-slider" class="range-slider" min="5" max="60" step="1" value="${state.savingsPct}" />
+                <input type="range" id="bud-savings-slider" class="range-slider" min="0" max="100" step="1" value="${state.savingsPct || 0}" />
               </div>
             </div>
           </div>

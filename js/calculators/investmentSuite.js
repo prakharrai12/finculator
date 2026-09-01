@@ -22,33 +22,33 @@ export function initInvestmentSuite(container) {
 
   const defaultState = {
     activeTab: 'sip', // 'sip' | 'lump' | 'combined' | 'stepup' | 'cagr' | 'returns'
-    // SIP (Default ₹25,000/mo)
-    sipMonthly: 25000,
-    sipRate: 12,
-    sipYears: 15,
+    // SIP
+    sipMonthly: 0,
+    sipRate: 0,
+    sipYears: 0,
     // Lump Sum
-    lumpPrincipal: 200000,
-    lumpRate: 12,
-    lumpYears: 10,
+    lumpPrincipal: 0,
+    lumpRate: 0,
+    lumpYears: 0,
     // Combined
-    combLump: 200000,
-    combMonthly: 25000,
-    combRate: 12,
-    combYears: 15,
+    combLump: 0,
+    combMonthly: 0,
+    combRate: 0,
+    combYears: 0,
     // Step-Up
-    stepMonthly: 25000,
-    stepUpPct: 10,
-    stepRate: 12,
-    stepYears: 15,
+    stepMonthly: 0,
+    stepUpPct: 0,
+    stepRate: 0,
+    stepYears: 0,
     // CAGR
-    cagrInitial: 100000,
-    cagrFinal: 350000,
-    cagrYears: 5,
+    cagrInitial: 0,
+    cagrFinal: 0,
+    cagrYears: 0,
     // Returns
-    retInitial: 100000,
-    retFinal: 250000,
-    retDividends: 12000,
-    retYears: 4
+    retInitial: 0,
+    retFinal: 0,
+    retDividends: 0,
+    retYears: 0
   };
 
   const state = getStoredState('investments', defaultState);
@@ -245,15 +245,10 @@ export function initInvestmentSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="sip-m-input" class="form-input has-prefix" min="500" max="1000000" step="500" value="${state.sipMonthly}" />
+            <input type="number" id="sip-m-input" class="form-input has-prefix" min="0" max="1000000" step="500" placeholder="0" value="${state.sipMonthly ? state.sipMonthly : ''}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="sip-m-slider" class="range-slider" min="1000" max="100000" step="500" value="${Math.min(state.sipMonthly, 100000)}" />
-          </div>
-          <div class="slider-limits">
-            <span>₹1,000 / mo</span>
-            <span>₹25,000 / mo (Target)</span>
-            <span>₹100,000 / mo</span>
+            <input type="range" id="sip-m-slider" class="range-slider" min="0" max="100000" step="500" value="${state.sipMonthly || 0}" />
           </div>
         </div>
 
@@ -263,16 +258,11 @@ export function initInvestmentSuite(container) {
             <span class="form-hint">${state.sipRate}%</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="sip-r-input" class="form-input has-suffix" min="1" max="30" step="0.1" value="${state.sipRate}" />
+            <input type="number" id="sip-r-input" class="form-input has-suffix" min="0" max="30" step="0.1" placeholder="0" value="${state.sipRate ? state.sipRate : ''}" />
             <span class="input-suffix">%</span>
           </div>
           <div class="slider-container">
-            <input type="range" id="sip-r-slider" class="range-slider" min="6" max="20" step="0.5" value="${state.sipRate}" />
-          </div>
-          <div class="slider-limits">
-            <span>6% (Conservative)</span>
-            <span>12% (Nifty 50)</span>
-            <span>20% (Aggressive)</span>
+            <input type="range" id="sip-r-slider" class="range-slider" min="0" max="30" step="0.5" value="${state.sipRate || 0}" />
           </div>
         </div>
 
@@ -282,11 +272,11 @@ export function initInvestmentSuite(container) {
             <span class="form-hint">${state.sipYears} Years (${state.sipYears * 12} Installments)</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="sip-y-input" class="form-input has-suffix" min="1" max="40" step="1" value="${state.sipYears}" />
+            <input type="number" id="sip-y-input" class="form-input has-suffix" min="0" max="40" step="1" placeholder="0" value="${state.sipYears ? state.sipYears : ''}" />
             <span class="input-suffix">Years</span>
           </div>
           <div class="slider-container">
-            <input type="range" id="sip-y-slider" class="range-slider" min="1" max="35" step="1" value="${state.sipYears}" />
+            <input type="range" id="sip-y-slider" class="range-slider" min="0" max="35" step="1" value="${state.sipYears || 0}" />
           </div>
         </div>
       `;
@@ -299,15 +289,10 @@ export function initInvestmentSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="lump-p-input" class="form-input has-prefix" min="1000" max="10000000" step="5000" value="${state.lumpPrincipal}" />
+            <input type="number" id="lump-p-input" class="form-input has-prefix" min="0" max="10000000" step="5000" placeholder="0" value="${state.lumpPrincipal ? state.lumpPrincipal : ''}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="lump-p-slider" class="range-slider" min="10000" max="2000000" step="10000" value="${Math.min(state.lumpPrincipal, 2000000)}" />
-          </div>
-          <div class="slider-limits">
-            <span>₹10,000</span>
-            <span>₹2,00,000</span>
-            <span>₹20 Lakhs</span>
+            <input type="range" id="lump-p-slider" class="range-slider" min="0" max="2000000" step="10000" value="${state.lumpPrincipal || 0}" />
           </div>
         </div>
 
@@ -317,11 +302,11 @@ export function initInvestmentSuite(container) {
             <span class="form-hint">${state.lumpRate}%</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="lump-r-input" class="form-input has-suffix" min="1" max="30" step="0.1" value="${state.lumpRate}" />
+            <input type="number" id="lump-r-input" class="form-input has-suffix" min="0" max="30" step="0.1" placeholder="0" value="${state.lumpRate ? state.lumpRate : ''}" />
             <span class="input-suffix">%</span>
           </div>
           <div class="slider-container">
-            <input type="range" id="lump-r-slider" class="range-slider" min="5" max="22" step="0.5" value="${state.lumpRate}" />
+            <input type="range" id="lump-r-slider" class="range-slider" min="0" max="30" step="0.5" value="${state.lumpRate || 0}" />
           </div>
         </div>
 
@@ -331,11 +316,11 @@ export function initInvestmentSuite(container) {
             <span class="form-hint">${state.lumpYears} Years</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="lump-y-input" class="form-input has-suffix" min="1" max="40" step="1" value="${state.lumpYears}" />
+            <input type="number" id="lump-y-input" class="form-input has-suffix" min="0" max="40" step="1" placeholder="0" value="${state.lumpYears ? state.lumpYears : ''}" />
             <span class="input-suffix">Years</span>
           </div>
           <div class="slider-container">
-            <input type="range" id="lump-y-slider" class="range-slider" min="1" max="35" step="1" value="${state.lumpYears}" />
+            <input type="range" id="lump-y-slider" class="range-slider" min="0" max="35" step="1" value="${state.lumpYears || 0}" />
           </div>
         </div>
       `;
@@ -348,10 +333,10 @@ export function initInvestmentSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="comb-l-input" class="form-input has-prefix" min="0" max="5000000" step="10000" value="${state.combLump}" />
+            <input type="number" id="comb-l-input" class="form-input has-prefix" min="0" max="5000000" step="10000" placeholder="0" value="${state.combLump ? state.combLump : ''}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="comb-l-slider" class="range-slider" min="0" max="1000000" step="10000" value="${Math.min(state.combLump, 1000000)}" />
+            <input type="range" id="comb-l-slider" class="range-slider" min="0" max="1000000" step="10000" value="${state.combLump || 0}" />
           </div>
         </div>
 
@@ -362,10 +347,10 @@ export function initInvestmentSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="comb-m-input" class="form-input has-prefix" min="500" max="500000" step="500" value="${state.combMonthly}" />
+            <input type="number" id="comb-m-input" class="form-input has-prefix" min="0" max="500000" step="500" placeholder="0" value="${state.combMonthly ? state.combMonthly : ''}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="comb-m-slider" class="range-slider" min="500" max="50000" step="500" value="${Math.min(state.combMonthly, 50000)}" />
+            <input type="range" id="comb-m-slider" class="range-slider" min="0" max="50000" step="500" value="${state.combMonthly || 0}" />
           </div>
         </div>
 
@@ -375,7 +360,7 @@ export function initInvestmentSuite(container) {
             <span class="form-hint">${state.combRate}%</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="comb-r-input" class="form-input has-suffix" min="1" max="30" step="0.1" value="${state.combRate}" />
+            <input type="number" id="comb-r-input" class="form-input has-suffix" min="0" max="30" step="0.1" placeholder="0" value="${state.combRate ? state.combRate : ''}" />
             <span class="input-suffix">%</span>
           </div>
         </div>
@@ -386,7 +371,7 @@ export function initInvestmentSuite(container) {
             <span class="form-hint">${state.combYears} Years</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="comb-y-input" class="form-input has-suffix" min="1" max="40" step="1" value="${state.combYears}" />
+            <input type="number" id="comb-y-input" class="form-input has-suffix" min="0" max="40" step="1" placeholder="0" value="${state.combYears ? state.combYears : ''}" />
             <span class="input-suffix">Years</span>
           </div>
         </div>
@@ -400,24 +385,24 @@ export function initInvestmentSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="step-m-input" class="form-input has-prefix" min="500" max="500000" step="500" value="${state.stepMonthly}" />
+            <input type="number" id="step-m-input" class="form-input has-prefix" min="0" max="500000" step="500" placeholder="0" value="${state.stepMonthly ? state.stepMonthly : ''}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="step-m-slider" class="range-slider" min="1000" max="50000" step="500" value="${Math.min(state.stepMonthly, 50000)}" />
+            <input type="range" id="step-m-slider" class="range-slider" min="0" max="50000" step="500" value="${state.stepMonthly || 0}" />
           </div>
         </div>
 
         <div class="form-group">
           <div class="label-row">
             <label class="form-label" for="step-u-input">Annual Step-Up Percentage</label>
-            <span class="form-hint">+${state.stepUpPct}% annual salary hike match</span>
+            <span class="form-hint">+${state.stepUpPct}% annual increase</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="step-u-input" class="form-input has-suffix" min="1" max="50" step="1" value="${state.stepUpPct}" />
+            <input type="number" id="step-u-input" class="form-input has-suffix" min="0" max="50" step="1" placeholder="0" value="${state.stepUpPct ? state.stepUpPct : ''}" />
             <span class="input-suffix">%</span>
           </div>
           <div class="slider-container">
-            <input type="range" id="step-u-slider" class="range-slider" min="5" max="25" step="1" value="${state.stepUpPct}" />
+            <input type="range" id="step-u-slider" class="range-slider" min="0" max="25" step="1" value="${state.stepUpPct || 0}" />
           </div>
         </div>
 
@@ -427,7 +412,7 @@ export function initInvestmentSuite(container) {
             <span class="form-hint">${state.stepRate}%</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="step-r-input" class="form-input has-suffix" min="1" max="30" step="0.1" value="${state.stepRate}" />
+            <input type="number" id="step-r-input" class="form-input has-suffix" min="0" max="30" step="0.1" placeholder="0" value="${state.stepRate ? state.stepRate : ''}" />
             <span class="input-suffix">%</span>
           </div>
         </div>
@@ -438,7 +423,7 @@ export function initInvestmentSuite(container) {
             <span class="form-hint">${state.stepYears} Years</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="step-y-input" class="form-input has-suffix" min="1" max="40" step="1" value="${state.stepYears}" />
+            <input type="number" id="step-y-input" class="form-input has-suffix" min="0" max="40" step="1" placeholder="0" value="${state.stepYears ? state.stepYears : ''}" />
             <span class="input-suffix">Years</span>
           </div>
         </div>
@@ -452,7 +437,7 @@ export function initInvestmentSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="cagr-i-input" class="form-input has-prefix" min="100" max="50000000" step="5000" value="${state.cagrInitial}" />
+            <input type="number" id="cagr-i-input" class="form-input has-prefix" min="0" max="50000000" step="5000" placeholder="0" value="${state.cagrInitial ? state.cagrInitial : ''}" />
           </div>
         </div>
 
@@ -463,7 +448,7 @@ export function initInvestmentSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="cagr-f-input" class="form-input has-prefix" min="100" max="100000000" step="5000" value="${state.cagrFinal}" />
+            <input type="number" id="cagr-f-input" class="form-input has-prefix" min="0" max="100000000" step="5000" placeholder="0" value="${state.cagrFinal ? state.cagrFinal : ''}" />
           </div>
         </div>
 
@@ -473,7 +458,7 @@ export function initInvestmentSuite(container) {
             <span class="form-hint">${state.cagrYears} Years</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="cagr-y-input" class="form-input has-suffix" min="0.1" max="50" step="0.5" value="${state.cagrYears}" />
+            <input type="number" id="cagr-y-input" class="form-input has-suffix" min="0" max="50" step="0.5" placeholder="0" value="${state.cagrYears ? state.cagrYears : ''}" />
             <span class="input-suffix">Years</span>
           </div>
         </div>
@@ -488,7 +473,7 @@ export function initInvestmentSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="ret-i-input" class="form-input has-prefix" min="100" max="50000000" step="5000" value="${state.retInitial}" />
+            <input type="number" id="ret-i-input" class="form-input has-prefix" min="0" max="50000000" step="5000" placeholder="0" value="${state.retInitial ? state.retInitial : ''}" />
           </div>
         </div>
 
@@ -499,7 +484,7 @@ export function initInvestmentSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="ret-f-input" class="form-input has-prefix" min="0" max="100000000" step="5000" value="${state.retFinal}" />
+            <input type="number" id="ret-f-input" class="form-input has-prefix" min="0" max="100000000" step="5000" placeholder="0" value="${state.retFinal ? state.retFinal : ''}" />
           </div>
         </div>
 
@@ -510,7 +495,7 @@ export function initInvestmentSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="ret-d-input" class="form-input has-prefix" min="0" max="5000000" step="500" value="${state.retDividends}" />
+            <input type="number" id="ret-d-input" class="form-input has-prefix" min="0" max="5000000" step="500" placeholder="0" value="${state.retDividends ? state.retDividends : ''}" />
           </div>
         </div>
 
@@ -520,7 +505,7 @@ export function initInvestmentSuite(container) {
             <span class="form-hint">${state.retYears} Years</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="ret-y-input" class="form-input has-suffix" min="0.1" max="40" step="0.5" value="${state.retYears}" />
+            <input type="number" id="ret-y-input" class="form-input has-suffix" min="0" max="50" step="0.5" placeholder="0" value="${state.retYears ? state.retYears : ''}" />
             <span class="input-suffix">Years</span>
           </div>
         </div>
@@ -694,7 +679,7 @@ export function initInvestmentSuite(container) {
         state.retFinal = 0;
         state.retDividends = 0;
         state.retYears = 0;
-        setStoredState('investment_suite', state);
+        setStoredState('investments', state);
         render();
       });
     }

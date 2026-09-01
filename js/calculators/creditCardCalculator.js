@@ -13,10 +13,10 @@ export function initCreditCardCalculator(container) {
   if (!container) return;
 
   const defaultState = {
-    balance: 100000,
-    aprPercent: 42.0,
-    minDuePercent: 5.0,
-    fixedMonthlyPayment: 5000
+    balance: 0,
+    aprPercent: 0,
+    minDuePercent: 0,
+    fixedMonthlyPayment: 0
   };
 
   const state = getStoredState('credit_card', defaultState);
@@ -82,10 +82,10 @@ export function initCreditCardCalculator(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="cc-balance-input" class="form-input has-prefix" min="0" max="2000000" step="1000" placeholder="0" value="${state.balance}" />
+                <input type="number" id="cc-balance-input" class="form-input has-prefix" min="0" max="2000000" step="1000" placeholder="0" value="${state.balance ? state.balance : ''}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="cc-balance-slider" class="range-slider" min="5000" max="500000" step="1000" value="${Math.min(state.balance, 500000)}" />
+                <input type="range" id="cc-balance-slider" class="range-slider" min="0" max="500000" step="1000" value="${state.balance || 0}" />
               </div>
             </div>
 
@@ -96,11 +96,11 @@ export function initCreditCardCalculator(container) {
                 <span class="form-hint" id="cc-apr-hint">${state.aprPercent}% APR (${(state.aprPercent / 12).toFixed(1)}%/mo)</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="cc-apr-input" class="form-input has-suffix" min="0" max="60" step="0.5" placeholder="0" value="${state.aprPercent}" />
+                <input type="number" id="cc-apr-input" class="form-input has-suffix" min="0" max="60" step="0.5" placeholder="0" value="${state.aprPercent ? state.aprPercent : ''}" />
                 <span class="input-suffix">%</span>
               </div>
               <div class="slider-container">
-                <input type="range" id="cc-apr-slider" class="range-slider" min="12" max="48" step="0.5" value="${state.aprPercent}" />
+                <input type="range" id="cc-apr-slider" class="range-slider" min="0" max="60" step="0.5" value="${state.aprPercent || 0}" />
               </div>
             </div>
 
@@ -111,11 +111,11 @@ export function initCreditCardCalculator(container) {
                 <span class="form-hint" id="cc-mindue-hint">${state.minDuePercent}% (Min ${formatCurrency(500, undefined, false)})</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="cc-mindue-input" class="form-input has-suffix" min="1" max="20" step="0.5" placeholder="5" value="${state.minDuePercent}" />
+                <input type="number" id="cc-mindue-input" class="form-input has-suffix" min="0" max="20" step="0.5" placeholder="0" value="${state.minDuePercent ? state.minDuePercent : ''}" />
                 <span class="input-suffix">%</span>
               </div>
               <div class="slider-container">
-                <input type="range" id="cc-mindue-slider" class="range-slider" min="2" max="10" step="0.5" value="${state.minDuePercent}" />
+                <input type="range" id="cc-mindue-slider" class="range-slider" min="0" max="20" step="0.5" value="${state.minDuePercent || 0}" />
               </div>
             </div>
 
@@ -127,10 +127,10 @@ export function initCreditCardCalculator(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="cc-fixed-input" class="form-input has-prefix" min="0" max="100000" step="250" placeholder="0" value="${state.fixedMonthlyPayment}" />
+                <input type="number" id="cc-fixed-input" class="form-input has-prefix" min="0" max="100000" step="250" placeholder="0" value="${state.fixedMonthlyPayment ? state.fixedMonthlyPayment : ''}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="cc-fixed-slider" class="range-slider" min="1000" max="30000" step="250" value="${Math.min(state.fixedMonthlyPayment, 30000)}" />
+                <input type="range" id="cc-fixed-slider" class="range-slider" min="0" max="30000" step="250" value="${state.fixedMonthlyPayment || 0}" />
               </div>
             </div>
           </div>
@@ -252,7 +252,7 @@ export function initCreditCardCalculator(container) {
         state.aprPercent = 0;
         state.minDuePercent = 0;
         state.fixedMonthlyPayment = 0;
-        setStoredState('credit_card_calculator', state);
+        setStoredState('credit_card', state);
         render();
       });
     }
