@@ -248,7 +248,11 @@ export function initCreditCardCalculator(container) {
     const resetBtn = container.querySelector('#btn-reset-cc');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        Object.assign(state, defaultState);
+        state.balance = 0;
+        state.aprPercent = 0;
+        state.minDuePercent = 0;
+        state.fixedMonthlyPayment = 0;
+        setStoredState('credit_card_calculator', state);
         render();
       });
     }

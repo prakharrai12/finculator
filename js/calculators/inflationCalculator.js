@@ -264,7 +264,10 @@ export function initInflationCalculator(container) {
     const resetBtn = container.querySelector('#btn-reset-inflation');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        Object.assign(state, defaultState);
+        state.amount = 0;
+        state.inflationRate = 0;
+        state.years = 0;
+        setStoredState('inflation_calc', state);
         render();
       });
     }

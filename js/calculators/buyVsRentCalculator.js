@@ -269,7 +269,15 @@ export function initBuyVsRentCalculator(container) {
     const resetBtn = container.querySelector('#btn-reset-bvr');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        Object.assign(state, defaultState);
+        state.homePrice = 0;
+        state.downPaymentPct = 0;
+        state.mortgageRate = 0;
+        state.homeAppreciationRate = 0;
+        state.monthlyRent = 0;
+        state.rentInflationRate = 0;
+        state.investmentReturnRate = 0;
+        state.timeHorizonYears = 0;
+        setStoredState('buy_vs_rent', state);
         render();
       });
     }

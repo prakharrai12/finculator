@@ -412,10 +412,16 @@ export function initEMICalculator(container) {
       updateLive();
     });
 
-    // Reset Defaults
+    // Reset Defaults to 0
     const resetBtn = container.querySelector('#btn-reset-emi');
     resetBtn.addEventListener('click', () => {
-      Object.assign(state, defaultState);
+      state.principal = 0;
+      state.rate = 0;
+      state.tenureYears = 0;
+      state.processingFeePct = 0;
+      state.prepaymentMonthly = 0;
+      state.prepaymentLumpSum = 0;
+      setStoredState('emi_calculator', state);
       render();
     });
   }

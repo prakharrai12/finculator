@@ -290,7 +290,12 @@ export function initLoanEligibility(container) {
     const resetBtn = container.querySelector('#btn-reset-eligibility');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        Object.assign(state, defaultState);
+        state.monthlyIncome = 0;
+        state.existingEMIs = 0;
+        state.interestRate = 0;
+        state.tenureYears = 0;
+        state.foirPct = 0;
+        setStoredState('loan_eligibility', state);
         render();
       });
     }

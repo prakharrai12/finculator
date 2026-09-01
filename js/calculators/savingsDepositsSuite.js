@@ -659,7 +659,25 @@ export function initSavingsDepositsSuite(container) {
     const resetBtn = container.querySelector('#btn-reset-savings');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        Object.assign(state, defaultState);
+        state.compoundPrincipal = 0;
+        state.compoundRate = 0;
+        state.compoundYears = 0;
+        state.compoundRecurring = 0;
+        state.simplePrincipal = 0;
+        state.simpleRate = 0;
+        state.simpleYears = 0;
+        state.fdPrincipal = 0;
+        state.fdRate = 0;
+        state.fdMonths = 0;
+        state.rdMonthly = 0;
+        state.rdRate = 0;
+        state.rdMonths = 0;
+        state.ppfAnnual = 0;
+        state.goalCorpus = 0;
+        state.goalYears = 0;
+        state.goalReturn = 0;
+        state.goalInitial = 0;
+        setStoredState('savings_suite', state);
         render();
       });
     }

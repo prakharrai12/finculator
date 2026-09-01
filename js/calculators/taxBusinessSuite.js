@@ -578,7 +578,18 @@ export function initTaxBusinessSuite(container) {
     const resetBtn = container.querySelector('#btn-reset-tb');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        Object.assign(state, defaultState);
+        state.taxGross = 0;
+        state.taxDeductions = 0;
+        state.gstAmount = 0;
+        state.salaryCTC = 0;
+        state.salaryBasicPct = 0;
+        state.marginCost = 0;
+        state.marginPrice = 0;
+        state.marginUnits = 0;
+        state.beFixedCosts = 0;
+        state.beVariableCost = 0;
+        state.bePrice = 0;
+        setStoredState('tax_business_suite', state);
         render();
       });
     }

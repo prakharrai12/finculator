@@ -287,7 +287,11 @@ export function initBudgetPlanner(container) {
     const resetBtn = container.querySelector('#btn-reset-budget');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        Object.assign(state, defaultState);
+        state.monthlyIncome = 0;
+        state.needsPct = 0;
+        state.wantsPct = 0;
+        state.savingsPct = 0;
+        setStoredState('budget_planner', state);
         render();
       });
     }

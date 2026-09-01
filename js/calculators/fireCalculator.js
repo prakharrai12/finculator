@@ -388,7 +388,14 @@ export function initFIRECalculator(container) {
     const resetBtn = container.querySelector('#btn-reset-fire');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        Object.assign(state, defaultState);
+        state.currentAge = 0;
+        state.targetAge = 0;
+        state.monthlyExpenses = 0;
+        state.currentSavings = 0;
+        state.inflationRate = 0;
+        state.expectedReturn = 0;
+        state.swrPercent = 0;
+        setStoredState('fire_calculator', state);
         render();
       });
     }

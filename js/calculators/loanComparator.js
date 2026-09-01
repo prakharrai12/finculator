@@ -199,7 +199,14 @@ export function initLoanComparator(container) {
     const resetBtn = container.querySelector('#btn-reset-comp');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        Object.assign(state, defaultState);
+        [1, 2, 3].forEach((id) => {
+          const key = `loan${id}`;
+          state[key].principal = 0;
+          state[key].rate = 0;
+          state[key].tenureYears = 0;
+          state[key].fee = 0;
+        });
+        setStoredState('loan_comparator', state);
         render();
       });
     }

@@ -673,7 +673,28 @@ export function initInvestmentSuite(container) {
     const resetBtn = container.querySelector('#btn-reset-invest');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        Object.assign(state, defaultState);
+        state.sipMonthly = 0;
+        state.sipRate = 0;
+        state.sipYears = 0;
+        state.lumpPrincipal = 0;
+        state.lumpRate = 0;
+        state.lumpYears = 0;
+        state.combLump = 0;
+        state.combMonthly = 0;
+        state.combRate = 0;
+        state.combYears = 0;
+        state.stepMonthly = 0;
+        state.stepUpPct = 0;
+        state.stepRate = 0;
+        state.stepYears = 0;
+        state.cagrInitial = 0;
+        state.cagrFinal = 0;
+        state.cagrYears = 0;
+        state.retInitial = 0;
+        state.retFinal = 0;
+        state.retDividends = 0;
+        state.retYears = 0;
+        setStoredState('investment_suite', state);
         render();
       });
     }

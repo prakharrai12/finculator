@@ -274,7 +274,16 @@ export function initNetWorthCalculator(container) {
     const resetBtn = container.querySelector('#btn-reset-nw');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        Object.assign(state, defaultState);
+        state.cash = 0;
+        state.investments = 0;
+        state.realEstate = 0;
+        state.retirement = 0;
+        state.vehicles = 0;
+        state.mortgage = 0;
+        state.autoLoans = 0;
+        state.studentLoans = 0;
+        state.creditCards = 0;
+        setStoredState('net_worth', state);
         render();
       });
     }

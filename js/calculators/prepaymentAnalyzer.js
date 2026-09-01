@@ -319,7 +319,12 @@ export function initPrepaymentAnalyzer(container) {
     const resetBtn = container.querySelector('#btn-reset-prepay');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        Object.assign(state, defaultState);
+        state.principal = 0;
+        state.rate = 0;
+        state.tenureYears = 0;
+        state.extraMonthly = 0;
+        state.annualLumpSum = 0;
+        setStoredState('prepayment_analyzer', state);
         render();
       });
     }
