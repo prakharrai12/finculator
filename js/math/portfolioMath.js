@@ -5,102 +5,92 @@
 
 export const DEFAULT_PORTFOLIO_STATE = {
   profile: {
-    fullName: 'Prakhar Rai',
-    dob: '1995-08-15',
-    email: 'prakharrai12@gmail.com',
-    phone: '+91 98765 43210',
-    address: 'Bengaluru, Karnataka, India',
-    occupation: 'Senior Software Engineer / Tech Lead',
-    employer: 'FinTech Innovations Ltd',
-    maritalStatus: 'Single',
-    dependents: 0,
+    fullName: '',
+    dob: '',
+    email: '',
+    phone: '',
+    address: '',
+    occupation: '',
+    employer: '',
+    maritalStatus: '',
+    dependents: '',
     asOfDate: new Date().toISOString().split('T')[0],
     currency: 'INR'
   },
   assets: {
     // Liquid Assets
-    cashChecking: 150000,
-    savingsAccounts: 350000,
-    moneyMarket: 100000,
+    cashChecking: '',
+    savingsAccounts: '',
+    moneyMarket: '',
     // Fixed Deposits / CDs
-    fixedDeposits: 600000,
-    recurringDeposits: 200000,
+    fixedDeposits: '',
+    recurringDeposits: '',
     // Investment Holdings
-    stocksEquities: 1800000,
-    mutualFundsETFs: 2400000,
-    bondsFixedIncome: 500000,
-    retirementAccounts: 1200000, // EPF, PPF, NPS
+    stocksEquities: '',
+    mutualFundsETFs: '',
+    bondsFixedIncome: '',
+    retirementAccounts: '', // EPF, PPF, NPS
     // Real Estate
-    primaryResidence: 8500000,
-    investmentProperties: 0,
+    primaryResidence: '',
+    investmentProperties: '',
     // Vehicles & Personal Valuables
-    vehicles: 800000,
-    valuablesArtJewelry: 500000,
+    vehicles: '',
+    valuablesArtJewelry: '',
     // Business & Receivables
-    businessEquity: 0,
-    lifeInsuranceCashValue: 250000,
-    receivables: 100000
+    businessEquity: '',
+    lifeInsuranceCashValue: '',
+    receivables: ''
   },
   liabilities: {
-    creditCards: 45000,
-    mortgagePrimary: 4800000,
-    mortgageInvestment: 0,
-    autoLoans: 320000,
-    studentLoans: 0,
-    personalLoans: 0,
-    linesOfCredit: 0,
-    unpaidTaxes: 0,
-    otherDebts: 0
+    creditCards: '',
+    mortgagePrimary: '',
+    mortgageInvestment: '',
+    autoLoans: '',
+    studentLoans: '',
+    personalLoans: '',
+    linesOfCredit: '',
+    unpaidTaxes: '',
+    otherDebts: ''
   },
   income: {
-    primarySalary: 200000, // Monthly
-    secondarySalary: 0,
-    businessIncome: 0,
-    rentalIncome: 0,
-    dividendsInterest: 15000,
-    otherIncome: 0
+    primarySalary: '', // Monthly
+    secondarySalary: '',
+    businessIncome: '',
+    rentalIncome: '',
+    dividendsInterest: '',
+    otherIncome: ''
   },
   expenses: {
-    fixedLiving: 75000, // Monthly (Rent/EMI, utilities, insurance)
-    variableDiscretionary: 35000, // Dining, leisure, shopping
-    debtPayments: 45000 // Monthly EMIs
+    fixedLiving: '', // Monthly (Rent/EMI, utilities, insurance)
+    variableDiscretionary: '', // Dining, leisure, shopping
+    debtPayments: '' // Monthly EMIs
   },
   allocation: {
-    equityPct: 55,
-    fixedIncomePct: 15,
-    cashPct: 10,
-    realEstatePct: 12,
-    goldCommoditiesPct: 5,
-    alternativesPct: 3
+    equityPct: '',
+    fixedIncomePct: '',
+    cashPct: '',
+    realEstatePct: '',
+    goldCommoditiesPct: '',
+    alternativesPct: ''
   },
-  holdings: [
-    { id: 'h1', name: 'Nifty 50 Index Fund', type: 'Mutual Fund', qty: 1250, buyPrice: 160, currentPrice: 220 },
-    { id: 'h2', name: 'Parag Parikh Flexi Cap', type: 'Mutual Fund', qty: 850, buyPrice: 420, currentPrice: 680 },
-    { id: 'h3', name: 'HDFC Bank Equity Shares', type: 'Stock', qty: 250, buyPrice: 1450, currentPrice: 1680 },
-    { id: 'h4', name: 'Tata Consultancy Services', type: 'Stock', qty: 80, buyPrice: 3200, currentPrice: 4100 },
-    { id: 'h5', name: 'Sovereign Gold Bond (SGB)', type: 'Gold/Bond', qty: 50, buyPrice: 4800, currentPrice: 7200 }
-  ],
+  holdings: [],
   insurance: {
-    lifeType: 'Term Life Insurance',
-    lifeCoverage: 20000000, // ₹2 Crores
-    lifePremium: 18000, // Annual
-    healthCoverage: 1500000, // ₹15 Lakhs
-    healthPremium: 14000, // Annual
-    otherCoverageNotes: 'Comprehensive Motor Insurance + Personal Accident Cover'
+    lifeType: '',
+    lifeCoverage: '',
+    lifePremium: '',
+    healthCoverage: '',
+    healthPremium: '',
+    otherCoverageNotes: ''
   },
-  goals: [
-    { id: 'g1', title: 'Emergency Fund (6 Months Expenses)', targetAmount: 700000, currentAmount: 600000, targetDate: '2026-12-31', type: 'Short-Term' },
-    { id: 'g2', title: 'Home Renovation & Solar Setup', targetAmount: 800000, currentAmount: 350000, targetDate: '2027-06-30', type: 'Medium-Term' },
-    { id: 'g3', title: 'Early Financial Independence (FIRE)', targetAmount: 50000000, currentAmount: 6500000, targetDate: '2040-12-31', type: 'Long-Term' }
-  ],
+  goals: [],
   estate: {
-    willStatus: 'Drafted / In Review',
-    namedBeneficiaries: 'Primary: Parents / Spouse (100%)',
-    powerOfAttorney: 'Designated Family Nominee'
+    willStatus: '',
+    namedBeneficiaries: '',
+    powerOfAttorney: ''
   },
   credit: {
-    creditScore: 785,
-    scoreSource: 'CIBIL / Experian'
+    creditScore: '',
+    scoreSource: ''
   }
 };
 

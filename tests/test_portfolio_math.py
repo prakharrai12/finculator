@@ -101,5 +101,20 @@ class TestPortfolioMath(unittest.TestCase):
         self.assertEqual(total_val, 100000)
         self.assertEqual(gain, 15000)
 
+    def test_blank_state_handling(self):
+        blank_state = {
+            'assets': {},
+            'liabilities': {},
+            'income': {},
+            'expenses': {},
+            'holdings': []
+        }
+        total_assets = sum(blank_state['assets'].values())
+        total_liab = sum(blank_state['liabilities'].values())
+        net_worth = total_assets - total_liab
+        self.assertEqual(total_assets, 0)
+        self.assertEqual(total_liab, 0)
+        self.assertEqual(net_worth, 0)
+
 if __name__ == '__main__':
     unittest.main()

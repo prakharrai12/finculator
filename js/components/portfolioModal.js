@@ -1,6 +1,6 @@
 /**
  * Finculator Personal Finance Portfolio Builder Modal & Controller
- * Merges Personal Financial Statement (PFS) & Wealth Management Portfolio Report
+ * Clean, Unbiased, Real-Time Personal Financial Statement (PFS) & Wealth Portfolio
  */
 
 import { formatCurrency, formatPercent, getGlobalCurrency } from '../utils/formatters.js';
@@ -68,7 +68,7 @@ export class PortfolioModal {
 
         <div class="portfolio-header-actions">
           <span class="portfolio-save-status" id="pf-save-badge">✓ Saved</span>
-          <button class="btn btn-secondary btn-sm" id="pf-btn-reset" title="Reset to Defaults">Reset Defaults</button>
+          <button class="btn btn-secondary btn-sm" id="pf-btn-reset" title="Clear all and reset to blank">Clear All</button>
           <button class="btn btn-primary btn-sm" id="pf-btn-download-pdf">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             Download PDF
@@ -81,7 +81,7 @@ export class PortfolioModal {
 
       <!-- Scrollable Workspace -->
       <div class="portfolio-workspace">
-        <!-- Hero Net Worth Card -->
+        <!-- Hero Net Worth Card (Obsidian Navy Signature Card) -->
         <div class="portfolio-hero-card">
           <div class="portfolio-hero-top">
             <div class="portfolio-hero-main-stat">
@@ -92,7 +92,7 @@ export class PortfolioModal {
               </span>
             </div>
             <div class="portfolio-hero-quick-actions">
-              <button class="btn btn-secondary btn-sm" id="pf-btn-print-hero">
+              <button class="btn btn-secondary btn-sm" id="pf-btn-print-hero" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#FFFFFF;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                 Export Report
               </button>
@@ -146,7 +146,7 @@ export class PortfolioModal {
                   <span class="portfolio-acc-title">Personal & Identification Details</span>
                 </div>
                 <div class="portfolio-acc-meta">
-                  <span class="portfolio-acc-sum" id="pf-sum-profile">${profile.fullName || 'Profile'}</span>
+                  <span class="portfolio-acc-sum" id="pf-sum-profile">${profile.fullName || 'Not specified'}</span>
                   <svg class="portfolio-acc-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
               </div>
@@ -154,27 +154,27 @@ export class PortfolioModal {
                 <div class="portfolio-form-grid">
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Full Legal Name</label>
-                    <input type="text" class="portfolio-field-input" id="pf-prof-name" placeholder="John Doe" value="${profile.fullName || ''}" />
+                    <input type="text" class="portfolio-field-input" id="pf-prof-name" placeholder="e.g. John Doe" value="${profile.fullName || ''}" />
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Date of Birth</label>
-                    <input type="date" class="portfolio-field-input" id="pf-prof-dob" value="${profile.dob || '1995-08-15'}" />
+                    <input type="date" class="portfolio-field-input" id="pf-prof-dob" value="${profile.dob || ''}" />
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Email Address</label>
-                    <input type="email" class="portfolio-field-input" id="pf-prof-email" placeholder="john@example.com" value="${profile.email || ''}" />
+                    <input type="email" class="portfolio-field-input" id="pf-prof-email" placeholder="e.g. john@example.com" value="${profile.email || ''}" />
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Phone Number</label>
-                    <input type="text" class="portfolio-field-input" id="pf-prof-phone" placeholder="+91 9876543210" value="${profile.phone || ''}" />
+                    <input type="text" class="portfolio-field-input" id="pf-prof-phone" placeholder="e.g. +91 98765 43210" value="${profile.phone || ''}" />
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Occupation / Title</label>
-                    <input type="text" class="portfolio-field-input" id="pf-prof-occ" placeholder="Tech Lead / Consultant" value="${profile.occupation || ''}" />
+                    <input type="text" class="portfolio-field-input" id="pf-prof-occ" placeholder="e.g. Software Engineer / Consultant" value="${profile.occupation || ''}" />
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Employer / Organization</label>
-                    <input type="text" class="portfolio-field-input" id="pf-prof-emp" placeholder="Company Name" value="${profile.employer || ''}" />
+                    <input type="text" class="portfolio-field-input" id="pf-prof-emp" placeholder="e.g. Acme Corp" value="${profile.employer || ''}" />
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Statement "As of" Date</label>
@@ -182,7 +182,7 @@ export class PortfolioModal {
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Number of Dependents</label>
-                    <input type="number" class="portfolio-field-input" id="pf-prof-dep" min="0" max="20" placeholder="0" value="${profile.dependents || 0}" />
+                    <input type="number" class="portfolio-field-input" id="pf-prof-dep" min="0" max="20" placeholder="0" value="${profile.dependents || ''}" />
                   </div>
                 </div>
               </div>
@@ -206,70 +206,70 @@ export class PortfolioModal {
                     <label class="portfolio-field-label">Checking & Liquid Cash</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-ast-cash" placeholder="0" value="${assets.cashChecking || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-ast-cash" placeholder="0" value="${assets.cashChecking || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Savings Accounts</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-ast-savings" placeholder="0" value="${assets.savingsAccounts || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-ast-savings" placeholder="0" value="${assets.savingsAccounts || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Fixed Deposits & CDs</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-ast-fd" placeholder="0" value="${assets.fixedDeposits || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-ast-fd" placeholder="0" value="${assets.fixedDeposits || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Stocks & Direct Equities</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-ast-stocks" placeholder="0" value="${assets.stocksEquities || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-ast-stocks" placeholder="0" value="${assets.stocksEquities || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Mutual Funds & ETFs</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-ast-mf" placeholder="0" value="${assets.mutualFundsETFs || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-ast-mf" placeholder="0" value="${assets.mutualFundsETFs || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Retirement (EPF, PPF, NPS, 401k)</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-ast-ret" placeholder="0" value="${assets.retirementAccounts || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-ast-ret" placeholder="0" value="${assets.retirementAccounts || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Primary Real Estate (Market Value)</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-ast-re-pri" placeholder="0" value="${assets.primaryResidence || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-ast-re-pri" placeholder="0" value="${assets.primaryResidence || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Vehicles (Market Resale Value)</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-ast-veh" placeholder="0" value="${assets.vehicles || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-ast-veh" placeholder="0" value="${assets.vehicles || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Valuables, Jewelry & Gold</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-ast-val" placeholder="0" value="${assets.valuablesArtJewelry || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-ast-val" placeholder="0" value="${assets.valuablesArtJewelry || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Insurance Cash Surrender Value</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-ast-ins-csv" placeholder="0" value="${assets.lifeInsuranceCashValue || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-ast-ins-csv" placeholder="0" value="${assets.lifeInsuranceCashValue || ''}" />
                     </div>
                   </div>
                 </div>
@@ -294,28 +294,28 @@ export class PortfolioModal {
                     <label class="portfolio-field-label">Credit Card Revolving Balances</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-liab-cc" placeholder="0" value="${liab.creditCards || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-liab-cc" placeholder="0" value="${liab.creditCards || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Primary Mortgage / Home Loan Balance</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-liab-mort" placeholder="0" value="${liab.mortgagePrimary || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-liab-mort" placeholder="0" value="${liab.mortgagePrimary || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Auto / Vehicle Loans</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-liab-auto" placeholder="0" value="${liab.autoLoans || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-liab-auto" placeholder="0" value="${liab.autoLoans || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Student & Personal Loans</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-liab-pers" placeholder="0" value="${liab.personalLoans || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-liab-pers" placeholder="0" value="${liab.personalLoans || ''}" />
                     </div>
                   </div>
                 </div>
@@ -340,35 +340,35 @@ export class PortfolioModal {
                     <label class="portfolio-field-label">Primary Net Monthly Salary</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-inc-salary" placeholder="0" value="${inc.primarySalary || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-inc-salary" placeholder="0" value="${inc.primarySalary || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Dividends & Secondary Inflow</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-inc-sec" placeholder="0" value="${inc.dividendsInterest || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-inc-sec" placeholder="0" value="${inc.dividendsInterest || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Fixed Living Costs (Rent/Utilities/Bills)</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-exp-fixed" placeholder="0" value="${exp.fixedLiving || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-exp-fixed" placeholder="0" value="${exp.fixedLiving || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Discretionary / Lifestyle Expenses</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-exp-var" placeholder="0" value="${exp.variableDiscretionary || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-exp-var" placeholder="0" value="${exp.variableDiscretionary || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Monthly Debt Repayments (EMIs)</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-exp-debt" placeholder="0" value="${exp.debtPayments || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-exp-debt" placeholder="0" value="${exp.debtPayments || ''}" />
                     </div>
                   </div>
                 </div>
@@ -388,25 +388,9 @@ export class PortfolioModal {
                 </div>
               </div>
               <div class="portfolio-acc-body">
-                <p style="font-size: 0.8rem; color: #94A3B8; margin-bottom: 0.5rem;">Track individual stocks, index funds, bonds, and ETFs with live gain/loss calculation.</p>
-                <div class="portfolio-table-wrap">
-                  <table class="portfolio-table">
-                    <thead>
-                      <tr>
-                        <th>Security / Fund Name</th>
-                        <th>Type</th>
-                        <th>Qty</th>
-                        <th>Buy Price</th>
-                        <th>Current Price</th>
-                        <th>Market Value</th>
-                        <th>Gain / Loss</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody id="pf-holdings-tbody">
-                      ${this.renderHoldingsRows(metrics.processedHoldings)}
-                    </tbody>
-                  </table>
+                <p style="font-size: 0.8rem; color: #64748B; margin-bottom: 0.5rem;">Track individual stocks, index funds, bonds, and ETFs with live valuation.</p>
+                <div id="pf-holdings-container">
+                  ${this.renderHoldingsView(metrics.processedHoldings)}
                 </div>
                 <button class="portfolio-btn-add-row" id="pf-btn-add-holding">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -433,28 +417,28 @@ export class PortfolioModal {
                     <label class="portfolio-field-label">Life Insurance Sum Assured</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-ins-life-cov" placeholder="0" value="${insurance.lifeCoverage || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-ins-life-cov" placeholder="0" value="${insurance.lifeCoverage || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Life Insurance Annual Premium</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-ins-life-prem" placeholder="0" value="${insurance.lifePremium || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-ins-life-prem" placeholder="0" value="${insurance.lifePremium || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Health Insurance Coverage</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-ins-hlth-cov" placeholder="0" value="${insurance.healthCoverage || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-ins-hlth-cov" placeholder="0" value="${insurance.healthCoverage || ''}" />
                     </div>
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Health Insurance Annual Premium</label>
                     <div class="portfolio-input-with-prefix">
                       <span class="portfolio-input-prefix">${curr.symbol}</span>
-                      <input type="number" class="portfolio-field-input" id="pf-ins-hlth-prem" placeholder="0" value="${insurance.healthPremium || 0}" />
+                      <input type="number" class="portfolio-field-input" id="pf-ins-hlth-prem" placeholder="0" value="${insurance.healthPremium || ''}" />
                     </div>
                   </div>
                 </div>
@@ -474,23 +458,8 @@ export class PortfolioModal {
                 </div>
               </div>
               <div class="portfolio-acc-body">
-                <div class="portfolio-table-wrap">
-                  <table class="portfolio-table">
-                    <thead>
-                      <tr>
-                        <th>Goal Title</th>
-                        <th>Horizon</th>
-                        <th>Target Amount</th>
-                        <th>Accumulated</th>
-                        <th>Target Date</th>
-                        <th>Progress</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody id="pf-goals-tbody">
-                      ${this.renderGoalsRows(goals)}
-                    </tbody>
-                  </table>
+                <div id="pf-goals-container">
+                  ${this.renderGoalsView(goals)}
                 </div>
                 <button class="portfolio-btn-add-row" id="pf-btn-add-goal">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -510,7 +479,7 @@ export class PortfolioModal {
               </div>
               <div id="pf-donut-allocation"></div>
               <div class="portfolio-legend-grid" id="pf-legend-allocation">
-                ${this.renderAllocationLegend(metrics.assetCategoryBreakdown)}
+                ${this.renderAllocationLegend(metrics.assetCategoryBreakdown, metrics.totalAssets)}
               </div>
             </div>
 
@@ -518,12 +487,12 @@ export class PortfolioModal {
             <div class="portfolio-chart-card">
               <div class="portfolio-chart-title">
                 <span>Solvency & Emergency Health</span>
-                <span class="portfolio-chart-tag">Institutional Score</span>
+                <span class="portfolio-chart-tag">Health Index</span>
               </div>
               <div style="display:flex; flex-direction:column; gap:0.85rem;">
                 <div>
                   <div style="display:flex; justify-content:space-between; font-size:0.78rem; margin-bottom:0.25rem;">
-                    <span>Emergency Fund Progress (6-Mo Target)</span>
+                    <span>Emergency Fund (6-Mo Target)</span>
                     <strong id="pf-prog-emg-pct">${metrics.emergencyFundProgressPct}%</strong>
                   </div>
                   <div class="portfolio-bar-bg">
@@ -543,11 +512,11 @@ export class PortfolioModal {
 
                 <div>
                   <div style="display:flex; justify-content:space-between; font-size:0.78rem; margin-bottom:0.25rem;">
-                    <span>Debt-to-Asset Solvency Index</span>
+                    <span>Debt-to-Asset Solvency</span>
                     <strong id="pf-prog-dta-pct">${metrics.debtToAssetRatio}%</strong>
                   </div>
                   <div class="portfolio-bar-bg">
-                    <div class="portfolio-bar-fill" id="pf-bar-dta" style="width: ${Math.min(100, metrics.debtToAssetRatio)}%; background:#38BDF8;"></div>
+                    <div class="portfolio-bar-fill" id="pf-bar-dta" style="width: ${Math.min(100, metrics.debtToAssetRatio)}%; background:#0284C7;"></div>
                   </div>
                 </div>
               </div>
@@ -561,10 +530,38 @@ export class PortfolioModal {
     this.attachDynamicEvents();
   }
 
+  renderHoldingsView(holdings) {
+    if (!holdings || holdings.length === 0) {
+      return `<div class="portfolio-empty-state-box">No holdings added yet. Click "+ Add Holding Row" below to track your stocks, mutual funds, or bonds.</div>`;
+    }
+
+    return `
+      <div class="portfolio-table-wrap">
+        <table class="portfolio-table">
+          <thead>
+            <tr>
+              <th>Security / Fund Name</th>
+              <th>Type</th>
+              <th>Qty</th>
+              <th>Buy Price</th>
+              <th>Current Price</th>
+              <th>Market Value</th>
+              <th>Gain / Loss</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="pf-holdings-tbody">
+            ${this.renderHoldingsRows(holdings)}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
   renderHoldingsRows(holdings) {
     return holdings.map((h, i) => `
       <tr data-index="${i}">
-        <td><input type="text" class="portfolio-table-input pf-h-name" value="${h.name || ''}" placeholder="Fund/Stock Name" /></td>
+        <td><input type="text" class="portfolio-table-input pf-h-name" value="${h.name || ''}" placeholder="e.g. Nifty 50 Index" /></td>
         <td>
           <select class="portfolio-table-input pf-h-type">
             <option value="Mutual Fund" ${h.type === 'Mutual Fund' ? 'selected' : ''}>Mutual Fund</option>
@@ -574,11 +571,11 @@ export class PortfolioModal {
             <option value="Crypto/Alt" ${h.type === 'Crypto/Alt' ? 'selected' : ''}>Crypto/Alt</option>
           </select>
         </td>
-        <td><input type="number" class="portfolio-table-input pf-h-qty" style="width:70px;" value="${h.qty || 0}" placeholder="0" /></td>
-        <td><input type="number" class="portfolio-table-input pf-h-buy" style="width:85px;" value="${h.buyPrice || 0}" placeholder="0" /></td>
-        <td><input type="number" class="portfolio-table-input pf-h-cur" style="width:85px;" value="${h.currentPrice || 0}" placeholder="0" /></td>
+        <td><input type="number" class="portfolio-table-input pf-h-qty" style="width:70px;" value="${h.qty || ''}" placeholder="0" /></td>
+        <td><input type="number" class="portfolio-table-input pf-h-buy" style="width:85px;" value="${h.buyPrice || ''}" placeholder="0" /></td>
+        <td><input type="number" class="portfolio-table-input pf-h-cur" style="width:85px;" value="${h.currentPrice || ''}" placeholder="0" /></td>
         <td><strong class="pf-h-val">${formatCurrency(h.value || 0)}</strong></td>
-        <td style="color: ${(h.gainLoss || 0) >= 0 ? '#10B981' : '#F87171'}; font-weight:600;" class="pf-h-gl">
+        <td style="color: ${(h.gainLoss || 0) >= 0 ? '#059669' : '#DC2626'}; font-weight:600;" class="pf-h-gl">
           ${(h.gainLoss || 0) >= 0 ? '+' : ''}${formatCurrency(h.gainLoss || 0)} (${h.gainLossPct || 0}%)
         </td>
         <td>
@@ -590,12 +587,39 @@ export class PortfolioModal {
     `).join('');
   }
 
+  renderGoalsView(goals) {
+    if (!goals || goals.length === 0) {
+      return `<div class="portfolio-empty-state-box">No strategic goals added yet. Click "+ Add Strategic Goal" below to set milestone targets.</div>`;
+    }
+
+    return `
+      <div class="portfolio-table-wrap">
+        <table class="portfolio-table">
+          <thead>
+            <tr>
+              <th>Goal Title</th>
+              <th>Horizon</th>
+              <th>Target Amount</th>
+              <th>Accumulated</th>
+              <th>Target Date</th>
+              <th>Progress</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="pf-goals-tbody">
+            ${this.renderGoalsRows(goals)}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
   renderGoalsRows(goals) {
     return goals.map((g, i) => {
       const pct = g.targetAmount > 0 ? Math.min(100, Math.round(((g.currentAmount || 0) / g.targetAmount) * 100)) : 0;
       return `
         <tr data-index="${i}">
-          <td><input type="text" class="portfolio-table-input pf-g-title" value="${g.title || ''}" placeholder="Goal Title" /></td>
+          <td><input type="text" class="portfolio-table-input pf-g-title" value="${g.title || ''}" placeholder="e.g. Home Down Payment" /></td>
           <td>
             <select class="portfolio-table-input pf-g-type">
               <option value="Short-Term" ${g.type === 'Short-Term' ? 'selected' : ''}>Short-Term</option>
@@ -603,9 +627,9 @@ export class PortfolioModal {
               <option value="Long-Term" ${g.type === 'Long-Term' ? 'selected' : ''}>Long-Term</option>
             </select>
           </td>
-          <td><input type="number" class="portfolio-table-input pf-g-target" style="width:95px;" value="${g.targetAmount || 0}" placeholder="0" /></td>
-          <td><input type="number" class="portfolio-table-input pf-g-cur" style="width:95px;" value="${g.currentAmount || 0}" placeholder="0" /></td>
-          <td><input type="date" class="portfolio-table-input pf-g-date" style="width:125px;" value="${g.targetDate || '2030-12-31'}" /></td>
+          <td><input type="number" class="portfolio-table-input pf-g-target" style="width:95px;" value="${g.targetAmount || ''}" placeholder="0" /></td>
+          <td><input type="number" class="portfolio-table-input pf-g-cur" style="width:95px;" value="${g.currentAmount || ''}" placeholder="0" /></td>
+          <td><input type="date" class="portfolio-table-input pf-g-date" style="width:125px;" value="${g.targetDate || ''}" /></td>
           <td style="min-width:110px;">
             <div class="portfolio-goal-progress">
               <span style="font-size:0.75rem; font-weight:600;">${pct}%</span>
@@ -624,9 +648,18 @@ export class PortfolioModal {
     }).join('');
   }
 
-  renderAllocationLegend(breakdown) {
+  renderAllocationLegend(breakdown, totalAssets) {
+    if (!totalAssets || totalAssets === 0) {
+      return `<div style="text-align:center; color:#94A3B8; font-size:0.78rem; padding:0.5rem 0;">No asset values entered yet</div>`;
+    }
+
     const dots = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6'];
-    return breakdown.map((item, idx) => `
+    const validItems = breakdown.filter((item) => item.value > 0);
+    if (validItems.length === 0) {
+      return `<div style="text-align:center; color:#94A3B8; font-size:0.78rem; padding:0.5rem 0;">No asset values entered yet</div>`;
+    }
+
+    return validItems.map((item, idx) => `
       <div class="portfolio-legend-row">
         <div class="portfolio-legend-left">
           <span class="portfolio-legend-dot ${dots[idx % dots.length]}"></span>
@@ -639,22 +672,34 @@ export class PortfolioModal {
 
   renderCharts(metrics) {
     const donutBox = this.drawer.querySelector('#pf-donut-allocation');
-    if (donutBox) {
-      const totAssets = metrics.totalAssets || 1;
-      const segments = [
-        { label: 'Equities', value: metrics.marketInvestments, percent: Math.round((metrics.marketInvestments / totAssets) * 100), colorClass: 'principal' },
-        { label: 'Fixed Deposits', value: metrics.fixedDepositAssets, percent: Math.round((metrics.fixedDepositAssets / totAssets) * 100), colorClass: 'interest' },
-        { label: 'Retirement', value: metrics.retirementAssets, percent: Math.round((metrics.retirementAssets / totAssets) * 100), colorClass: 'extra' },
-        { label: 'Liquid Cash', value: metrics.liquidAssets, percent: Math.round((metrics.liquidAssets / totAssets) * 100), colorClass: 'principal' },
-        { label: 'Real Estate', value: metrics.realEstateAssets, percent: Math.round((metrics.realEstateAssets / totAssets) * 100), colorClass: 'interest' }
-      ];
+    if (!donutBox) return;
 
-      renderDonutChart(donutBox, {
-        segments,
-        centerLabel: 'Total Portfolio',
-        centerValue: formatCurrency(metrics.totalAssets, undefined, false)
-      });
+    if (!metrics.totalAssets || metrics.totalAssets === 0) {
+      donutBox.innerHTML = `
+        <div class="portfolio-chart-empty-state">
+          <div class="portfolio-chart-empty-circle">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
+          </div>
+          <span>Add your assets to see live allocation</span>
+        </div>
+      `;
+      return;
     }
+
+    const totAssets = metrics.totalAssets;
+    const segments = [
+      { label: 'Equities', value: metrics.marketInvestments, percent: Math.round((metrics.marketInvestments / totAssets) * 100), colorClass: 'principal' },
+      { label: 'Fixed Deposits', value: metrics.fixedDepositAssets, percent: Math.round((metrics.fixedDepositAssets / totAssets) * 100), colorClass: 'interest' },
+      { label: 'Retirement', value: metrics.retirementAssets, percent: Math.round((metrics.retirementAssets / totAssets) * 100), colorClass: 'extra' },
+      { label: 'Liquid Cash', value: metrics.liquidAssets, percent: Math.round((metrics.liquidAssets / totAssets) * 100), colorClass: 'principal' },
+      { label: 'Real Estate', value: metrics.realEstateAssets, percent: Math.round((metrics.realEstateAssets / totAssets) * 100), colorClass: 'interest' }
+    ].filter((s) => s.value > 0);
+
+    renderDonutChart(donutBox, {
+      segments: segments.length > 0 ? segments : [{ label: 'Assets', value: totAssets, percent: 100, colorClass: 'principal' }],
+      centerLabel: 'Total Portfolio',
+      centerValue: formatCurrency(metrics.totalAssets, undefined, false)
+    });
   }
 
   updateLive() {
@@ -706,7 +751,7 @@ export class PortfolioModal {
 
     // Update Legend & Donut Chart
     const legendBox = this.drawer.querySelector('#pf-legend-allocation');
-    if (legendBox) legendBox.innerHTML = this.renderAllocationLegend(metrics.assetCategoryBreakdown);
+    if (legendBox) legendBox.innerHTML = this.renderAllocationLegend(metrics.assetCategoryBreakdown, metrics.totalAssets);
 
     this.renderCharts(metrics);
 
@@ -756,9 +801,9 @@ export class PortfolioModal {
     this.drawer.querySelector('#pf-btn-download-pdf').addEventListener('click', () => generatePortfolioPDF(this.state));
     this.drawer.querySelector('#pf-btn-print-hero').addEventListener('click', () => generatePortfolioPDF(this.state));
 
-    // Reset Defaults
+    // Reset Defaults / Clear All
     this.drawer.querySelector('#pf-btn-reset').addEventListener('click', () => {
-      if (confirm('Reset your portfolio inputs to default baseline profile?')) {
+      if (confirm('Clear all fields and reset your portfolio?')) {
         this.state = JSON.parse(JSON.stringify(DEFAULT_PORTFOLIO_STATE));
         setStoredState('personal_portfolio', this.state);
         this.render();
@@ -821,111 +866,125 @@ export class PortfolioModal {
     this.bindNum('pf-ins-hlth-prem', (v) => { this.state.insurance.healthPremium = v; });
 
     // Holdings dynamic table handlers
-    this.drawer.querySelector('#pf-btn-add-holding').addEventListener('click', () => {
-      this.state.holdings.push({
-        id: 'h_' + Date.now(),
-        name: 'New Security',
-        type: 'Mutual Fund',
-        qty: 100,
-        buyPrice: 100,
-        currentPrice: 120
+    const addHoldBtn = this.drawer.querySelector('#pf-btn-add-holding');
+    if (addHoldBtn) {
+      addHoldBtn.addEventListener('click', () => {
+        this.state.holdings.push({
+          id: 'h_' + Date.now(),
+          name: '',
+          type: 'Mutual Fund',
+          qty: '',
+          buyPrice: '',
+          currentPrice: ''
+        });
+        this.refreshHoldingsTable();
+        this.updateLive();
       });
-      this.refreshHoldingsTable();
-      this.updateLive();
-    });
+    }
 
-    this.drawer.querySelector('#pf-holdings-tbody').addEventListener('input', (e) => {
-      const row = e.target.closest('tr');
-      if (!row) return;
-      const idx = Number(row.getAttribute('data-index'));
-      const holding = this.state.holdings[idx];
-      if (!holding) return;
+    const holdCont = this.drawer.querySelector('#pf-holdings-container');
+    if (holdCont) {
+      holdCont.addEventListener('input', (e) => {
+        const row = e.target.closest('tr');
+        if (!row) return;
+        const idx = Number(row.getAttribute('data-index'));
+        const holding = this.state.holdings[idx];
+        if (!holding) return;
 
-      if (e.target.classList.contains('pf-h-name')) holding.name = e.target.value;
-      if (e.target.classList.contains('pf-h-type')) holding.type = e.target.value;
-      if (e.target.classList.contains('pf-h-qty')) holding.qty = Number(e.target.value) || 0;
-      if (e.target.classList.contains('pf-h-buy')) holding.buyPrice = Number(e.target.value) || 0;
-      if (e.target.classList.contains('pf-h-cur')) holding.currentPrice = Number(e.target.value) || 0;
+        if (e.target.classList.contains('pf-h-name')) holding.name = e.target.value;
+        if (e.target.classList.contains('pf-h-type')) holding.type = e.target.value;
+        if (e.target.classList.contains('pf-h-qty')) holding.qty = Number(e.target.value) || 0;
+        if (e.target.classList.contains('pf-h-buy')) holding.buyPrice = Number(e.target.value) || 0;
+        if (e.target.classList.contains('pf-h-cur')) holding.currentPrice = Number(e.target.value) || 0;
 
-      // Update row live
-      const val = holding.qty * holding.currentPrice;
-      const cost = holding.qty * holding.buyPrice;
-      const gl = val - cost;
-      const glPct = cost > 0 ? ((gl / cost) * 100).toFixed(2) : 0;
+        // Update row live
+        const val = (Number(holding.qty) || 0) * (Number(holding.currentPrice) || 0);
+        const cost = (Number(holding.qty) || 0) * (Number(holding.buyPrice) || 0);
+        const gl = val - cost;
+        const glPct = cost > 0 ? ((gl / cost) * 100).toFixed(2) : 0;
 
-      const valCell = row.querySelector('.pf-h-val');
-      if (valCell) valCell.textContent = formatCurrency(val);
+        const valCell = row.querySelector('.pf-h-val');
+        if (valCell) valCell.textContent = formatCurrency(val);
 
-      const glCell = row.querySelector('.pf-h-gl');
-      if (glCell) {
-        glCell.textContent = `${gl >= 0 ? '+' : ''}${formatCurrency(gl)} (${glPct}%)`;
-        glCell.style.color = gl >= 0 ? '#10B981' : '#F87171';
-      }
+        const glCell = row.querySelector('.pf-h-gl');
+        if (glCell) {
+          glCell.textContent = `${gl >= 0 ? '+' : ''}${formatCurrency(gl)} (${glPct}%)`;
+          glCell.style.color = gl >= 0 ? '#059669' : '#DC2626';
+        }
 
-      this.updateLive();
-    });
+        this.updateLive();
+      });
 
-    this.drawer.querySelector('#pf-holdings-tbody').addEventListener('click', (e) => {
-      const delBtn = e.target.closest('.pf-btn-del-holding');
-      if (!delBtn) return;
-      const row = delBtn.closest('tr');
-      const idx = Number(row.getAttribute('data-index'));
-      this.state.holdings.splice(idx, 1);
-      this.refreshHoldingsTable();
-      this.updateLive();
-    });
+      holdCont.addEventListener('click', (e) => {
+        const delBtn = e.target.closest('.pf-btn-del-holding');
+        if (!delBtn) return;
+        const row = delBtn.closest('tr');
+        const idx = Number(row.getAttribute('data-index'));
+        this.state.holdings.splice(idx, 1);
+        this.refreshHoldingsTable();
+        this.updateLive();
+      });
+    }
 
     // Goals dynamic table handlers
-    this.drawer.querySelector('#pf-btn-add-goal').addEventListener('click', () => {
-      this.state.goals.push({
-        id: 'g_' + Date.now(),
-        title: 'New Financial Milestone',
-        type: 'Medium-Term',
-        targetAmount: 500000,
-        currentAmount: 100000,
-        targetDate: '2028-12-31'
+    const addGoalBtn = this.drawer.querySelector('#pf-btn-add-goal');
+    if (addGoalBtn) {
+      addGoalBtn.addEventListener('click', () => {
+        this.state.goals.push({
+          id: 'g_' + Date.now(),
+          title: '',
+          type: 'Medium-Term',
+          targetAmount: '',
+          currentAmount: '',
+          targetDate: ''
+        });
+        this.refreshGoalsTable();
+        this.updateLive();
       });
-      this.refreshGoalsTable();
-      this.updateLive();
-    });
+    }
 
-    this.drawer.querySelector('#pf-goals-tbody').addEventListener('input', (e) => {
-      const row = e.target.closest('tr');
-      if (!row) return;
-      const idx = Number(row.getAttribute('data-index'));
-      const goal = this.state.goals[idx];
-      if (!goal) return;
+    const goalCont = this.drawer.querySelector('#pf-goals-container');
+    if (goalCont) {
+      goalCont.addEventListener('input', (e) => {
+        const row = e.target.closest('tr');
+        if (!row) return;
+        const idx = Number(row.getAttribute('data-index'));
+        const goal = this.state.goals[idx];
+        if (!goal) return;
 
-      if (e.target.classList.contains('pf-g-title')) goal.title = e.target.value;
-      if (e.target.classList.contains('pf-g-type')) goal.type = e.target.value;
-      if (e.target.classList.contains('pf-g-target')) goal.targetAmount = Number(e.target.value) || 0;
-      if (e.target.classList.contains('pf-g-cur')) goal.currentAmount = Number(e.target.value) || 0;
-      if (e.target.classList.contains('pf-g-date')) goal.targetDate = e.target.value;
+        if (e.target.classList.contains('pf-g-title')) goal.title = e.target.value;
+        if (e.target.classList.contains('pf-g-type')) goal.type = e.target.value;
+        if (e.target.classList.contains('pf-g-target')) goal.targetAmount = Number(e.target.value) || 0;
+        if (e.target.classList.contains('pf-g-cur')) goal.currentAmount = Number(e.target.value) || 0;
+        if (e.target.classList.contains('pf-g-date')) goal.targetDate = e.target.value;
 
-      this.refreshGoalsTable();
-      this.updateLive();
-    });
+        this.refreshGoalsTable();
+        this.updateLive();
+      });
 
-    this.drawer.querySelector('#pf-goals-tbody').addEventListener('click', (e) => {
-      const delBtn = e.target.closest('.pf-btn-del-goal');
-      if (!delBtn) return;
-      const row = delBtn.closest('tr');
-      const idx = Number(row.getAttribute('data-index'));
-      this.state.goals.splice(idx, 1);
-      this.refreshGoalsTable();
-      this.updateLive();
-    });
+      goalCont.addEventListener('click', (e) => {
+        const delBtn = e.target.closest('.pf-btn-del-goal');
+        if (!delBtn) return;
+        const row = delBtn.closest('tr');
+        const idx = Number(row.getAttribute('data-index'));
+        this.state.goals.splice(idx, 1);
+        this.refreshGoalsTable();
+        this.updateLive();
+      });
+    }
   }
 
   refreshHoldingsTable() {
     const metrics = calculatePortfolioMetrics(this.state);
-    const tbody = this.drawer.querySelector('#pf-holdings-tbody');
-    if (tbody) tbody.innerHTML = this.renderHoldingsRows(metrics.processedHoldings);
+    const cont = this.drawer.querySelector('#pf-holdings-container');
+    if (cont) cont.innerHTML = this.renderHoldingsView(metrics.processedHoldings);
+    const sumHoldings = this.drawer.querySelector('#pf-sum-holdings');
+    if (sumHoldings) sumHoldings.textContent = `${this.state.holdings.length} Securities`;
   }
 
   refreshGoalsTable() {
-    const tbody = this.drawer.querySelector('#pf-goals-tbody');
-    if (tbody) tbody.innerHTML = this.renderGoalsRows(this.state.goals);
+    const cont = this.drawer.querySelector('#pf-goals-container');
+    if (cont) cont.innerHTML = this.renderGoalsView(this.state.goals);
   }
 
   bindText(id, setter) {
@@ -943,7 +1002,7 @@ export class PortfolioModal {
     if (input) {
       input.addEventListener('input', (e) => {
         const raw = e.target.value;
-        const val = raw === '' ? 0 : Math.max(0, Number(raw));
+        const val = raw === '' ? '' : Math.max(0, Number(raw));
         setter(val);
         this.updateLive();
       });
