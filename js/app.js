@@ -29,17 +29,15 @@ import { initNetWorthCalculator } from './calculators/netWorthCalculator.js';
 import { initBudgetPlanner } from './calculators/budgetPlanner.js';
 import { initBuyVsRentCalculator } from './calculators/buyVsRentCalculator.js';
 
-// AI Copilot, Portfolio Builder, Auth, Hero Section & Landing Gate
+// AI Copilot, Portfolio Builder, Auth & Landing Gate
 import { FinBot } from './components/chatbot.js';
 import { PortfolioModal } from './components/portfolioModal.js';
 import { AuthModal } from './components/authModal.js';
-import { renderHeroSection } from './components/heroSection.js';
 import { HeroLandingGate } from './components/heroLandingGate.js';
 
 class FinculatorApp {
   constructor() {
     this.contentContainer = document.getElementById('main-content');
-    this.heroContainer = document.getElementById('hero-mount-container');
     this.currencySelect = document.getElementById('global-currency-select');
     this.navLinks = document.querySelectorAll('.nav-item');
     this.mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -72,18 +70,7 @@ class FinculatorApp {
     this.initMobileMenu();
     this.initPrint();
     this.initFooterEvents();
-    this.initHeroSection();
     this.handleRoute();
-  }
-
-  initHeroSection() {
-    if (this.heroContainer) {
-      renderHeroSection(this.heroContainer, {
-        openAuth: (tab) => {
-          if (this.authModal) this.authModal.open(tab);
-        }
-      });
-    }
   }
 
   initCurrency() {

@@ -183,18 +183,22 @@ export class HeroLandingGate {
 
     if (isAuth) {
       overlay.classList.add('unlocked');
+      document.body.classList.remove('gate-locked');
     } else {
       overlay.classList.remove('unlocked');
+      document.body.classList.add('gate-locked');
     }
   }
 
   unlock() {
     const overlay = this.container.querySelector('#auth-landing-gate-overlay');
     if (overlay) overlay.classList.add('unlocked');
+    document.body.classList.remove('gate-locked');
   }
 
   lock() {
     const overlay = this.container.querySelector('#auth-landing-gate-overlay');
     if (overlay) overlay.classList.remove('unlocked');
+    document.body.classList.add('gate-locked');
   }
 }

@@ -7,11 +7,13 @@
 .landing-gate-overlay {
   position: fixed;
   inset: 0;
+  width: 100vw;
+  height: 100vh;
   background: #F8FAFC;
   background: radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
               radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.06) 0%, transparent 50%),
               #F8FAFC;
-  z-index: 9000;
+  z-index: 99999;
   display: flex;
   flex-direction: column;
   opacity: 1;
@@ -27,6 +29,25 @@
   visibility: hidden;
   pointer-events: none;
   transform: scale(0.99) translateY(-10px);
+}
+
+/* Complete background scroll locking while on landing / login gate */
+body.gate-locked {
+  overflow: hidden !important;
+  height: 100vh !important;
+}
+
+body.gate-locked .app-container {
+  overflow: hidden !important;
+  max-height: 100vh !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+body.gate-locked .app-sidebar,
+body.gate-locked .app-content,
+body.gate-locked .main-wrapper {
+  overflow: hidden !important;
 }
 
 /* 1. Top Navigation Bar (matching "Navigation" in schematic) */
