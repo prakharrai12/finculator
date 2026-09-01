@@ -14,11 +14,11 @@ export function initFIRECalculator(container) {
   const defaultState = {
     currentAge: 30,
     targetAge: 50,
-    currentSavings: 50000,
-    monthlyExpenses: 4000,
-    inflationRate: 5.0,
-    expectedReturn: 10.0,
-    swrPercent: 4.0
+    currentSavings: 1500000,
+    monthlyExpenses: 80000,
+    inflationRate: 6.0,
+    expectedReturn: 12.0,
+    swrPercent: 3.5
   };
 
   const state = getStoredState('fire', defaultState);
@@ -92,10 +92,10 @@ export function initFIRECalculator(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="fire-savings-input" class="form-input has-prefix" min="0" max="10000000" step="5000" value="${state.currentSavings}" />
+                <input type="number" id="fire-savings-input" class="form-input has-prefix" min="0" max="50000000" step="25000" value="${state.currentSavings}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="fire-savings-slider" class="range-slider" min="0" max="500000" step="5000" value="${Math.min(state.currentSavings, 500000)}" />
+                <input type="range" id="fire-savings-slider" class="range-slider" min="0" max="10000000" step="25000" value="${Math.min(state.currentSavings, 10000000)}" />
               </div>
             </div>
 
@@ -107,10 +107,10 @@ export function initFIRECalculator(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="fire-expenses-input" class="form-input has-prefix" min="500" max="50000" step="250" value="${state.monthlyExpenses}" />
+                <input type="number" id="fire-expenses-input" class="form-input has-prefix" min="5000" max="500000" step="2500" value="${state.monthlyExpenses}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="fire-expenses-slider" class="range-slider" min="1000" max="20000" step="250" value="${Math.min(state.monthlyExpenses, 20000)}" />
+                <input type="range" id="fire-expenses-slider" class="range-slider" min="10000" max="250000" step="2500" value="${Math.min(state.monthlyExpenses, 250000)}" />
               </div>
             </div>
 

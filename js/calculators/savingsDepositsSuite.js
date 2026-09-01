@@ -22,22 +22,22 @@ export function initSavingsDepositsSuite(container) {
   const defaultState = {
     activeTab: 'compound', // 'compound' | 'simple' | 'fd' | 'rd' | 'ppf' | 'goal'
     // Compound
-    compoundPrincipal: 25000,
+    compoundPrincipal: 500000,
     compoundRate: 7.5,
     compoundYears: 10,
     compoundFrequency: 'quarterly',
-    compoundRecurring: 100,
+    compoundRecurring: 10000,
     // Simple
-    simplePrincipal: 15000,
+    simplePrincipal: 100000,
     simpleRate: 6.0,
     simpleYears: 5,
     // FD
-    fdPrincipal: 50000,
+    fdPrincipal: 500000,
     fdRate: 7.25,
     fdMonths: 36,
     fdFrequency: 'quarterly',
     // RD
-    rdMonthly: 500,
+    rdMonthly: 10000,
     rdRate: 6.8,
     rdMonths: 36,
     // PPF
@@ -45,10 +45,10 @@ export function initSavingsDepositsSuite(container) {
     ppfYears: 15,
     ppfRate: 7.1,
     // Goal
-    goalCorpus: 200000,
+    goalCorpus: 2500000,
     goalYears: 10,
     goalReturn: 8.5,
-    goalInitial: 10000
+    goalInitial: 200000
   };
 
   const state = getStoredState('savings_deposits', defaultState);
@@ -206,10 +206,10 @@ export function initSavingsDepositsSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="sd-c-p-input" class="form-input has-prefix" min="100" max="5000000" step="500" value="${state.compoundPrincipal}" />
+            <input type="number" id="sd-c-p-input" class="form-input has-prefix" min="100" max="50000000" step="10000" value="${state.compoundPrincipal}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="sd-c-p-slider" class="range-slider" min="1000" max="200000" step="500" value="${Math.min(state.compoundPrincipal, 200000)}" />
+            <input type="range" id="sd-c-p-slider" class="range-slider" min="10000" max="2000000" step="10000" value="${Math.min(state.compoundPrincipal, 2000000)}" />
           </div>
         </div>
 
@@ -274,10 +274,10 @@ export function initSavingsDepositsSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="sd-s-p-input" class="form-input has-prefix" min="100" max="2000000" step="500" value="${state.simplePrincipal}" />
+            <input type="number" id="sd-s-p-input" class="form-input has-prefix" min="1000" max="20000000" step="5000" value="${state.simplePrincipal}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="sd-s-p-slider" class="range-slider" min="1000" max="100000" step="500" value="${Math.min(state.simplePrincipal, 100000)}" />
+            <input type="range" id="sd-s-p-slider" class="range-slider" min="5000" max="1000000" step="5000" value="${Math.min(state.simplePrincipal, 1000000)}" />
           </div>
         </div>
 
@@ -318,10 +318,10 @@ export function initSavingsDepositsSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="sd-fd-p-input" class="form-input has-prefix" min="500" max="5000000" step="1000" value="${state.fdPrincipal}" />
+            <input type="number" id="sd-fd-p-input" class="form-input has-prefix" min="1000" max="50000000" step="10000" value="${state.fdPrincipal}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="sd-fd-p-slider" class="range-slider" min="1000" max="250000" step="1000" value="${Math.min(state.fdPrincipal, 250000)}" />
+            <input type="range" id="sd-fd-p-slider" class="range-slider" min="10000" max="2500000" step="10000" value="${Math.min(state.fdPrincipal, 2500000)}" />
           </div>
         </div>
 
@@ -362,10 +362,10 @@ export function initSavingsDepositsSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="sd-rd-m-input" class="form-input has-prefix" min="50" max="100000" step="50" value="${state.rdMonthly}" />
+            <input type="number" id="sd-rd-m-input" class="form-input has-prefix" min="500" max="1000000" step="500" value="${state.rdMonthly}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="sd-rd-m-slider" class="range-slider" min="100" max="10000" step="50" value="${Math.min(state.rdMonthly, 10000)}" />
+            <input type="range" id="sd-rd-m-slider" class="range-slider" min="1000" max="50000" step="500" value="${Math.min(state.rdMonthly, 50000)}" />
           </div>
         </div>
 
@@ -445,10 +445,10 @@ export function initSavingsDepositsSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="sd-g-t-input" class="form-input has-prefix" min="5000" max="10000000" step="5000" value="${state.goalCorpus}" />
+            <input type="number" id="sd-g-t-input" class="form-input has-prefix" min="10000" max="50000000" step="50000" value="${state.goalCorpus}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="sd-g-t-slider" class="range-slider" min="10000" max="1000000" step="5000" value="${Math.min(state.goalCorpus, 1000000)}" />
+            <input type="range" id="sd-g-t-slider" class="range-slider" min="100000" max="10000000" step="50000" value="${Math.min(state.goalCorpus, 10000000)}" />
           </div>
         </div>
 

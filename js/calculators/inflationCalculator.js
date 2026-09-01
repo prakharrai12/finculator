@@ -13,7 +13,7 @@ export function initInflationCalculator(container) {
 
   const defaultState = {
     amount: 100000,
-    inflationRate: 4.5,
+    inflationRate: 6.0,
     years: 20,
     direction: 'future_cost' // 'future_cost' | 'purchasing_power'
   };
@@ -44,8 +44,8 @@ export function initInflationCalculator(container) {
 
         <!-- Mode Toggle Bar -->
         <div class="tab-bar" id="inflation-mode-toggle">
-          <button class="tab-btn ${state.direction === 'future_cost' ? 'active' : ''}" data-mode="future_cost">Future Cost of Living (What will $X cost?)</button>
-          <button class="tab-btn ${state.direction === 'purchasing_power' ? 'active' : ''}" data-mode="purchasing_power">Future Purchasing Power (What will $X buy?)</button>
+          <button class="tab-btn ${state.direction === 'future_cost' ? 'active' : ''}" data-mode="future_cost">Future Cost of Living (What will it cost in the future?)</button>
+          <button class="tab-btn ${state.direction === 'purchasing_power' ? 'active' : ''}" data-mode="purchasing_power">Future Purchasing Power (What will today's money buy?)</button>
         </div>
 
         <div class="calc-grid">
@@ -67,7 +67,7 @@ export function initInflationCalculator(container) {
                 <input type="number" id="inf-amount-input" class="form-input has-prefix" min="100" max="10000000" step="1000" value="${state.amount}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="inf-amount-slider" class="range-slider" min="1000" max="500000" step="1000" value="${Math.min(state.amount, 500000)}" />
+                <input type="range" id="inf-amount-slider" class="range-slider" min="5000" max="1000000" step="5000" value="${Math.min(state.amount, 1000000)}" />
               </div>
             </div>
 

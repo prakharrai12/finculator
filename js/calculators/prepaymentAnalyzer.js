@@ -13,11 +13,11 @@ export function initPrepaymentAnalyzer(container) {
   if (!container) return;
 
   const defaultState = {
-    loanAmount: 250000,
-    interestRate: 6.5,
-    tenureYears: 30,
-    extraMonthly: 250,
-    annualLumpSum: 1000
+    loanAmount: 5000000,
+    interestRate: 8.5,
+    tenureYears: 20,
+    extraMonthly: 5000,
+    annualLumpSum: 50000
   };
 
   const state = getStoredState('prepayment', defaultState);
@@ -44,7 +44,7 @@ export function initPrepaymentAnalyzer(container) {
         <div class="calculator-header">
           <div class="calculator-title-group">
             <h1 class="calculator-title">Prepayment & Loan Comparison Analyzer</h1>
-            <p class="calculator-desc">Quantify exact interest savings and tenure reduction by injecting recurring extra payments and annual lump sums.</p>
+            <p class="calculator-desc">Quantify exact interest savings and tenure reduction by injecting recurring extra payments and annual lump sums (₹50 Lakhs baseline).</p>
           </div>
           <div class="calculator-actions">
             <button class="btn btn-secondary btn-sm" id="btn-reset-prepay">Reset Defaults</button>
@@ -59,12 +59,12 @@ export function initPrepaymentAnalyzer(container) {
           </div>
           <div class="savings-meta">
             <div class="savings-subitem">
-              <span class="sub-label">Tenure Cut Off</span>
+              <span class="sub-label">Tenure Shortened By</span>
               <span class="sub-val">${res.savings.yearsSaved} Years (${res.savings.monthsSaved} Months)</span>
             </div>
             <div class="savings-subitem">
-              <span class="sub-label">New Payoff Term</span>
-              <span class="sub-val">${(res.revised.months / 12).toFixed(1)} Years (${res.revised.months} Mos)</span>
+              <span class="sub-label">Revised Payoff Period</span>
+              <span class="sub-val">${(res.revised.months / 12).toFixed(1)} Years</span>
             </div>
           </div>
         </div>
@@ -85,10 +85,10 @@ export function initPrepaymentAnalyzer(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="prepay-amount-input" class="form-input has-prefix" min="5000" max="5000000" step="5000" value="${state.loanAmount}" />
+                <input type="number" id="prepay-amount-input" class="form-input has-prefix" min="100000" max="50000000" step="50000" value="${state.loanAmount}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="prepay-amount-slider" class="range-slider" min="10000" max="1000000" step="5000" value="${Math.min(state.loanAmount, 1000000)}" />
+                <input type="range" id="prepay-amount-slider" class="range-slider" min="500000" max="20000000" step="50000" value="${Math.min(state.loanAmount, 20000000)}" />
               </div>
             </div>
 
@@ -99,11 +99,11 @@ export function initPrepaymentAnalyzer(container) {
                 <span class="form-hint">${state.interestRate}%</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="prepay-rate-input" class="form-input has-suffix" min="0.1" max="25" step="0.1" value="${state.interestRate}" />
+                <input type="number" id="prepay-rate-input" class="form-input has-suffix" min="0.1" max="25" step="0.05" value="${state.interestRate}" />
                 <span class="input-suffix">%</span>
               </div>
               <div class="slider-container">
-                <input type="range" id="prepay-rate-slider" class="range-slider" min="1" max="15" step="0.1" value="${state.interestRate}" />
+                <input type="range" id="prepay-rate-slider" class="range-slider" min="5" max="18" step="0.05" value="${state.interestRate}" />
               </div>
             </div>
 
@@ -133,10 +133,10 @@ export function initPrepaymentAnalyzer(container) {
                 </div>
                 <div class="input-wrapper">
                   <span class="input-prefix">${curr.symbol}</span>
-                  <input type="number" id="prepay-monthly-input" class="form-input has-prefix" min="0" max="10000" step="25" value="${state.extraMonthly}" />
+                  <input type="number" id="prepay-monthly-input" class="form-input has-prefix" min="0" max="200000" step="500" value="${state.extraMonthly}" />
                 </div>
                 <div class="slider-container">
-                  <input type="range" id="prepay-monthly-slider" class="range-slider" min="0" max="2000" step="25" value="${Math.min(state.extraMonthly, 2000)}" />
+                  <input type="range" id="prepay-monthly-slider" class="range-slider" min="0" max="50000" step="500" value="${Math.min(state.extraMonthly, 50000)}" />
                 </div>
               </div>
 
@@ -148,10 +148,10 @@ export function initPrepaymentAnalyzer(container) {
                 </div>
                 <div class="input-wrapper">
                   <span class="input-prefix">${curr.symbol}</span>
-                  <input type="number" id="prepay-annual-input" class="form-input has-prefix" min="0" max="50000" step="250" value="${state.annualLumpSum}" />
+                  <input type="number" id="prepay-annual-input" class="form-input has-prefix" min="0" max="2000000" step="5000" value="${state.annualLumpSum}" />
                 </div>
                 <div class="slider-container">
-                  <input type="range" id="prepay-annual-slider" class="range-slider" min="0" max="10000" step="250" value="${Math.min(state.annualLumpSum, 10000)}" />
+                  <input type="range" id="prepay-annual-slider" class="range-slider" min="0" max="500000" step="5000" value="${Math.min(state.annualLumpSum, 500000)}" />
                 </div>
               </div>
             </div>

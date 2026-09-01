@@ -12,14 +12,14 @@ export function initBuyVsRentCalculator(container) {
   if (!container) return;
 
   const defaultState = {
-    homePrice: 500000,
+    homePrice: 7500000,
     downPaymentPct: 20,
-    mortgageRate: 6.5,
-    mortgageYears: 30,
-    homeAppreciationRate: 4.0,
-    monthlyRent: 2200,
-    rentInflationRate: 3.5,
-    investmentReturnRate: 8.0,
+    mortgageRate: 8.5,
+    mortgageYears: 20,
+    homeAppreciationRate: 5.0,
+    monthlyRent: 25000,
+    rentInflationRate: 5.0,
+    investmentReturnRate: 12.0,
     timeHorizonYears: 15
   };
 
@@ -91,10 +91,10 @@ export function initBuyVsRentCalculator(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="bvr-hp-input" class="form-input has-prefix" min="50000" max="10000000" step="10000" value="${state.homePrice}" />
+                <input type="number" id="bvr-hp-input" class="form-input has-prefix" min="500000" max="50000000" step="50000" value="${state.homePrice}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="bvr-hp-slider" class="range-slider" min="100000" max="2000000" step="10000" value="${Math.min(state.homePrice, 2000000)}" />
+                <input type="range" id="bvr-hp-slider" class="range-slider" min="1000000" max="20000000" step="50000" value="${Math.min(state.homePrice, 20000000)}" />
               </div>
             </div>
 
@@ -150,10 +150,10 @@ export function initBuyVsRentCalculator(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="bvr-rent-input" class="form-input has-prefix" min="200" max="50000" step="100" value="${state.monthlyRent}" />
+                <input type="number" id="bvr-rent-input" class="form-input has-prefix" min="5000" max="300000" step="1000" value="${state.monthlyRent}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="bvr-rent-slider" class="range-slider" min="500" max="10000" step="100" value="${Math.min(state.monthlyRent, 10000)}" />
+                <input type="range" id="bvr-rent-slider" class="range-slider" min="10000" max="100000" step="1000" value="${Math.min(state.monthlyRent, 100000)}" />
               </div>
             </div>
 

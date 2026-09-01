@@ -12,17 +12,17 @@ export function initNetWorthCalculator(container) {
   if (!container) return;
 
   const defaultState = {
-    cash: 35000,
-    investments: 120000,
-    realEstate: 450000,
-    retirement: 85000,
-    vehicles: 25000,
-    otherAssets: 15000,
+    cash: 500000,
+    investments: 2500000,
+    realEstate: 8000000,
+    retirement: 1500000,
+    vehicles: 800000,
+    otherAssets: 400000,
     // Liabilities
-    mortgage: 280000,
-    autoLoans: 12000,
-    studentLoans: 18000,
-    creditCards: 3500,
+    mortgage: 4500000,
+    autoLoans: 350000,
+    studentLoans: 0,
+    creditCards: 45000,
     otherDebts: 0
   };
 
@@ -85,7 +85,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Cash, Savings & Emergency Funds</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-cash-input" class="form-input has-prefix" value="${state.cash}" step="1000" />
+                <input type="number" id="nw-cash-input" class="form-input has-prefix" value="${state.cash}" step="10000" />
               </div>
             </div>
 
@@ -93,7 +93,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Brokerage, Stocks & Mutual Funds</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-inv-input" class="form-input has-prefix" value="${state.investments}" step="2500" />
+                <input type="number" id="nw-inv-input" class="form-input has-prefix" value="${state.investments}" step="25000" />
               </div>
             </div>
 
@@ -101,15 +101,15 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Primary Real Estate & Property</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-re-input" class="form-input has-prefix" value="${state.realEstate}" step="5000" />
+                <input type="number" id="nw-re-input" class="form-input has-prefix" value="${state.realEstate}" step="50000" />
               </div>
             </div>
 
             <div class="form-group">
-              <label class="form-label">Retirement Accounts (401k, IRA, PPF, EPF)</label>
+              <label class="form-label">Retirement Accounts (EPF, PPF, NPS, Superannuation, 401k)</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-ret-input" class="form-input has-prefix" value="${state.retirement}" step="2500" />
+                <input type="number" id="nw-ret-input" class="form-input has-prefix" value="${state.retirement}" step="25000" />
               </div>
             </div>
 
@@ -117,7 +117,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Vehicles & Personal Valuables</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-veh-input" class="form-input has-prefix" value="${state.vehicles}" step="1000" />
+                <input type="number" id="nw-veh-input" class="form-input has-prefix" value="${state.vehicles}" step="10000" />
               </div>
             </div>
           </div>
@@ -130,10 +130,10 @@ export function initNetWorthCalculator(container) {
             </div>
 
             <div class="form-group">
-              <label class="form-label">Mortgage Balance</label>
+              <label class="form-label">Mortgage / Home Loan Balance</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-mort-input" class="form-input has-prefix" value="${state.mortgage}" step="5000" />
+                <input type="number" id="nw-mort-input" class="form-input has-prefix" value="${state.mortgage}" step="50000" />
               </div>
             </div>
 
@@ -141,15 +141,15 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Auto Loans</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-auto-input" class="form-input has-prefix" value="${state.autoLoans}" step="500" />
+                <input type="number" id="nw-auto-input" class="form-input has-prefix" value="${state.autoLoans}" step="5000" />
               </div>
             </div>
 
             <div class="form-group">
-              <label class="form-label">Student Loans</label>
+              <label class="form-label">Student & Personal Loans</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-stu-input" class="form-input has-prefix" value="${state.studentLoans}" step="500" />
+                <input type="number" id="nw-stu-input" class="form-input has-prefix" value="${state.studentLoans}" step="5000" />
               </div>
             </div>
 
@@ -157,7 +157,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Credit Card Debt</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-cc-input" class="form-input has-prefix" value="${state.creditCards}" step="250" />
+                <input type="number" id="nw-cc-input" class="form-input has-prefix" value="${state.creditCards}" step="1000" />
               </div>
             </div>
 

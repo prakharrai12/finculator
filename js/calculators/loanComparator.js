@@ -11,9 +11,9 @@ export function initLoanComparator(container) {
   if (!container) return;
 
   const defaultState = {
-    loan1: { name: 'Bank A (Fixed)', principal: 300000, rate: 6.5, tenureYears: 30, fee: 1500 },
-    loan2: { name: 'Bank B (Lower Rate)', principal: 300000, rate: 6.0, tenureYears: 30, fee: 3500 },
-    loan3: { name: 'Bank C (Shorter Term)', principal: 300000, rate: 5.8, tenureYears: 20, fee: 2000 }
+    loan1: { name: 'HDFC Bank (Standard 20Y)', principal: 5000000, rate: 8.50, tenureYears: 20, fee: 10000 },
+    loan2: { name: 'SBI MaxGain (Concession Rate)', principal: 5000000, rate: 8.35, tenureYears: 20, fee: 15000 },
+    loan3: { name: 'ICICI Bank (Shorter 15Y Term)', principal: 5000000, rate: 8.40, tenureYears: 15, fee: 10000 }
   };
 
   const state = getStoredState('loan_comparator', defaultState);
@@ -93,7 +93,7 @@ export function initLoanComparator(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="loan-${id}-p" class="form-input has-prefix" value="${loan.principal}" step="5000" />
+            <input type="number" id="loan-${id}-p" class="form-input has-prefix" value="${loan.principal}" step="50000" />
           </div>
         </div>
 
@@ -123,7 +123,7 @@ export function initLoanComparator(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="loan-${id}-f" class="form-input has-prefix" value="${loan.fee}" step="250" />
+            <input type="number" id="loan-${id}-f" class="form-input has-prefix" value="${loan.fee}" step="500" />
           </div>
         </div>
 
