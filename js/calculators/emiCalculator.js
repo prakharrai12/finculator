@@ -1,5 +1,6 @@
 /**
  * Finculator EMI & Loan Repayment Calculator
+ * Calibrated for realistic home and consumer loans (e.g. ₹50 Lakhs @ 8.5% for 20 yrs)
  */
 
 import { calculateEMI, generateAmortizationSchedule } from '../math/financeMath.js';
@@ -12,9 +13,9 @@ export function initEMICalculator(container) {
   if (!container) return;
 
   const defaultState = {
-    loanAmount: 100000,
-    interestRate: 7.5,
-    tenureValue: 30,
+    loanAmount: 5000000, // ₹50 Lakhs home loan default
+    interestRate: 8.5,
+    tenureValue: 20,
     isYears: true,
     processingFeePct: 0.5
   };
@@ -39,7 +40,7 @@ export function initEMICalculator(container) {
         <div class="calculator-header">
           <div class="calculator-title-group">
             <h1 class="calculator-title">EMI & Loan Repayment</h1>
-            <p class="calculator-desc">Calculate fixed monthly installments, total interest liabilities, and detailed amortization step-down schedules.</p>
+            <p class="calculator-desc">Calculate fixed monthly installments, total interest liabilities, and detailed amortization step-down schedules (₹50 Lakhs home loan baseline).</p>
           </div>
           <div class="calculator-actions">
             <button class="btn btn-secondary btn-sm" id="btn-reset-emi">Reset Defaults</button>
@@ -47,17 +48,20 @@ export function initEMICalculator(container) {
         </div>
 
         <div class="calc-grid">
-          <!-- Input Controls Panel -->
+          <!-- Section 1: Input Controls Panel -->
           <div class="panel">
             <div class="panel-header">
-              <span class="panel-title">Loan Parameters</span>
-              <span class="panel-subtitle">Institutional amortized model</span>
+              <span class="panel-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                Loan Parameters
+              </span>
+              <span class="panel-subtitle">LOAN INPUTS</span>
             </div>
 
             <!-- Loan Amount -->
             <div class="form-group">
               <div class="label-row">
-                <label class="form-label" for="emi-amount-input">Loan Amount</label>
+                <label class="form-label" for="emi-amount-input">Principal Loan Amount</label>
                 <span class="form-hint" id="emi-amount-display">${formatCurrency(state.loanAmount, undefined, false)}</span>
               </div>
               <div class="input-wrapper">
@@ -66,9 +70,9 @@ export function initEMICalculator(container) {
                   type="number"
                   id="emi-amount-input"
                   class="form-input has-prefix"
-                  min="1000"
-                  max="10000000"
-                  step="1000"
+                  min="50000"
+                  max="50000000"
+                  step="50000"
                   value="${state.loanAmount}"
                 />
               </div>
@@ -77,15 +81,16 @@ export function initEMICalculator(container) {
                   type="range"
                   id="emi-amount-slider"
                   class="range-slider"
-                  min="1000"
-                  max="2000000"
-                  step="1000"
-                  value="${Math.min(state.loanAmount, 2000000)}"
+                  min="100000"
+                  max="15000000"
+                  step="50000"
+                  value="${Math.min(state.loanAmount, 15000000)}"
                 />
               </div>
               <div class="slider-limits">
-                <span>${curr.symbol}1,000</span>
-                <span>${curr.symbol}2,000,000</span>
+                <span>₹1 Lakh</span>
+                <span>₹50 Lakh (Target)</span>
+                <span>₹1.5 Crore</span>
               </div>
             </div>
 
@@ -112,15 +117,16 @@ export function initEMICalculator(container) {
                   type="range"
                   id="emi-rate-slider"
                   class="range-slider"
-                  min="0.5"
-                  max="20"
+                  min="5.0"
+                  max="18.0"
                   step="0.1"
                   value="${state.interestRate}"
                 />
               </div>
               <div class="slider-limits">
-                <span>0.5%</span>
-                <span>20.0%</span>
+                <span>5.0%</span>
+                <span>8.5% (Home Loan)</span>
+                <span>18.0%</span>
               </div>
             </div>
 
@@ -151,21 +157,22 @@ export function initEMICalculator(container) {
                   id="emi-tenure-slider"
                   class="range-slider"
                   min="1"
-                  max="${state.isYears ? 35 : 420}"
+                  max="${state.isYears ? 30 : 360}"
                   step="1"
                   value="${state.tenureValue}"
                 />
               </div>
               <div class="slider-limits">
                 <span>1 ${state.isYears ? 'Yr' : 'Mo'}</span>
-                <span>${state.isYears ? '35 Yrs' : '420 Mos'}</span>
+                <span>20 Yrs (Standard)</span>
+                <span>${state.isYears ? '30 Yrs' : '360 Mos'}</span>
               </div>
             </div>
 
             <!-- Processing Fee -->
             <div class="form-group">
               <div class="label-row">
-                <label class="form-label" for="emi-fee-input">Processing Fee</label>
+                <label class="form-label" for="emi-fee-input">Bank Processing Fee</label>
                 <span class="form-hint">${formatPercent(state.processingFeePct, 1)} (${formatCurrency(emiResult.processingFee)})</span>
               </div>
               <div class="input-wrapper">
@@ -174,7 +181,7 @@ export function initEMICalculator(container) {
                   id="emi-fee-input"
                   class="form-input has-suffix"
                   min="0"
-                  max="10"
+                  max="5"
                   step="0.1"
                   value="${state.processingFeePct}"
                 />
@@ -183,11 +190,14 @@ export function initEMICalculator(container) {
             </div>
           </div>
 
-          <!-- Output Results Panel -->
+          <!-- Section 2: Output Results Panel -->
           <div class="panel">
             <div class="panel-header">
-              <span class="panel-title">Repayment Summary</span>
-              <span class="panel-subtitle">${months} payments</span>
+              <span class="panel-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                Repayment Outlay Summary
+              </span>
+              <span class="panel-subtitle">${months} PAYMENTS</span>
             </div>
 
             <div class="summary-grid">
@@ -200,17 +210,17 @@ export function initEMICalculator(container) {
               <div class="summary-card">
                 <span class="metric-label">Total Interest</span>
                 <span class="metric-value">${formatCurrency(emiResult.totalInterest)}</span>
-                <span class="metric-subtext">${emiResult.interestPercent}% of total payment</span>
+                <span class="metric-subtext">${emiResult.interestPercent}% of total repayment</span>
               </div>
 
               <div class="summary-card">
-                <span class="metric-label">Total Payment</span>
+                <span class="metric-label">Total Repayment</span>
                 <span class="metric-value">${formatCurrency(emiResult.totalPayment)}</span>
                 <span class="metric-subtext">Principal + Interest</span>
               </div>
 
               <div class="summary-card">
-                <span class="metric-label">Net Total Cost</span>
+                <span class="metric-label">Net Lifetime Cost</span>
                 <span class="metric-value">${formatCurrency(emiResult.netTotalCost)}</span>
                 <span class="metric-subtext">Incl. ${formatCurrency(emiResult.processingFee)} fee</span>
               </div>
@@ -274,7 +284,7 @@ export function initEMICalculator(container) {
     const amountSlider = container.querySelector('#emi-amount-slider');
     amountInput.addEventListener('input', (e) => {
       state.loanAmount = Math.max(0, Number(e.target.value) || 0);
-      if (amountSlider) amountSlider.value = Math.min(state.loanAmount, 2000000);
+      if (amountSlider) amountSlider.value = Math.min(state.loanAmount, 15000000);
       updateDisplay();
     });
     amountSlider.addEventListener('input', (e) => {

@@ -1,6 +1,7 @@
 /**
  * Finculator 50/30/20 Budget Planner
  * Allocates net take-home income across Essential Needs, Discretionary Wants, and Savings / Debt Repayment
+ * Calibrated for professional salary baseline (e.g. ₹200k/month = ₹2,00,000)
  */
 
 import { calculateBudget50_30_20 } from '../math/financeMath.js';
@@ -12,7 +13,7 @@ export function initBudgetPlanner(container) {
   if (!container) return;
 
   const defaultState = {
-    monthlyIncome: 6500,
+    monthlyIncome: 200000, // Calibrated for ₹200k/month salary
     needsPct: 50,
     wantsPct: 30,
     savingsPct: 20
@@ -40,7 +41,7 @@ export function initBudgetPlanner(container) {
         <div class="calculator-header">
           <div class="calculator-title-group">
             <h1 class="calculator-title">50/30/20 Budget Rule Planner</h1>
-            <p class="calculator-desc">Structure monthly cash flows into Essential Needs (50%), Discretionary Wants (30%), and Financial Savings / Investments (20%).</p>
+            <p class="calculator-desc">Structure monthly cash flows into Essential Needs (50%), Discretionary Wants (30%), and Financial Savings / Investments (20%) based on your ₹200k/month salary.</p>
           </div>
           <div class="calculator-actions">
             <button class="btn btn-secondary btn-sm" id="btn-reset-budget">Reset Defaults</button>
@@ -48,11 +49,14 @@ export function initBudgetPlanner(container) {
         </div>
 
         <div class="calc-grid">
-          <!-- Inputs Panel -->
+          <!-- Section 1: Inputs Panel -->
           <div class="panel">
             <div class="panel-header">
-              <span class="panel-title">Monthly Cash Flow</span>
-              <span class="panel-subtitle">Income & allocation rules</span>
+              <span class="panel-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                Monthly Cash Flow Profile
+              </span>
+              <span class="panel-subtitle">INCOME ALLOCATION</span>
             </div>
 
             <!-- Net Monthly Income -->
@@ -63,18 +67,23 @@ export function initBudgetPlanner(container) {
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="bud-income-input" class="form-input has-prefix" min="500" max="500000" step="250" value="${state.monthlyIncome}" />
+                <input type="number" id="bud-income-input" class="form-input has-prefix" min="1000" max="5000000" step="5000" value="${state.monthlyIncome}" />
               </div>
               <div class="slider-container">
-                <input type="range" id="bud-income-slider" class="range-slider" min="1000" max="30000" step="250" value="${Math.min(state.monthlyIncome, 30000)}" />
+                <input type="range" id="bud-income-slider" class="range-slider" min="20000" max="1000000" step="5000" value="${Math.min(state.monthlyIncome, 1000000)}" />
+              </div>
+              <div class="slider-limits">
+                <span>₹20k / mo</span>
+                <span>₹200k / mo (Target)</span>
+                <span>₹10 Lakh / mo</span>
               </div>
             </div>
 
             <!-- Needs Slider -->
             <div class="form-group">
               <div class="label-row">
-                <label class="form-label" for="bud-needs-input">Needs Ratio (Rent, Food, Utilities, Minimum Debt)</label>
-                <span class="form-hint">${state.needsPct}%</span>
+                <label class="form-label" for="bud-needs-input">Needs Ratio (Rent, Groceries, Utilities, EMIs)</label>
+                <span class="form-hint">${state.needsPct}% (${formatCurrency(res.needsAmount)})</span>
               </div>
               <div class="input-wrapper">
                 <input type="number" id="bud-needs-input" class="form-input has-suffix" min="10" max="80" step="1" value="${state.needsPct}" />
@@ -88,8 +97,8 @@ export function initBudgetPlanner(container) {
             <!-- Wants Slider -->
             <div class="form-group">
               <div class="label-row">
-                <label class="form-label" for="bud-wants-input">Wants Ratio (Dining, Leisure, Travel, Subscriptions)</label>
-                <span class="form-hint">${state.wantsPct}%</span>
+                <label class="form-label" for="bud-wants-input">Wants Ratio (Dining, Leisure, Shopping, Subscriptions)</label>
+                <span class="form-hint">${state.wantsPct}% (${formatCurrency(res.wantsAmount)})</span>
               </div>
               <div class="input-wrapper">
                 <input type="number" id="bud-wants-input" class="form-input has-suffix" min="5" max="60" step="1" value="${state.wantsPct}" />
@@ -103,8 +112,8 @@ export function initBudgetPlanner(container) {
             <!-- Savings Slider -->
             <div class="form-group">
               <div class="label-row">
-                <label class="form-label" for="bud-savings-input">Savings Ratio (SIPs, Emergency, Extra Debt Payoff)</label>
-                <span class="form-hint">${state.savingsPct}%</span>
+                <label class="form-label" for="bud-savings-input">Savings Ratio (Mutual Funds, SIPs, Emergency Reserve)</label>
+                <span class="form-hint">${state.savingsPct}% (${formatCurrency(res.savingsAmount)})</span>
               </div>
               <div class="input-wrapper">
                 <input type="number" id="bud-savings-input" class="form-input has-suffix" min="5" max="60" step="1" value="${state.savingsPct}" />
@@ -116,30 +125,33 @@ export function initBudgetPlanner(container) {
             </div>
           </div>
 
-          <!-- Output Allocation Panel -->
+          <!-- Section 2: Output Allocation Panel -->
           <div class="panel">
             <div class="panel-header">
-              <span class="panel-title">Target Budget Breakdown</span>
-              <span class="panel-subtitle">Monthly allocations</span>
+              <span class="panel-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+                Target Budget Breakdown
+              </span>
+              <span class="panel-subtitle">MONTHLY TARGETS</span>
             </div>
 
             <div class="summary-grid">
               <div class="summary-card highlight">
-                <span class="metric-label">Needs Target (${state.needsPct}%)</span>
+                <span class="metric-label">Essential Needs (${state.needsPct}%)</span>
                 <span class="metric-value">${formatCurrency(res.needsAmount)}</span>
-                <span class="metric-subtext">Essential living costs</span>
+                <span class="metric-subtext">Core living expenses</span>
               </div>
 
               <div class="summary-card">
-                <span class="metric-label">Wants Target (${state.wantsPct}%)</span>
+                <span class="metric-label">Discretionary Wants (${state.wantsPct}%)</span>
                 <span class="metric-value">${formatCurrency(res.wantsAmount)}</span>
-                <span class="metric-subtext">Lifestyle & recreation</span>
+                <span class="metric-subtext">Lifestyle & recreational buffer</span>
               </div>
 
               <div class="summary-card">
-                <span class="metric-label">Savings Target (${state.savingsPct}%)</span>
+                <span class="metric-label">Wealth Building (${state.savingsPct}%)</span>
                 <span class="metric-value">${formatCurrency(res.savingsAmount)}</span>
-                <span class="metric-subtext">Investments & wealth</span>
+                <span class="metric-subtext">Monthly SIPs & investments</span>
               </div>
             </div>
 

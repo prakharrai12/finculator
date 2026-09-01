@@ -1,6 +1,7 @@
 /**
  * Finculator Tax & Business Suite
  * Sub-tabs: Income Tax, GST, Take-Home Salary, Profit Margin, Break-Even Analysis
+ * Calibrated for professional salary baseline (e.g. ₹200k/month = ₹24 Lakhs/year)
  */
 
 import {
@@ -19,16 +20,16 @@ export function initTaxBusinessSuite(container) {
 
   const defaultState = {
     activeTab: 'tax', // 'tax' | 'gst' | 'salary' | 'margin' | 'breakeven'
-    // Tax
-    taxGross: 1200000,
+    // Tax (Default ₹200k/month = ₹24,00,000 / year)
+    taxGross: 2400000,
     taxDeductions: 150000,
     taxRegime: 'new',
     // GST
-    gstAmount: 10000,
+    gstAmount: 25000,
     gstRate: 18,
     gstMode: 'add',
-    // Salary
-    salaryCTC: 1500000,
+    // Salary (Default ₹200k/month = ₹24,00,000 / year CTC)
+    salaryCTC: 2400000,
     salaryBasicPct: 40,
     salaryHraPct: 20,
     // Margin
@@ -84,42 +85,48 @@ export function initTaxBusinessSuite(container) {
         <div class="calculator-header">
           <div class="calculator-title-group">
             <h1 class="calculator-title">Tax & Business Suite</h1>
-            <p class="calculator-desc">Analyze direct income taxes, GST compliance, net in-hand salaries, business gross profit margins, and enterprise break-even unit thresholds.</p>
+            <p class="calculator-desc">Analyze direct income taxes, GST compliance, net in-hand take-home salaries (calibrated for ₹200k/month baseline), and business unit margins.</p>
           </div>
           <div class="calculator-actions">
             <button class="btn btn-secondary btn-sm" id="btn-reset-tb">Reset Defaults</button>
           </div>
         </div>
 
-        <!-- Sub Tabs Bar -->
+        <!-- Distinctly Bordered Sub-Tabs Bar -->
         <div class="tab-bar" id="tb-tab-bar">
           <button class="tab-btn ${state.activeTab === 'tax' ? 'active' : ''}" data-tab="tax">Income Tax (Old vs New)</button>
+          <button class="tab-btn ${state.activeTab === 'salary' ? 'active' : ''}" data-tab="salary">Take-Home Salary (₹200k / mo)</button>
           <button class="tab-btn ${state.activeTab === 'gst' ? 'active' : ''}" data-tab="gst">GST Calculator</button>
-          <button class="tab-btn ${state.activeTab === 'salary' ? 'active' : ''}" data-tab="salary">Take-Home Salary</button>
           <button class="tab-btn ${state.activeTab === 'margin' ? 'active' : ''}" data-tab="margin">Profit Margin & Markup</button>
           <button class="tab-btn ${state.activeTab === 'breakeven' ? 'active' : ''}" data-tab="breakeven">Break-Even Analysis</button>
         </div>
 
         <div class="calc-grid">
-          <!-- Inputs Panel -->
+          <!-- Section 1: Inputs Panel -->
           <div class="panel">
             <div class="panel-header">
-              <span class="panel-title">${getTabTitle(state.activeTab)} Parameters</span>
-              <span class="panel-subtitle">Taxation & cost variables</span>
+              <span class="panel-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                ${getTabTitle(state.activeTab)} Parameters
+              </span>
+              <span class="panel-subtitle">INPUT CONTROLS</span>
             </div>
             ${renderTabInputs(state.activeTab, curr)}
           </div>
 
-          <!-- Output Results Panel -->
+          <!-- Section 2: Output Results Panel -->
           <div class="panel">
             <div class="panel-header">
-              <span class="panel-title">Financial Outlay Summary</span>
-              <span class="panel-subtitle">Net payable analysis</span>
+              <span class="panel-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                Calculated Outlay Summary
+              </span>
+              <span class="panel-subtitle">FINANCIAL METRICS</span>
             </div>
 
             ${renderTabMetrics(type, res, curr)}
 
-            <!-- Donut Chart -->
+            <!-- Donut Chart & Breakdown -->
             <div id="tb-donut-box"></div>
           </div>
         </div>
@@ -156,10 +163,14 @@ export function initTaxBusinessSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="tb-tax-g-input" class="form-input has-prefix" min="10000" max="50000000" step="25000" value="${state.taxGross}" />
+            <input type="number" id="tb-tax-g-input" class="form-input has-prefix" min="100000" max="50000000" step="50000" value="${state.taxGross}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="tb-tax-g-slider" class="range-slider" min="100000" max="5000000" step="25000" value="${Math.min(state.taxGross, 5000000)}" />
+            <input type="range" id="tb-tax-g-slider" class="range-slider" min="300000" max="10000000" step="50000" value="${Math.min(state.taxGross, 10000000)}" />
+          </div>
+          <div class="slider-limits">
+            <span>₹3 Lakh</span>
+            <span>₹1 Crore</span>
           </div>
         </div>
 
@@ -179,51 +190,11 @@ export function initTaxBusinessSuite(container) {
 
         <div class="form-group">
           <div class="label-row">
-            <label class="form-label">Regime Selection</label>
+            <label class="form-label">Tax Regime Comparison Mode</label>
           </div>
           <div class="toggle-group" id="tb-tax-regime-toggle">
             <button class="toggle-option ${state.taxRegime === 'new' ? 'active' : ''}" data-regime="new">New Tax Regime</button>
             <button class="toggle-option ${state.taxRegime === 'old' ? 'active' : ''}" data-regime="old">Old Tax Regime</button>
-          </div>
-        </div>
-      `;
-    } else if (tab === 'gst') {
-      return `
-        <div class="form-group">
-          <div class="label-row">
-            <label class="form-label" for="tb-gst-a-input">Base Amount</label>
-            <span class="form-hint">${formatCurrency(state.gstAmount, undefined, false)}</span>
-          </div>
-          <div class="input-wrapper">
-            <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="tb-gst-a-input" class="form-input has-prefix" min="10" max="10000000" step="100" value="${state.gstAmount}" />
-          </div>
-          <div class="slider-container">
-            <input type="range" id="tb-gst-a-slider" class="range-slider" min="500" max="100000" step="500" value="${Math.min(state.gstAmount, 100000)}" />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <div class="label-row">
-            <label class="form-label" for="tb-gst-r-select">GST Rate Slab</label>
-          </div>
-          <select id="tb-gst-r-select" class="form-input">
-            <option value="5" ${state.gstRate === 5 ? 'selected' : ''}>5% (Essential Goods)</option>
-            <option value="12" ${state.gstRate === 12 ? 'selected' : ''}>12% (Standard Concessional)</option>
-            <option value="18" ${state.gstRate === 18 ? 'selected' : ''}>18% (Standard Rate)</option>
-            <option value="28" ${state.gstRate === 28 ? 'selected' : ''}>28% (Luxury & De-merit)</option>
-            <option value="0.25" ${state.gstRate === 0.25 ? 'selected' : ''}>0.25% (Precious Stones)</option>
-            <option value="3" ${state.gstRate === 3 ? 'selected' : ''}>3% (Gold & Silver)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <div class="label-row">
-            <label class="form-label">Calculation Mode</label>
-          </div>
-          <div class="toggle-group" id="tb-gst-mode-toggle">
-            <button class="toggle-option ${state.gstMode === 'add' ? 'active' : ''}" data-mode="add">Add GST (Exclusive)</button>
-            <button class="toggle-option ${state.gstMode === 'remove' ? 'active' : ''}" data-mode="remove">Remove GST (Inclusive)</button>
           </div>
         </div>
       `;
@@ -232,14 +203,19 @@ export function initTaxBusinessSuite(container) {
         <div class="form-group">
           <div class="label-row">
             <label class="form-label" for="tb-sal-ctc-input">Annual CTC (Cost to Company)</label>
-            <span class="form-hint">${formatCurrency(state.salaryCTC, undefined, false)} / yr</span>
+            <span class="form-hint">${formatCurrency(state.salaryCTC, undefined, false)} (${formatCurrency(state.salaryCTC / 12, undefined, false)} / mo)</span>
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
             <input type="number" id="tb-sal-ctc-input" class="form-input has-prefix" min="100000" max="50000000" step="50000" value="${state.salaryCTC}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="tb-sal-ctc-slider" class="range-slider" min="300000" max="5000000" step="50000" value="${Math.min(state.salaryCTC, 5000000)}" />
+            <input type="range" id="tb-sal-ctc-slider" class="range-slider" min="300000" max="10000000" step="50000" value="${Math.min(state.salaryCTC, 10000000)}" />
+          </div>
+          <div class="slider-limits">
+            <span>₹3 Lakh</span>
+            <span>₹24 Lakh (₹200k/mo)</span>
+            <span>₹1 Crore</span>
           </div>
         </div>
 
@@ -254,6 +230,46 @@ export function initTaxBusinessSuite(container) {
           </div>
           <div class="slider-container">
             <input type="range" id="tb-sal-b-slider" class="range-slider" min="30" max="50" step="5" value="${state.salaryBasicPct}" />
+          </div>
+        </div>
+      `;
+    } else if (tab === 'gst') {
+      return `
+        <div class="form-group">
+          <div class="label-row">
+            <label class="form-label" for="tb-gst-a-input">Invoice Base Amount</label>
+            <span class="form-hint">${formatCurrency(state.gstAmount, undefined, false)}</span>
+          </div>
+          <div class="input-wrapper">
+            <span class="input-prefix">${curr.symbol}</span>
+            <input type="number" id="tb-gst-a-input" class="form-input has-prefix" min="10" max="10000000" step="100" value="${state.gstAmount}" />
+          </div>
+          <div class="slider-container">
+            <input type="range" id="tb-gst-a-slider" class="range-slider" min="500" max="500000" step="1000" value="${Math.min(state.gstAmount, 500000)}" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <label class="form-label" for="tb-gst-r-select">GST Rate Slab</label>
+          </div>
+          <select id="tb-gst-r-select" class="form-input">
+            <option value="5" ${state.gstRate === 5 ? 'selected' : ''}>5% (Essential Goods)</option>
+            <option value="12" ${state.gstRate === 12 ? 'selected' : ''}>12% (Standard Concessional)</option>
+            <option value="18" ${state.gstRate === 18 ? 'selected' : ''}>18% (Standard Services & Goods)</option>
+            <option value="28" ${state.gstRate === 28 ? 'selected' : ''}>28% (Luxury & De-merit)</option>
+            <option value="0.25" ${state.gstRate === 0.25 ? 'selected' : ''}>0.25% (Precious Stones)</option>
+            <option value="3" ${state.gstRate === 3 ? 'selected' : ''}>3% (Gold & Silver)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <label class="form-label">Calculation Mode</label>
+          </div>
+          <div class="toggle-group" id="tb-gst-mode-toggle">
+            <button class="toggle-option ${state.gstMode === 'add' ? 'active' : ''}" data-mode="add">Add GST (Exclusive)</button>
+            <button class="toggle-option ${state.gstMode === 'remove' ? 'active' : ''}" data-mode="remove">Remove GST (Inclusive)</button>
           </div>
         </div>
       `;
@@ -336,12 +352,12 @@ export function initTaxBusinessSuite(container) {
         <div class="hero-metric-box">
           <span class="metric-label">Total Tax Liability (${state.taxRegime === 'new' ? 'New Regime' : 'Old Regime'})</span>
           <span class="metric-value">${formatCurrency(res.selectedTax)}</span>
-          <span class="metric-subtext">Effective tax rate: ${res.effectiveRate}%</span>
+          <span class="metric-subtext">Effective tax rate: ${res.effectiveRate}% on ${formatCurrency(state.taxGross)}</span>
         </div>
 
         <div class="summary-grid">
-          <div class="summary-card">
-            <span class="metric-label">Net Take-Home</span>
+          <div class="summary-card highlight">
+            <span class="metric-label">Net Take-Home Pay</span>
             <span class="metric-value">${formatCurrency(res.netTakeHome)}</span>
             <span class="metric-subtext">Annual disposable pay</span>
           </div>
@@ -355,10 +371,38 @@ export function initTaxBusinessSuite(container) {
             <span class="metric-value">${formatCurrency(res.oldRegime.totalTax)}</span>
             <span class="metric-subtext">${res.oldRegime.effectiveRate}% rate</span>
           </div>
-          <div class="summary-card highlight">
-            <span class="metric-label">Recommended</span>
-            <span class="metric-value" style="font-size: 1.15rem;">${res.recommendedRegime}</span>
+          <div class="summary-card">
+            <span class="metric-label">Recommended Regime</span>
+            <span class="metric-value" style="font-size: 1.15rem; color: var(--brand-cyan);">${res.recommendedRegime}</span>
             <span class="metric-subtext">Saves ${formatCurrency(res.savingsWithRecommended)}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    if (type === 'salary') {
+      return `
+        <div class="hero-metric-box">
+          <span class="metric-label">Monthly Net In-Hand Salary</span>
+          <span class="metric-value">${formatCurrency(res.netMonthlySalary)} / mo</span>
+          <span class="metric-subtext">Annual Net Take-Home: ${formatCurrency(res.netAnnualSalary)} (from ${formatCurrency(res.annualCTC)} CTC)</span>
+        </div>
+
+        <div class="summary-grid">
+          <div class="summary-card">
+            <span class="metric-label">Monthly Gross</span>
+            <span class="metric-value">${formatCurrency(res.monthlyGross)}</span>
+            <span class="metric-subtext">CTC / 12 months</span>
+          </div>
+          <div class="summary-card">
+            <span class="metric-label">Monthly Income Tax</span>
+            <span class="metric-value">${formatCurrency(res.taxMonthly)}</span>
+            <span class="metric-subtext">TDS withholding / mo</span>
+          </div>
+          <div class="summary-card">
+            <span class="metric-label">Monthly PF</span>
+            <span class="metric-value">${formatCurrency(res.employeePFMonthly)}</span>
+            <span class="metric-subtext">Employee provident fund</span>
           </div>
         </div>
       `;
@@ -367,7 +411,7 @@ export function initTaxBusinessSuite(container) {
     if (type === 'gst') {
       return `
         <div class="hero-metric-box">
-          <span class="metric-label">Total Gross Amount</span>
+          <span class="metric-label">Total Gross Invoice Amount</span>
           <span class="metric-value">${formatCurrency(res.totalAmount)}</span>
           <span class="metric-subtext">Net Amount (${formatCurrency(res.netAmount)}) + GST (${formatCurrency(res.gstAmount)})</span>
         </div>
@@ -376,7 +420,7 @@ export function initTaxBusinessSuite(container) {
           <div class="summary-card">
             <span class="metric-label">Total GST (${state.gstRate}%)</span>
             <span class="metric-value">${formatCurrency(res.gstAmount)}</span>
-            <span class="metric-subtext">Tax amount</span>
+            <span class="metric-subtext">Total tax levy</span>
           </div>
           <div class="summary-card">
             <span class="metric-label">CGST (Central)</span>
@@ -392,40 +436,12 @@ export function initTaxBusinessSuite(container) {
       `;
     }
 
-    if (type === 'salary') {
-      return `
-        <div class="hero-metric-box">
-          <span class="metric-label">Monthly In-Hand Salary</span>
-          <span class="metric-value">${formatCurrency(res.netMonthlySalary)} / mo</span>
-          <span class="metric-subtext">Annual Net Take-Home: ${formatCurrency(res.netAnnualSalary)}</span>
-        </div>
-
-        <div class="summary-grid">
-          <div class="summary-card">
-            <span class="metric-label">Monthly Gross</span>
-            <span class="metric-value">${formatCurrency(res.monthlyGross)}</span>
-            <span class="metric-subtext">CTC / 12</span>
-          </div>
-          <div class="summary-card">
-            <span class="metric-label">Monthly Income Tax</span>
-            <span class="metric-value">${formatCurrency(res.taxMonthly)}</span>
-            <span class="metric-subtext">TDS withholding</span>
-          </div>
-          <div class="summary-card">
-            <span class="metric-label">Monthly PF</span>
-            <span class="metric-value">${formatCurrency(res.employeePFMonthly)}</span>
-            <span class="metric-subtext">Employee provident fund</span>
-          </div>
-        </div>
-      `;
-    }
-
     if (type === 'margin') {
       return `
         <div class="hero-metric-box">
           <span class="metric-label">Gross Profit Margin</span>
           <span class="metric-value">${res.grossMarginPct}%</span>
-          <span class="metric-subtext">Markup: ${res.markupPct}% | Net Profit: ${formatCurrency(res.totalProfit)}</span>
+          <span class="metric-subtext">Markup: ${res.markupPct}% | Total Profit: ${formatCurrency(res.totalProfit)}</span>
         </div>
 
         <div class="summary-grid">

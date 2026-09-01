@@ -1,6 +1,7 @@
 /**
  * Finculator Wealth & Investment Suite (v2)
  * Sub-tabs: SIP, Lump Sum, SIP + Lump Sum Combined, Step-Up SIP, CAGR, Mutual Fund / Stock Returns
+ * Calibrated for ₹200k/month salary earner (e.g. ₹25,000 / month SIP)
  */
 
 import {
@@ -21,32 +22,32 @@ export function initInvestmentSuite(container) {
 
   const defaultState = {
     activeTab: 'sip', // 'sip' | 'lump' | 'combined' | 'stepup' | 'cagr' | 'returns'
-    // SIP
-    sipMonthly: 500,
+    // SIP (Default ₹25,000/mo)
+    sipMonthly: 25000,
     sipRate: 12,
-    sipYears: 10,
+    sipYears: 15,
     // Lump Sum
-    lumpPrincipal: 25000,
-    lumpRate: 10,
+    lumpPrincipal: 200000,
+    lumpRate: 12,
     lumpYears: 10,
     // Combined
-    combLump: 20000,
-    combMonthly: 500,
+    combLump: 200000,
+    combMonthly: 25000,
     combRate: 12,
-    combYears: 10,
+    combYears: 15,
     // Step-Up
-    stepMonthly: 500,
+    stepMonthly: 25000,
     stepUpPct: 10,
     stepRate: 12,
-    stepYears: 10,
+    stepYears: 15,
     // CAGR
-    cagrInitial: 10000,
-    cagrFinal: 35000,
-    cagrYears: 7,
+    cagrInitial: 100000,
+    cagrFinal: 350000,
+    cagrYears: 5,
     // Returns
-    retInitial: 15000,
-    retFinal: 28000,
-    retDividends: 1200,
+    retInitial: 100000,
+    retFinal: 250000,
+    retDividends: 12000,
     retYears: 4
   };
 
@@ -105,9 +106,9 @@ export function initInvestmentSuite(container) {
           </div>
         </div>
 
-        <!-- Sub Tabs Bar -->
+        <!-- Distinctly Bordered Sub-Tabs Bar -->
         <div class="tab-bar" id="invest-tab-bar">
-          <button class="tab-btn ${state.activeTab === 'sip' ? 'active' : ''}" data-tab="sip">SIP (Recurring)</button>
+          <button class="tab-btn ${state.activeTab === 'sip' ? 'active' : ''}" data-tab="sip">SIP (Recurring Plan)</button>
           <button class="tab-btn ${state.activeTab === 'lump' ? 'active' : ''}" data-tab="lump">Lump Sum</button>
           <button class="tab-btn ${state.activeTab === 'combined' ? 'active' : ''}" data-tab="combined">SIP + Lump Sum</button>
           <button class="tab-btn ${state.activeTab === 'stepup' ? 'active' : ''}" data-tab="stepup">Step-Up SIP</button>
@@ -116,20 +117,26 @@ export function initInvestmentSuite(container) {
         </div>
 
         <div class="calc-grid">
-          <!-- Inputs Panel -->
+          <!-- Section 1: Inputs Panel -->
           <div class="panel">
             <div class="panel-header">
-              <span class="panel-title">${getTabTitle(state.activeTab)} Parameters</span>
-              <span class="panel-subtitle">Market yield assumptions</span>
+              <span class="panel-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                ${getTabTitle(state.activeTab)} Parameters
+              </span>
+              <span class="panel-subtitle">MARKET YIELD ASSUMPTIONS</span>
             </div>
             ${renderTabInputs(state.activeTab, curr)}
           </div>
 
-          <!-- Output Results Panel -->
+          <!-- Section 2: Output Results Panel -->
           <div class="panel">
             <div class="panel-header">
-              <span class="panel-title">Accumulation Summary</span>
-              <span class="panel-subtitle">Compounded performance</span>
+              <span class="panel-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                Accumulation Summary
+              </span>
+              <span class="panel-subtitle">COMPOUNDED PERFORMANCE</span>
             </div>
 
             ${renderTabMetrics(type, res, curr)}
@@ -200,21 +207,26 @@ export function initInvestmentSuite(container) {
       return `
         <div class="form-group">
           <div class="label-row">
-            <label class="form-label" for="sip-m-input">Monthly Investment</label>
+            <label class="form-label" for="sip-m-input">Monthly SIP Contribution</label>
             <span class="form-hint">${formatCurrency(state.sipMonthly, undefined, false)} / mo</span>
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="sip-m-input" class="form-input has-prefix" min="10" max="500000" step="50" value="${state.sipMonthly}" />
+            <input type="number" id="sip-m-input" class="form-input has-prefix" min="500" max="1000000" step="500" value="${state.sipMonthly}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="sip-m-slider" class="range-slider" min="100" max="10000" step="50" value="${Math.min(state.sipMonthly, 10000)}" />
+            <input type="range" id="sip-m-slider" class="range-slider" min="1000" max="100000" step="500" value="${Math.min(state.sipMonthly, 100000)}" />
+          </div>
+          <div class="slider-limits">
+            <span>₹1,000 / mo</span>
+            <span>₹25,000 / mo (Target)</span>
+            <span>₹100,000 / mo</span>
           </div>
         </div>
 
         <div class="form-group">
           <div class="label-row">
-            <label class="form-label" for="sip-r-input">Expected Annual Return</label>
+            <label class="form-label" for="sip-r-input">Expected Annual Equity Return</label>
             <span class="form-hint">${state.sipRate}%</span>
           </div>
           <div class="input-wrapper">
@@ -222,14 +234,19 @@ export function initInvestmentSuite(container) {
             <span class="input-suffix">%</span>
           </div>
           <div class="slider-container">
-            <input type="range" id="sip-r-slider" class="range-slider" min="1" max="25" step="0.1" value="${state.sipRate}" />
+            <input type="range" id="sip-r-slider" class="range-slider" min="6" max="20" step="0.5" value="${state.sipRate}" />
+          </div>
+          <div class="slider-limits">
+            <span>6% (Conservative)</span>
+            <span>12% (Nifty 50)</span>
+            <span>20% (Aggressive)</span>
           </div>
         </div>
 
         <div class="form-group">
           <div class="label-row">
             <label class="form-label" for="sip-y-input">Investment Horizon</label>
-            <span class="form-hint">${state.sipYears} Years</span>
+            <span class="form-hint">${state.sipYears} Years (${state.sipYears * 12} Installments)</span>
           </div>
           <div class="input-wrapper">
             <input type="number" id="sip-y-input" class="form-input has-suffix" min="1" max="40" step="1" value="${state.sipYears}" />
@@ -244,15 +261,20 @@ export function initInvestmentSuite(container) {
       return `
         <div class="form-group">
           <div class="label-row">
-            <label class="form-label" for="lump-p-input">Lump Sum Amount</label>
+            <label class="form-label" for="lump-p-input">Lump Sum Deployment Amount</label>
             <span class="form-hint">${formatCurrency(state.lumpPrincipal, undefined, false)}</span>
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="lump-p-input" class="form-input has-prefix" min="100" max="5000000" step="500" value="${state.lumpPrincipal}" />
+            <input type="number" id="lump-p-input" class="form-input has-prefix" min="1000" max="10000000" step="5000" value="${state.lumpPrincipal}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="lump-p-slider" class="range-slider" min="1000" max="200000" step="1000" value="${Math.min(state.lumpPrincipal, 200000)}" />
+            <input type="range" id="lump-p-slider" class="range-slider" min="10000" max="2000000" step="10000" value="${Math.min(state.lumpPrincipal, 2000000)}" />
+          </div>
+          <div class="slider-limits">
+            <span>₹10,000</span>
+            <span>₹2,00,000</span>
+            <span>₹20 Lakhs</span>
           </div>
         </div>
 
@@ -266,7 +288,7 @@ export function initInvestmentSuite(container) {
             <span class="input-suffix">%</span>
           </div>
           <div class="slider-container">
-            <input type="range" id="lump-r-slider" class="range-slider" min="1" max="25" step="0.1" value="${state.lumpRate}" />
+            <input type="range" id="lump-r-slider" class="range-slider" min="5" max="22" step="0.5" value="${state.lumpRate}" />
           </div>
         </div>
 
@@ -288,29 +310,29 @@ export function initInvestmentSuite(container) {
       return `
         <div class="form-group">
           <div class="label-row">
-            <label class="form-label" for="comb-l-input">Initial Lump Sum</label>
+            <label class="form-label" for="comb-l-input">Initial Lump Sum Capital</label>
             <span class="form-hint">${formatCurrency(state.combLump, undefined, false)}</span>
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="comb-l-input" class="form-input has-prefix" min="0" max="2000000" step="1000" value="${state.combLump}" />
+            <input type="number" id="comb-l-input" class="form-input has-prefix" min="0" max="5000000" step="10000" value="${state.combLump}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="comb-l-slider" class="range-slider" min="0" max="100000" step="1000" value="${Math.min(state.combLump, 100000)}" />
+            <input type="range" id="comb-l-slider" class="range-slider" min="0" max="1000000" step="10000" value="${Math.min(state.combLump, 1000000)}" />
           </div>
         </div>
 
         <div class="form-group">
           <div class="label-row">
-            <label class="form-label" for="comb-m-input">Monthly Recurring Deposit</label>
+            <label class="form-label" for="comb-m-input">Monthly Recurring Contribution</label>
             <span class="form-hint">${formatCurrency(state.combMonthly, undefined, false)} / mo</span>
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="comb-m-input" class="form-input has-prefix" min="10" max="100000" step="50" value="${state.combMonthly}" />
+            <input type="number" id="comb-m-input" class="form-input has-prefix" min="500" max="500000" step="500" value="${state.combMonthly}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="comb-m-slider" class="range-slider" min="100" max="5000" step="50" value="${Math.min(state.combMonthly, 5000)}" />
+            <input type="range" id="comb-m-slider" class="range-slider" min="500" max="50000" step="500" value="${Math.min(state.combMonthly, 50000)}" />
           </div>
         </div>
 
@@ -345,24 +367,24 @@ export function initInvestmentSuite(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="step-m-input" class="form-input has-prefix" min="10" max="200000" step="50" value="${state.stepMonthly}" />
+            <input type="number" id="step-m-input" class="form-input has-prefix" min="500" max="500000" step="500" value="${state.stepMonthly}" />
           </div>
           <div class="slider-container">
-            <input type="range" id="step-m-slider" class="range-slider" min="100" max="5000" step="50" value="${Math.min(state.stepMonthly, 5000)}" />
+            <input type="range" id="step-m-slider" class="range-slider" min="1000" max="50000" step="500" value="${Math.min(state.stepMonthly, 50000)}" />
           </div>
         </div>
 
         <div class="form-group">
           <div class="label-row">
             <label class="form-label" for="step-u-input">Annual Step-Up Percentage</label>
-            <span class="form-hint">+${state.stepUpPct}% each year</span>
+            <span class="form-hint">+${state.stepUpPct}% annual salary hike match</span>
           </div>
           <div class="input-wrapper">
             <input type="number" id="step-u-input" class="form-input has-suffix" min="1" max="50" step="1" value="${state.stepUpPct}" />
             <span class="input-suffix">%</span>
           </div>
           <div class="slider-container">
-            <input type="range" id="step-u-slider" class="range-slider" min="5" max="30" step="1" value="${state.stepUpPct}" />
+            <input type="range" id="step-u-slider" class="range-slider" min="5" max="25" step="1" value="${state.stepUpPct}" />
           </div>
         </div>
 
@@ -392,29 +414,29 @@ export function initInvestmentSuite(container) {
       return `
         <div class="form-group">
           <div class="label-row">
-            <label class="form-label" for="cagr-i-input">Initial Investment Value</label>
+            <label class="form-label" for="cagr-i-input">Initial Investment Capital</label>
             <span class="form-hint">${formatCurrency(state.cagrInitial, undefined, false)}</span>
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="cagr-i-input" class="form-input has-prefix" min="10" max="50000000" step="500" value="${state.cagrInitial}" />
+            <input type="number" id="cagr-i-input" class="form-input has-prefix" min="100" max="50000000" step="5000" value="${state.cagrInitial}" />
           </div>
         </div>
 
         <div class="form-group">
           <div class="label-row">
-            <label class="form-label" for="cagr-f-input">Final Realized / Current Value</label>
+            <label class="form-label" for="cagr-f-input">Current Realized Portfolio Value</label>
             <span class="form-hint">${formatCurrency(state.cagrFinal, undefined, false)}</span>
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="cagr-f-input" class="form-input has-prefix" min="10" max="100000000" step="500" value="${state.cagrFinal}" />
+            <input type="number" id="cagr-f-input" class="form-input has-prefix" min="100" max="100000000" step="5000" value="${state.cagrFinal}" />
           </div>
         </div>
 
         <div class="form-group">
           <div class="label-row">
-            <label class="form-label" for="cagr-y-input">Duration (Years)</label>
+            <label class="form-label" for="cagr-y-input">Holding Duration (Years)</label>
             <span class="form-hint">${state.cagrYears} Years</span>
           </div>
           <div class="input-wrapper">
@@ -428,34 +450,34 @@ export function initInvestmentSuite(container) {
       return `
         <div class="form-group">
           <div class="label-row">
-            <label class="form-label" for="ret-i-input">Cost Basis / Initial Purchase</label>
+            <label class="form-label" for="ret-i-input">Initial Purchase Cost Basis</label>
             <span class="form-hint">${formatCurrency(state.retInitial, undefined, false)}</span>
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="ret-i-input" class="form-input has-prefix" min="10" max="50000000" step="500" value="${state.retInitial}" />
+            <input type="number" id="ret-i-input" class="form-input has-prefix" min="100" max="50000000" step="5000" value="${state.retInitial}" />
           </div>
         </div>
 
         <div class="form-group">
           <div class="label-row">
-            <label class="form-label" for="ret-f-input">Current Portfolio / Selling Value</label>
+            <label class="form-label" for="ret-f-input">Current Valuation / Sale Proceeds</label>
             <span class="form-hint">${formatCurrency(state.retFinal, undefined, false)}</span>
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="ret-f-input" class="form-input has-prefix" min="0" max="100000000" step="500" value="${state.retFinal}" />
+            <input type="number" id="ret-f-input" class="form-input has-prefix" min="0" max="100000000" step="5000" value="${state.retFinal}" />
           </div>
         </div>
 
         <div class="form-group">
           <div class="label-row">
-            <label class="form-label" for="ret-d-input">Dividends / Income Received</label>
+            <label class="form-label" for="ret-d-input">Dividends & Payouts Received</label>
             <span class="form-hint">+${formatCurrency(state.retDividends, undefined, false)}</span>
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="ret-d-input" class="form-input has-prefix" min="0" max="5000000" step="100" value="${state.retDividends}" />
+            <input type="number" id="ret-d-input" class="form-input has-prefix" min="0" max="5000000" step="500" value="${state.retDividends}" />
           </div>
         </div>
 
@@ -483,8 +505,8 @@ export function initInvestmentSuite(container) {
         </div>
 
         <div class="summary-grid">
-          <div class="summary-card">
-            <span class="metric-label">Absolute Wealth Gain</span>
+          <div class="summary-card highlight">
+            <span class="metric-label">Absolute Gain</span>
             <span class="metric-value">${formatCurrency(res.absoluteGain)}</span>
             <span class="metric-subtext">Net nominal profit</span>
           </div>
@@ -511,7 +533,7 @@ export function initInvestmentSuite(container) {
         </div>
 
         <div class="summary-grid">
-          <div class="summary-card">
+          <div class="summary-card highlight">
             <span class="metric-label">Total Net Profit</span>
             <span class="metric-value">${formatCurrency(res.netProfit)}</span>
             <span class="metric-subtext">Capital gain + ${formatCurrency(res.dividends)} dividends</span>
@@ -543,7 +565,7 @@ export function initInvestmentSuite(container) {
       </div>
 
       <div class="summary-grid">
-        <div class="summary-card">
+        <div class="summary-card highlight">
           <span class="metric-label">Capital Invested</span>
           <span class="metric-value">${formatCurrency(inv)}</span>
           <span class="metric-subtext">Total deposits funded</span>
@@ -568,7 +590,10 @@ export function initInvestmentSuite(container) {
     return `
       <div class="panel" style="margin-top: 1.5rem;">
         <div class="panel-header">
-          <span class="panel-title">Growth Trajectory & Milestone Schedule</span>
+          <span class="panel-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+            Growth Trajectory & Milestone Schedule
+          </span>
           <button class="btn btn-secondary btn-sm" id="btn-export-inv-csv">Export CSV</button>
         </div>
         <div id="invest-growth-chart-box"></div>
