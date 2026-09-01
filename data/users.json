@@ -14,5 +14,13 @@
     "passwordHash": "c8067a4beff2947094566efb668d19b2b819eb95e8e04fabbe9a797a366b5758",
     "createdAt": "2026-09-01 09:20:32 UTC",
     "lastLogin": "2026-09-01 09:20:32 UTC"
+  },
+  {
+    "id": "12d4314f-f84d-4df2-8460-83ab34a8d520",
+    "name": "Prakhar Rai",
+    "email": "prakhar.rai@fintech.io",
+    "passwordHash": "cb664f6a8184d5a15a8090f262b3da7fb13230f02738d0c1976c020f44940a60",
+    "createdAt": "2026-09-01 09:29:15 UTC",
+    "lastLogin": "2026-09-01 09:29:15 UTC"
   }
 ]
