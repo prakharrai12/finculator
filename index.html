@@ -11,13 +11,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="css/main.css" />
-  <link rel="stylesheet" href="css/components.css" />
-  <link rel="stylesheet" href="css/calculators.css" />
-  <link rel="stylesheet" href="css/charts.css" />
-  <link rel="stylesheet" href="css/chatbot.css" />
-  <link rel="stylesheet" href="css/print.css" />
+  <!-- Stylesheets with cache-busting -->
+  <link rel="stylesheet" href="css/main.css?v=3.2" />
+  <link rel="stylesheet" href="css/components.css?v=3.2" />
+  <link rel="stylesheet" href="css/calculators.css?v=3.2" />
+  <link rel="stylesheet" href="css/charts.css?v=3.2" />
+  <link rel="stylesheet" href="css/chatbot.css?v=3.2" />
+  <link rel="stylesheet" href="css/print.css?v=3.2" />
 </head>
 <body>
   <div class="app-container">
@@ -242,7 +242,7 @@
               <div class="footer-brand-col">
                 <div class="brand-mark" style="color: #FFFFFF;">
                   <div class="brand-logo-wrap">
-                    <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M 48 10 A 38 38 0 1 0 86 48" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" />
                       <rect x="34" y="52" width="7.5" height="20" rx="3.75" fill="#2563EB" />
                       <rect x="46" y="40" width="7.5" height="32" rx="3.75" fill="#3B82F6" />
@@ -252,35 +252,32 @@
                     </svg>
                   </div>
                   <div class="brand-info">
-                    <span class="brand-title" style="color: #FFFFFF;">FINCULATOR</span>
-                    <span class="brand-tagline" style="color: var(--text-faint);">Smart Decisions. Stronger Futures.</span>
+                    <span class="brand-title" style="color: #FFFFFF; font-size: 1.05rem;">FINCULATOR</span>
+                    <span class="brand-tagline" style="color: #94A3B8; font-size: 0.65rem;">Smart Decisions. Stronger Futures.</span>
                   </div>
                 </div>
 
                 <p class="footer-brand-desc">
-                  Institutional financial computation suite engineered by Prakhar Rai. Calculate, compare, and optimize loans, investments, and taxes with mathematical precision.
+                  Institutional financial computation suite engineered by Prakhar Rai. Calculate, compare, and optimize loans, investments, and taxes.
                 </p>
 
-                <!-- Interactive Developer Contact Card -->
-                <div class="footer-contact-box">
-                  <span class="footer-contact-title">Direct Developer Contact</span>
-                  <div class="footer-contact-row">
-                    <!-- GitHub Profile -->
-                    <a href="https://github.com/prakharrai12" target="_blank" rel="noopener noreferrer" class="footer-contact-pill" id="footer-github-link">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-                      github.com/prakharrai12
-                    </a>
+                <!-- Developer Contact Row -->
+                <div class="footer-contact-row">
+                  <!-- GitHub Link -->
+                  <a href="https://github.com/prakharrai12" target="_blank" rel="noopener noreferrer" class="footer-contact-btn" id="footer-github-link" title="Visit Prakhar Rai on GitHub">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                    <span>prakharrai12</span>
+                  </a>
 
-                    <!-- Interactive Email Copy Pill -->
-                    <button type="button" class="footer-contact-pill" id="footer-copy-email-btn" data-email="prakharrai12@gmail.com" title="Click to copy email">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                      <span id="footer-email-label">prakharrai12@gmail.com</span>
-                    </button>
-                  </div>
+                  <!-- Email Copy Button -->
+                  <button type="button" class="footer-contact-btn" id="footer-copy-email-btn" data-email="prakharrai12@gmail.com" title="Click to copy email">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <span id="footer-email-label">prakharrai12@gmail.com</span>
+                  </button>
                 </div>
               </div>
 
-              <!-- Col 2: Loans & Mortgages -->
+              <!-- Col 2: Top Loan Tools -->
               <div>
                 <div class="footer-col-title">Loans & Mortgages</div>
                 <ul class="footer-links">
@@ -292,40 +289,29 @@
                 </ul>
               </div>
 
-              <!-- Col 3: Wealth & Investing -->
+              <!-- Col 3: Wealth & Taxes -->
               <div>
-                <div class="footer-col-title">Wealth & Investing</div>
+                <div class="footer-col-title">Wealth & Taxes</div>
                 <ul class="footer-links">
                   <li><a href="#/invest-sip">SIP Calculator</a></li>
-                  <li><a href="#/invest-lump">Lump Sum Compounding</a></li>
                   <li><a href="#/invest-stepup">Step-Up SIP</a></li>
-                  <li><a href="#/invest-cagr">CAGR Calculator</a></li>
                   <li><a href="#/savings-ppf">PPF (Tax-Free)</a></li>
-                </ul>
-              </div>
-
-              <!-- Col 4: Taxes & Planning -->
-              <div>
-                <div class="footer-col-title">Tax & Planning</div>
-                <ul class="footer-links">
                   <li><a href="#/tax-income">Income Tax (Old vs New)</a></li>
                   <li><a href="#/tax-salary">Take-Home Salary (₹200k)</a></li>
-                  <li><a href="#/fire">Retirement & FIRE Corpus</a></li>
-                  <li><a href="#/budget">50/30/20 Budget Rule</a></li>
-                  <li><a href="#/buy-vs-rent">Buy vs Rent Trajectory</a></li>
+                  <li><a href="#/fire">Retirement & FIRE</a></li>
                 </ul>
               </div>
 
-              <!-- Col 5: Stay Updated Newsletter -->
+              <!-- Col 4: Stay Updated Newsletter -->
               <div>
                 <div class="footer-col-title">Stay Updated</div>
-                <p style="font-size: 0.82rem; color: var(--text-faint); margin-bottom: 0.65rem;">
-                  Get institutional insights on finance, interest rates, and wealth strategies.
+                <p style="font-size: 0.8rem; color: #94A3B8; margin-bottom: 0.5rem;">
+                  Get insights on interest rates, tax laws, and wealth strategies.
                 </p>
                 <form class="newsletter-box" id="footer-newsletter-form">
                   <input type="email" class="newsletter-input" id="newsletter-email-input" placeholder="Enter your email" required />
                   <button type="submit" class="newsletter-btn" aria-label="Subscribe">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                   </button>
                 </form>
               </div>
@@ -333,7 +319,7 @@
 
             <!-- Quick Suite Jump Navigation Bar -->
             <div class="footer-quick-suites">
-              <span style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; color: var(--brand-cyan); letter-spacing: 0.08em; margin-right: 0.5rem;">Quick Jumps:</span>
+              <span class="footer-quick-label">Quick Jumps:</span>
               <a href="#/emi" class="footer-suite-chip">💳 Loans Suite</a>
               <a href="#/savings-compound" class="footer-suite-chip">🏦 Savings & Deposits</a>
               <a href="#/invest-sip" class="footer-suite-chip">📈 Wealth & SIPs</a>
@@ -344,10 +330,10 @@
 
             <!-- Footer Bottom Legal & Back to Top -->
             <div class="footer-bottom">
-              <span>© 2026 Finculator. Architected by <a href="https://github.com/prakharrai12" target="_blank" rel="noopener noreferrer" style="color: #FFFFFF; text-decoration: underline;">Prakhar Rai</a>. All rights reserved.</span>
+              <span>© 2026 Finculator. Architected by <a href="https://github.com/prakharrai12" target="_blank" rel="noopener noreferrer" style="color: #FFFFFF; font-weight: 600;">Prakhar Rai</a>.</span>
               <div class="footer-legal-links">
                 <button type="button" class="back-to-top-btn" id="footer-back-to-top">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
                   Back to Top
                 </button>
                 <a href="#/emi">Privacy Policy</a>
@@ -364,7 +350,7 @@
     <div class="toast-notification" id="app-toast">Action Completed</div>
   </div>
 
-  <!-- Scripts -->
-  <script type="module" src="js/app.js"></script>
+  <!-- Scripts with cache-busting -->
+  <script type="module" src="js/app.js?v=3.2"></script>
 </body>
 </html>
