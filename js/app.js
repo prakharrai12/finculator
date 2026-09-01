@@ -29,11 +29,12 @@ import { initNetWorthCalculator } from './calculators/netWorthCalculator.js';
 import { initBudgetPlanner } from './calculators/budgetPlanner.js';
 import { initBuyVsRentCalculator } from './calculators/buyVsRentCalculator.js';
 
-// AI Copilot, Portfolio Builder, Auth & Hero Section
+// AI Copilot, Portfolio Builder, Auth, Hero Section & Landing Gate
 import { FinBot } from './components/chatbot.js';
 import { PortfolioModal } from './components/portfolioModal.js';
 import { AuthModal } from './components/authModal.js';
 import { renderHeroSection } from './components/heroSection.js';
+import { HeroLandingGate } from './components/heroLandingGate.js';
 
 class FinculatorApp {
   constructor() {
@@ -49,6 +50,7 @@ class FinculatorApp {
 
     this.currentRoute = 'emi';
     this.authModal = new AuthModal(this);
+    this.landingGate = new HeroLandingGate(this);
     this.finbot = new FinBot(this);
     this.portfolio = new PortfolioModal(this);
 

@@ -1,0 +1,389 @@
+/**
+ * Finculator Fullscreen Hero Landing Gate Styles
+ * Clean white-dominant aesthetic strictly following the user's wireframe schematic:
+ * Top Navigation -> Left Column with Upper Air & Lower Title Card (Two Premium Buttons) -> Right Column with Large Image.
+ */
+
+.landing-gate-overlay {
+  position: fixed;
+  inset: 0;
+  background: #F8FAFC;
+  background: radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+              radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.06) 0%, transparent 50%),
+              #F8FAFC;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+
+.landing-gate-overlay.unlocked {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: scale(0.99) translateY(-10px);
+}
+
+/* 1. Top Navigation Bar (matching "Navigation" in schematic) */
+.landing-nav-bar {
+  width: 100%;
+  padding: 1.25rem 3rem;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.landing-brand-mark {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+}
+
+.landing-brand-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #0F172A;
+}
+
+.landing-brand-tagline {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #64748B;
+  display: block;
+}
+
+.landing-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.landing-security-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  padding: 0.4rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.landing-security-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 6px #10B981;
+}
+
+/* 2. Main Hero Split Body Layout */
+.landing-hero-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 3rem;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.95fr;
+  gap: 3.5rem;
+  align-items: stretch;
+  min-height: 560px;
+  width: 100%;
+}
+
+/* Left Column: High vertical spacing, Title Card at bottom */
+.landing-left-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Anchors the Title box in the lower portion */
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.landing-upper-space {
+  margin-bottom: auto;
+  padding-top: 1rem;
+}
+
+.landing-eyebrow-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  padding: 0.45rem 1rem;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #2563EB;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* Lower Title Card (matching blue "Title" box in schematic) */
+.landing-title-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 45px -12px rgba(15, 23, 42, 0.09), 0 0 0 1px rgba(15, 23, 42, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-title-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(180deg, #2563EB 0%, #06B6D4 100%);
+  border-radius: 20px 0 0 20px;
+}
+
+.landing-main-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #0F172A;
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+  margin: 0 0 1rem 0;
+}
+
+.landing-title-gradient {
+  background: linear-gradient(135deg, #2563EB 0%, #0284C7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.landing-description {
+  font-size: 1.05rem;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0 0 2rem 0;
+}
+
+/* Two Premium Buttons */
+.landing-btn-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+/* Button 1: Login — Existing User */
+.landing-btn-primary {
+  background: #0F172A;
+  color: #FFFFFF;
+  border: 1px solid #0F172A;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+}
+
+.landing-btn-primary:hover {
+  background: #1E293B;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.25);
+}
+
+.landing-btn-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.landing-btn-sub {
+  font-size: 0.72rem;
+  color: #94A3B8;
+  font-weight: 500;
+}
+
+/* Button 2: Sign In / Create Account — New User */
+.landing-btn-secondary {
+  background: #FFFFFF;
+  color: #2563EB;
+  border: 2px solid #2563EB;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.08);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+}
+
+.landing-btn-secondary:hover {
+  background: #EFF6FF;
+  border-color: #1D4ED8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.16);
+}
+
+.landing-btn-secondary .landing-btn-sub {
+  color: #64748B;
+}
+
+/* Right Column: Large Image Card (matching pink "Image" in schematic) */
+.landing-right-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-image-card {
+  width: 100%;
+  height: 100%;
+  min-height: 480px;
+  background: #0D1526;
+  border-radius: 24px;
+  border: 1px solid #CBD5E1;
+  overflow: hidden;
+  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.2), 0 0 0 1px rgba(15, 23, 42, 0.04);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-visual-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  display: block;
+}
+
+.landing-image-card:hover .landing-visual-img {
+  transform: scale(1.03);
+}
+
+/* Floating Badges on Image */
+.landing-floating-badge {
+  position: absolute;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 0.75rem 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.badge-top-left {
+  top: 24px;
+  left: 24px;
+}
+
+.badge-bottom-right {
+  bottom: 24px;
+  right: 24px;
+}
+
+.badge-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2563EB, #06B6D4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+}
+
+.badge-text-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.badge-text-sub {
+  font-size: 0.7rem;
+  color: #10B981;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .landing-nav-bar {
+    padding: 1rem 1.5rem;
+  }
+  
+  .landing-hero-body {
+    padding: 1.5rem;
+  }
+
+  .landing-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .landing-main-title {
+    font-size: 2rem;
+  }
+
+  .landing-image-card {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 640px) {
+  .landing-title-card {
+    padding: 1.5rem;
+  }
+
+  .landing-main-title {
+    font-size: 1.65rem;
+  }
+
+  .landing-btn-group {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+}
