@@ -124,7 +124,9 @@ export function initTaxBusinessSuite(container) {
               <span class="panel-subtitle">FINANCIAL METRICS</span>
             </div>
 
-            ${renderTabMetrics(type, res, curr)}
+            <div id="tb-metrics-container">
+              ${renderTabMetrics(type, res, curr)}
+            </div>
 
             <!-- Donut Chart & Breakdown -->
             <div id="tb-donut-box"></div>
@@ -133,13 +135,21 @@ export function initTaxBusinessSuite(container) {
       </div>
     `;
 
-    // Render Donut Chart
+    updateOutputs();
+    attachEvents();
+  }
+
+  function updateOutputs() {
+    const { type, res } = calculateActiveTab();
+    const curr = getGlobalCurrency();
+
+    const metricsBox = container.querySelector('#tb-metrics-container');
+    if (metricsBox) metricsBox.innerHTML = renderTabMetrics(type, res, curr);
+
     const donutBox = container.querySelector('#tb-donut-box');
     if (donutBox) {
       renderDonut(type, res, donutBox);
     }
-
-    attachEvents();
   }
 
   function getTabTitle(tab) {
@@ -553,6 +563,10 @@ export function initTaxBusinessSuite(container) {
   }
 
   function attachEvents() {
+    container.querySelectorAll('.form-input').forEach((input) => {
+      input.addEventListener('focus', () => input.select());
+    });
+
     const tabBtns = container.querySelectorAll('.tab-btn');
     tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -584,7 +598,7 @@ export function initTaxBusinessSuite(container) {
     } else if (state.activeTab === 'gst') {
       bindInput('tb-gst-a-input', 'tb-gst-a-slider', (v) => { state.gstAmount = v; });
       const rSel = container.querySelector('#tb-gst-r-select');
-      if (rSel) rSel.addEventListener('change', (e) => { state.gstRate = Number(e.target.value); render(); });
+      if (rSel) rSel.addEventListener('change', (e) => { state.gstRate = Number(e.target.value); updateOutputs(); });
       const mToggle = container.querySelector('#tb-gst-mode-toggle');
       if (mToggle) {
         mToggle.querySelectorAll('.toggle-option').forEach((b) => {
@@ -598,19 +612,25 @@ export function initTaxBusinessSuite(container) {
       bindInput('tb-sal-ctc-input', 'tb-sal-ctc-slider', (v) => { state.salaryCTC = v; });
       bindInput('tb-sal-b-input', 'tb-sal-b-slider', (v) => { state.salaryBasicPct = v; });
     } else if (state.activeTab === 'margin') {
-      const cInp = container.querySelector('#tb-m-c-input');
-      if (cInp) cInp.addEventListener('input', (e) => { state.marginCost = Math.max(0, Number(e.target.value) || 0); render(); });
-      const pInp = container.querySelector('#tb-m-p-input');
-      if (pInp) pInp.addEventListener('input', (e) => { state.marginPrice = Math.max(0, Number(e.target.value) || 0); render(); });
-      const uInp = container.querySelector('#tb-m-u-input');
-      if (uInp) uInp.addEventListener('input', (e) => { state.marginUnits = Math.max(1, Number(e.target.value) || 1); render(); });
+      bindSimpleInput('tb-m-c-input', (v) => { state.marginCost = v; });
+      bindSimpleInput('tb-m-p-input', (v) => { state.marginPrice = v; });
+      bindSimpleInput('tb-m-u-input', (v) => { state.marginUnits = v; });
     } else {
-      const fcInp = container.querySelector('#tb-be-fc-input');
-      if (fcInp) fcInp.addEventListener('input', (e) => { state.beFixedCosts = Math.max(0, Number(e.target.value) || 0); render(); });
-      const vcInp = container.querySelector('#tb-be-vc-input');
-      if (vcInp) vcInp.addEventListener('input', (e) => { state.beVariableCost = Math.max(0, Number(e.target.value) || 0); render(); });
-      const pInp = container.querySelector('#tb-be-p-input');
-      if (pInp) pInp.addEventListener('input', (e) => { state.bePrice = Math.max(0.01, Number(e.target.value) || 0.01); render(); });
+      bindSimpleInput('tb-be-fc-input', (v) => { state.beFixedCosts = v; });
+      bindSimpleInput('tb-be-vc-input', (v) => { state.beVariableCost = v; });
+      bindSimpleInput('tb-be-p-input', (v) => { state.bePrice = v; });
+    }
+  }
+
+  function bindSimpleInput(inputId, setter) {
+    const input = container.querySelector(`#${inputId}`);
+    if (input) {
+      input.addEventListener('input', (e) => {
+        const raw = e.target.value;
+        const val = raw === '' ? 0 : Math.max(0, Number(raw));
+        setter(val);
+        updateOutputs();
+      });
     }
   }
 
@@ -619,10 +639,11 @@ export function initTaxBusinessSuite(container) {
     const slider = container.querySelector(`#${sliderId}`);
     if (input) {
       input.addEventListener('input', (e) => {
-        const val = Math.max(0, Number(e.target.value) || 0);
+        const raw = e.target.value;
+        const val = raw === '' ? 0 : Math.max(0, Number(raw));
         setter(val);
         if (slider) slider.value = val;
-        render();
+        updateOutputs();
       });
     }
     if (slider) {
@@ -630,7 +651,7 @@ export function initTaxBusinessSuite(container) {
         const val = Number(e.target.value);
         setter(val);
         if (input) input.value = val;
-        render();
+        updateOutputs();
       });
     }
   }

@@ -55,16 +55,16 @@ export function initPrepaymentAnalyzer(container) {
         <div class="savings-banner">
           <div class="savings-info">
             <span class="savings-label">Total Interest Saved</span>
-            <span class="savings-amount">${formatCurrency(res.savings.interestSaved)}</span>
+            <span class="savings-amount" id="prepay-saved-amt">${formatCurrency(res.savings.interestSaved)}</span>
           </div>
           <div class="savings-meta">
             <div class="savings-subitem">
               <span class="sub-label">Tenure Shortened By</span>
-              <span class="sub-val">${res.savings.yearsSaved} Years (${res.savings.monthsSaved} Months)</span>
+              <span class="sub-val" id="prepay-saved-tenure">${res.savings.yearsSaved} Years (${res.savings.monthsSaved} Months)</span>
             </div>
             <div class="savings-subitem">
               <span class="sub-label">Revised Payoff Period</span>
-              <span class="sub-val">${(res.revised.months / 12).toFixed(1)} Years</span>
+              <span class="sub-val" id="prepay-revised-period">${(res.revised.months / 12).toFixed(1)} Years</span>
             </div>
           </div>
         </div>
@@ -81,11 +81,11 @@ export function initPrepaymentAnalyzer(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="prepay-amount-input">Current Loan Balance</label>
-                <span class="form-hint">${formatCurrency(state.loanAmount, undefined, false)}</span>
+                <span class="form-hint" id="prepay-amount-hint">${formatCurrency(state.loanAmount, undefined, false)}</span>
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="prepay-amount-input" class="form-input has-prefix" min="100000" max="50000000" step="50000" value="${state.loanAmount}" />
+                <input type="number" id="prepay-amount-input" class="form-input has-prefix" min="0" max="50000000" step="50000" placeholder="0" value="${state.loanAmount}" />
               </div>
               <div class="slider-container">
                 <input type="range" id="prepay-amount-slider" class="range-slider" min="500000" max="20000000" step="50000" value="${Math.min(state.loanAmount, 20000000)}" />
@@ -96,10 +96,10 @@ export function initPrepaymentAnalyzer(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="prepay-rate-input">Annual Interest Rate</label>
-                <span class="form-hint">${state.interestRate}%</span>
+                <span class="form-hint" id="prepay-rate-hint">${state.interestRate}%</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="prepay-rate-input" class="form-input has-suffix" min="0.1" max="25" step="0.05" value="${state.interestRate}" />
+                <input type="number" id="prepay-rate-input" class="form-input has-suffix" min="0" max="25" step="0.05" placeholder="0" value="${state.interestRate}" />
                 <span class="input-suffix">%</span>
               </div>
               <div class="slider-container">
@@ -111,10 +111,10 @@ export function initPrepaymentAnalyzer(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="prepay-years-input">Original Loan Tenure</label>
-                <span class="form-hint">${state.tenureYears} Years</span>
+                <span class="form-hint" id="prepay-years-hint">${state.tenureYears} Years</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="prepay-years-input" class="form-input has-suffix" min="1" max="40" step="1" value="${state.tenureYears}" />
+                <input type="number" id="prepay-years-input" class="form-input has-suffix" min="1" max="40" step="1" placeholder="1" value="${state.tenureYears}" />
                 <span class="input-suffix">Years</span>
               </div>
               <div class="slider-container">
@@ -129,11 +129,11 @@ export function initPrepaymentAnalyzer(container) {
               <div class="form-group">
                 <div class="label-row">
                   <label class="form-label" for="prepay-monthly-input">Extra Payment (Monthly)</label>
-                  <span class="form-hint">+${formatCurrency(state.extraMonthly, undefined, false)} / mo</span>
+                  <span class="form-hint" id="prepay-monthly-hint">+${formatCurrency(state.extraMonthly, undefined, false)} / mo</span>
                 </div>
                 <div class="input-wrapper">
                   <span class="input-prefix">${curr.symbol}</span>
-                  <input type="number" id="prepay-monthly-input" class="form-input has-prefix" min="0" max="200000" step="500" value="${state.extraMonthly}" />
+                  <input type="number" id="prepay-monthly-input" class="form-input has-prefix" min="0" max="200000" step="500" placeholder="0" value="${state.extraMonthly}" />
                 </div>
                 <div class="slider-container">
                   <input type="range" id="prepay-monthly-slider" class="range-slider" min="0" max="50000" step="500" value="${Math.min(state.extraMonthly, 50000)}" />
@@ -144,11 +144,11 @@ export function initPrepaymentAnalyzer(container) {
               <div class="form-group">
                 <div class="label-row">
                   <label class="form-label" for="prepay-annual-input">Extra Lump-Sum (Annual / Year-End)</label>
-                  <span class="form-hint">+${formatCurrency(state.annualLumpSum, undefined, false)} / yr</span>
+                  <span class="form-hint" id="prepay-annual-hint">+${formatCurrency(state.annualLumpSum, undefined, false)} / yr</span>
                 </div>
                 <div class="input-wrapper">
                   <span class="input-prefix">${curr.symbol}</span>
-                  <input type="number" id="prepay-annual-input" class="form-input has-prefix" min="0" max="2000000" step="5000" value="${state.annualLumpSum}" />
+                  <input type="number" id="prepay-annual-input" class="form-input has-prefix" min="0" max="2000000" step="5000" placeholder="0" value="${state.annualLumpSum}" />
                 </div>
                 <div class="slider-container">
                   <input type="range" id="prepay-annual-slider" class="range-slider" min="0" max="500000" step="5000" value="${Math.min(state.annualLumpSum, 500000)}" />
@@ -170,15 +170,15 @@ export function initPrepaymentAnalyzer(container) {
                 <span class="card-tag">Original Plan</span>
                 <div class="form-group" style="margin-bottom: 0.6rem;">
                   <span class="metric-label">Scheduled Payment</span>
-                  <p class="metric-value" style="font-size: 1.15rem;">${formatCurrency(res.original.monthlyEMI)} / mo</p>
+                  <p class="metric-value" id="prepay-orig-emi" style="font-size: 1.15rem;">${formatCurrency(res.original.monthlyEMI)} / mo</p>
                 </div>
                 <div class="form-group" style="margin-bottom: 0.6rem;">
                   <span class="metric-label">Total Interest</span>
-                  <p style="font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums;">${formatCurrency(res.original.totalInterest)}</p>
+                  <p id="prepay-orig-int" style="font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums;">${formatCurrency(res.original.totalInterest)}</p>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
                   <span class="metric-label">Payoff Duration</span>
-                  <p style="font-weight: 600; color: var(--text-secondary);">${state.tenureYears} Years (${res.original.months} Mos)</p>
+                  <p id="prepay-orig-dur" style="font-weight: 600; color: var(--text-secondary);">${state.tenureYears} Years (${res.original.months} Mos)</p>
                 </div>
               </div>
 
@@ -187,15 +187,15 @@ export function initPrepaymentAnalyzer(container) {
                 <span class="card-tag">Accelerated Plan</span>
                 <div class="form-group" style="margin-bottom: 0.6rem;">
                   <span class="metric-label">New Total Payment</span>
-                  <p class="metric-value" style="font-size: 1.15rem;">${formatCurrency(res.revised.monthlyEMI)} / mo</p>
+                  <p class="metric-value" id="prepay-rev-emi" style="font-size: 1.15rem;">${formatCurrency(res.revised.monthlyEMI)} / mo</p>
                 </div>
                 <div class="form-group" style="margin-bottom: 0.6rem;">
                   <span class="metric-label">Revised Interest</span>
-                  <p style="font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums;">${formatCurrency(res.revised.totalInterest)}</p>
+                  <p id="prepay-rev-int" style="font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums;">${formatCurrency(res.revised.totalInterest)}</p>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
                   <span class="metric-label">Revised Duration</span>
-                  <p style="font-weight: 600; color: var(--accent-obsidian);">${(res.revised.months / 12).toFixed(1)} Years (${res.revised.months} Mos)</p>
+                  <p id="prepay-rev-dur" style="font-weight: 600; color: var(--accent-obsidian);">${(res.revised.months / 12).toFixed(1)} Years (${res.revised.months} Mos)</p>
                 </div>
               </div>
             </div>
@@ -222,7 +222,7 @@ export function initPrepaymentAnalyzer(container) {
                   <th>Cumulative Balance Delta</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="prepay-schedule-tbody">
                 ${renderScheduleRows(res.originalSchedule, res.revisedSchedule)}
               </tbody>
             </table>
@@ -231,14 +231,49 @@ export function initPrepaymentAnalyzer(container) {
       </div>
     `;
 
+    updateOutputs(res);
+    attachEvents();
+  }
+
+  function updateOutputs(res) {
+    const savedAmt = container.querySelector('#prepay-saved-amt');
+    if (savedAmt) savedAmt.textContent = formatCurrency(res.savings.interestSaved);
+
+    const savedTenure = container.querySelector('#prepay-saved-tenure');
+    if (savedTenure) savedTenure.textContent = `${res.savings.yearsSaved} Years (${res.savings.monthsSaved} Months)`;
+
+    const revisedPeriod = container.querySelector('#prepay-revised-period');
+    if (revisedPeriod) revisedPeriod.textContent = `${(res.revised.months / 12).toFixed(1)} Years`;
+
+    const origEmi = container.querySelector('#prepay-orig-emi');
+    if (origEmi) origEmi.textContent = `${formatCurrency(res.original.monthlyEMI)} / mo`;
+
+    const origInt = container.querySelector('#prepay-orig-int');
+    if (origInt) origInt.textContent = formatCurrency(res.original.totalInterest);
+
+    const origDur = container.querySelector('#prepay-orig-dur');
+    if (origDur) origDur.textContent = `${state.tenureYears} Years (${res.original.months} Mos)`;
+
+    const revEmi = container.querySelector('#prepay-rev-emi');
+    if (revEmi) revEmi.textContent = `${formatCurrency(res.revised.monthlyEMI)} / mo`;
+
+    const revInt = container.querySelector('#prepay-rev-int');
+    if (revInt) revInt.textContent = formatCurrency(res.revised.totalInterest);
+
+    const revDur = container.querySelector('#prepay-rev-dur');
+    if (revDur) revDur.textContent = `${(res.revised.months / 12).toFixed(1)} Years (${res.revised.months} Mos)`;
+
+    const tbody = container.querySelector('#prepay-schedule-tbody');
+    if (tbody) tbody.innerHTML = renderScheduleRows(res.originalSchedule, res.revisedSchedule);
+
     // Render Trajectory Chart
     const chartBox = container.querySelector('#prepay-comparison-chart-box');
-    renderComparisonChart(chartBox, {
-      original: res.originalSchedule,
-      revised: res.revisedSchedule
-    });
-
-    attachEvents();
+    if (chartBox) {
+      renderComparisonChart(chartBox, {
+        original: res.originalSchedule,
+        revised: res.revisedSchedule
+      });
+    }
   }
 
   function renderScheduleRows(origSched, revSched) {
@@ -265,12 +300,21 @@ export function initPrepaymentAnalyzer(container) {
     return rows.join('');
   }
 
+  function updateLive() {
+    const res = calculate();
+    updateOutputs(res);
+  }
+
   function attachEvents() {
-    bindInput('prepay-amount-input', 'prepay-amount-slider', (v) => { state.loanAmount = v; });
-    bindInput('prepay-rate-input', 'prepay-rate-slider', (v) => { state.interestRate = v; });
-    bindInput('prepay-years-input', 'prepay-years-slider', (v) => { state.tenureYears = v; });
-    bindInput('prepay-monthly-input', 'prepay-monthly-slider', (v) => { state.extraMonthly = v; });
-    bindInput('prepay-annual-input', 'prepay-annual-slider', (v) => { state.annualLumpSum = v; });
+    container.querySelectorAll('.form-input').forEach((input) => {
+      input.addEventListener('focus', () => input.select());
+    });
+
+    bindInput('prepay-amount-input', 'prepay-amount-slider', 'prepay-amount-hint', (v) => { state.loanAmount = v; }, (v) => formatCurrency(v, undefined, false));
+    bindInput('prepay-rate-input', 'prepay-rate-slider', 'prepay-rate-hint', (v) => { state.interestRate = v; }, (v) => `${v}%`);
+    bindInput('prepay-years-input', 'prepay-years-slider', 'prepay-years-hint', (v) => { state.tenureYears = v; }, (v) => `${v} Years`);
+    bindInput('prepay-monthly-input', 'prepay-monthly-slider', 'prepay-monthly-hint', (v) => { state.extraMonthly = v; }, (v) => `+${formatCurrency(v, undefined, false)} / mo`);
+    bindInput('prepay-annual-input', 'prepay-annual-slider', 'prepay-annual-hint', (v) => { state.annualLumpSum = v; }, (v) => `+${formatCurrency(v, undefined, false)} / yr`);
 
     const resetBtn = container.querySelector('#btn-reset-prepay');
     if (resetBtn) {
@@ -298,15 +342,19 @@ export function initPrepaymentAnalyzer(container) {
     }
   }
 
-  function bindInput(inputId, sliderId, setter) {
+  function bindInput(inputId, sliderId, hintId, setter, hintFormatter) {
     const input = container.querySelector(`#${inputId}`);
     const slider = container.querySelector(`#${sliderId}`);
+    const hint = hintId ? container.querySelector(`#${hintId}`) : null;
+
     if (input) {
       input.addEventListener('input', (e) => {
-        const val = Math.max(0, Number(e.target.value) || 0);
+        const raw = e.target.value;
+        const val = raw === '' ? 0 : Math.max(0, Number(raw));
         setter(val);
         if (slider) slider.value = val;
-        render();
+        if (hint && hintFormatter) hint.textContent = hintFormatter(val);
+        updateLive();
       });
     }
     if (slider) {
@@ -314,7 +362,8 @@ export function initPrepaymentAnalyzer(container) {
         const val = Number(e.target.value);
         setter(val);
         if (input) input.value = val;
-        render();
+        if (hint && hintFormatter) hint.textContent = hintFormatter(val);
+        updateLive();
       });
     }
   }

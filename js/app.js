@@ -29,7 +29,7 @@ import { initNetWorthCalculator } from './calculators/netWorthCalculator.js';
 import { initBudgetPlanner } from './calculators/budgetPlanner.js';
 import { initBuyVsRentCalculator } from './calculators/buyVsRentCalculator.js';
 
-// FinBot AI Assistant
+// AI Copilot
 import { FinBot } from './components/chatbot.js';
 
 class FinculatorApp {
@@ -44,6 +44,7 @@ class FinculatorApp {
 
     this.currentRoute = 'emi';
     this.init();
+    this.finbot = new FinBot(this);
   }
 
   init() {
@@ -53,9 +54,6 @@ class FinculatorApp {
     this.initPrint();
     this.initFooterEvents();
     this.handleRoute();
-
-    // Initialize FinBot AI Assistant & Site Controller
-    this.finBot = new FinBot(this);
   }
 
   initCurrency() {
@@ -245,6 +243,15 @@ class FinculatorApp {
       // Fallback
       initEMICalculator(this.contentContainer);
     }
+  }
+
+  navigateTo(target) {
+    let normalized = target;
+    if (target === 'taxes' || target === 'tax') normalized = 'tax-income';
+    else if (target === 'investments' || target === 'invest' || target === 'sip') normalized = 'invest-sip';
+    else if (target === 'savings' || target === 'deposits') normalized = 'savings-compound';
+    
+    window.location.hash = `#/${normalized}`;
   }
 }
 

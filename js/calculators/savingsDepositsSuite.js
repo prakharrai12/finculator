@@ -139,7 +139,9 @@ export function initSavingsDepositsSuite(container) {
               <span class="panel-subtitle">Yield breakdown</span>
             </div>
 
-            ${renderTabMetrics(type, res, curr)}
+            <div id="savings-metrics-container">
+              ${renderTabMetrics(type, res, curr)}
+            </div>
 
             <!-- Donut Breakdown -->
             <div id="savings-donut-box"></div>
@@ -147,24 +149,43 @@ export function initSavingsDepositsSuite(container) {
         </div>
 
         <!-- Growth Schedule & Table (if applicable) -->
-        ${renderScheduleSection(type, res)}
+        <div id="savings-schedule-container">
+          ${renderScheduleSection(type, res)}
+        </div>
       </div>
     `;
 
+    updateOutputs();
+    attachEvents();
+  }
+
+  function updateOutputs() {
+    const { type, res } = calculateActiveTab();
+    const curr = getGlobalCurrency();
+
+    const metricsBox = container.querySelector('#savings-metrics-container');
+    if (metricsBox) metricsBox.innerHTML = renderTabMetrics(type, res, curr);
+
     // Render Donut
     const donutBox = container.querySelector('#savings-donut-box');
-    const { princ, int, total } = getDonutValues(type, res);
-    const princPct = total > 0 ? Math.round((princ / total) * 100) : 100;
-    const intPct = 100 - princPct;
+    if (donutBox) {
+      const { princ, int, total } = getDonutValues(type, res);
+      const princPct = total > 0 ? Math.round((princ / total) * 100) : 100;
+      const intPct = 100 - princPct;
 
-    renderDonutChart(donutBox, {
-      segments: [
-        { label: 'Principal Deposits', value: princ, percent: princPct, colorClass: 'principal' },
-        { label: 'Interest Earnings', value: int, percent: intPct, colorClass: 'interest' }
-      ],
-      centerLabel: 'Maturity Value',
-      centerValue: formatCurrency(total, undefined, false)
-    });
+      renderDonutChart(donutBox, {
+        segments: [
+          { label: 'Principal Deposits', value: princ, percent: princPct, colorClass: 'principal' },
+          { label: 'Interest Earnings', value: int, percent: intPct, colorClass: 'interest' }
+        ],
+        centerLabel: 'Maturity Value',
+        centerValue: formatCurrency(total, undefined, false)
+      });
+    }
+
+    // Render Schedule
+    const schedBox = container.querySelector('#savings-schedule-container');
+    if (schedBox) schedBox.innerHTML = renderScheduleSection(type, res);
 
     // Render Chart if table section exists
     const chartBox = container.querySelector('#savings-growth-chart-box');
@@ -181,7 +202,21 @@ export function initSavingsDepositsSuite(container) {
       });
     }
 
-    attachEvents();
+    // Attach CSV export if rendered
+    const csvBtn = container.querySelector('#btn-export-sd-csv');
+    if (csvBtn) {
+      csvBtn.onclick = () => {
+        const { res: curRes } = calculateActiveTab();
+        const headers = ['Year', 'Cumulative Deposits', 'Interest Yield', 'Balance'];
+        const rows = (curRes.yearlyBreakdown || []).map((r) => [
+          `Year ${r.year}`,
+          r.totalDeposits || r.invested || 0,
+          r.interestEarned || r.totalInterest || 0,
+          r.balance || r.closingBalance || 0
+        ]);
+        exportToCSV(`savings_deposit_schedule_${state.activeTab}`, headers, rows);
+      };
+    }
   }
 
   function getTabTitle(tab) {
@@ -609,6 +644,10 @@ export function initSavingsDepositsSuite(container) {
   }
 
   function attachEvents() {
+    container.querySelectorAll('.form-input').forEach((input) => {
+      input.addEventListener('focus', () => input.select());
+    });
+
     const tabBtns = container.querySelectorAll('.tab-btn');
     tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -625,30 +664,14 @@ export function initSavingsDepositsSuite(container) {
       });
     }
 
-    const csvBtn = container.querySelector('#btn-export-sd-csv');
-    if (csvBtn) {
-      csvBtn.addEventListener('click', () => {
-        const { type, res } = calculateActiveTab();
-        const headers = ['Year', 'Cumulative Deposits', 'Interest Yield', 'Balance'];
-        const rows = (res.yearlyBreakdown || []).map((r) => [
-          `Year ${r.year}`,
-          r.totalDeposits || r.invested || 0,
-          r.interestEarned || r.totalInterest || 0,
-          r.balance || r.closingBalance || 0
-        ]);
-        exportToCSV(`savings_deposit_schedule_${state.activeTab}`, headers, rows);
-      });
-    }
-
     // Dynamic bindings based on active tab
     if (state.activeTab === 'compound') {
       bindInput('sd-c-p-input', 'sd-c-p-slider', (v) => { state.compoundPrincipal = v; });
       bindInput('sd-c-r-input', 'sd-c-r-slider', (v) => { state.compoundRate = v; });
       bindInput('sd-c-t-input', 'sd-c-t-slider', (v) => { state.compoundYears = v; });
-      const recInput = container.querySelector('#sd-c-rec-input');
-      if (recInput) recInput.addEventListener('input', (e) => { state.compoundRecurring = Math.max(0, Number(e.target.value) || 0); render(); });
+      bindSimpleInput('sd-c-rec-input', (v) => { state.compoundRecurring = v; });
       const freqSel = container.querySelector('#sd-c-freq-select');
-      if (freqSel) freqSel.addEventListener('change', (e) => { state.compoundFrequency = e.target.value; render(); });
+      if (freqSel) freqSel.addEventListener('change', (e) => { state.compoundFrequency = e.target.value; updateOutputs(); });
     } else if (state.activeTab === 'simple') {
       bindInput('sd-s-p-input', 'sd-s-p-slider', (v) => { state.simplePrincipal = v; });
       bindInput('sd-s-r-input', 'sd-s-r-slider', (v) => { state.simpleRate = v; });
@@ -663,16 +686,25 @@ export function initSavingsDepositsSuite(container) {
       bindInput('sd-rd-t-input', 'sd-rd-t-slider', (v) => { state.rdMonths = v; });
     } else if (state.activeTab === 'ppf') {
       bindInput('sd-ppf-a-input', 'sd-ppf-a-slider', (v) => { state.ppfAnnual = v; });
-      const rInput = container.querySelector('#sd-ppf-r-input');
-      if (rInput) rInput.addEventListener('input', (e) => { state.ppfRate = Math.max(0, Number(e.target.value) || 0); render(); });
-      const tInput = container.querySelector('#sd-ppf-t-input');
-      if (tInput) tInput.addEventListener('input', (e) => { state.ppfYears = Math.max(15, Number(e.target.value) || 15); render(); });
+      bindSimpleInput('sd-ppf-r-input', (v) => { state.ppfRate = v; });
+      bindSimpleInput('sd-ppf-t-input', (v) => { state.ppfYears = v; });
     } else {
       bindInput('sd-g-t-input', 'sd-g-t-slider', (v) => { state.goalCorpus = v; });
       bindInput('sd-g-y-input', 'sd-g-y-slider', (v) => { state.goalYears = v; });
       bindInput('sd-g-r-input', 'sd-g-r-slider', (v) => { state.goalReturn = v; });
-      const initInput = container.querySelector('#sd-g-i-input');
-      if (initInput) initInput.addEventListener('input', (e) => { state.goalInitial = Math.max(0, Number(e.target.value) || 0); render(); });
+      bindSimpleInput('sd-g-i-input', (v) => { state.goalInitial = v; });
+    }
+  }
+
+  function bindSimpleInput(inputId, setter) {
+    const input = container.querySelector(`#${inputId}`);
+    if (input) {
+      input.addEventListener('input', (e) => {
+        const raw = e.target.value;
+        const val = raw === '' ? 0 : Math.max(0, Number(raw));
+        setter(val);
+        updateOutputs();
+      });
     }
   }
 
@@ -681,10 +713,11 @@ export function initSavingsDepositsSuite(container) {
     const slider = container.querySelector(`#${sliderId}`);
     if (input) {
       input.addEventListener('input', (e) => {
-        const val = Math.max(0, Number(e.target.value) || 0);
+        const raw = e.target.value;
+        const val = raw === '' ? 0 : Math.max(0, Number(raw));
         setter(val);
         if (slider) slider.value = val;
-        render();
+        updateOutputs();
       });
     }
     if (slider) {
@@ -692,7 +725,7 @@ export function initSavingsDepositsSuite(container) {
         const val = Number(e.target.value);
         setter(val);
         if (input) input.value = val;
-        render();
+        updateOutputs();
       });
     }
   }

@@ -70,11 +70,11 @@ export function initLoanComparator(container) {
 
   function renderLoanCard(id, loan, result, isBest, curr) {
     return `
-      <div class="comparator-column ${isBest ? 'best-value' : ''}">
+      <div class="comparator-column ${isBest ? 'best-value' : ''}" id="loan-card-${id}">
         <div class="comparator-card-header">
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <span class="card-tag">Scenario ${id}</span>
-            ${isBest ? '<span class="badge badge-best">Best Value (Lowest Total Cost)</span>' : ''}
+            <span id="loan-${id}-badge-slot">${isBest ? '<span class="badge badge-best">Best Value (Lowest Total Cost)</span>' : ''}</span>
           </div>
           <input type="text" id="loan-${id}-name" class="form-input" value="${loan.name}" style="font-weight: 600; margin-top: 0.4rem; font-family: var(--font-sans);" />
         </div>
@@ -82,8 +82,8 @@ export function initLoanComparator(container) {
         <!-- Result Box -->
         <div class="hero-metric-box" style="padding: 1.15rem; margin-bottom: 1.25rem;">
           <span class="metric-label">Monthly EMI</span>
-          <span class="metric-value" style="font-size: 1.75rem;">${formatCurrency(result.monthlyEMI)}</span>
-          <span class="metric-subtext">Total Cost: ${formatCurrency(result.netTotalCost)}</span>
+          <span class="metric-value" id="loan-${id}-emi-val" style="font-size: 1.75rem;">${formatCurrency(result.monthlyEMI)}</span>
+          <span class="metric-subtext" id="loan-${id}-net-sub">Total Cost: ${formatCurrency(result.netTotalCost)}</span>
         </div>
 
         <!-- Inputs -->
@@ -93,7 +93,7 @@ export function initLoanComparator(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="loan-${id}-p" class="form-input has-prefix" value="${loan.principal}" step="50000" />
+            <input type="number" id="loan-${id}-p" class="form-input has-prefix" placeholder="0" value="${loan.principal}" step="50000" />
           </div>
         </div>
 
@@ -102,7 +102,7 @@ export function initLoanComparator(container) {
             <label class="form-label" for="loan-${id}-r">Interest Rate</label>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="loan-${id}-r" class="form-input has-suffix" value="${loan.rate}" step="0.05" />
+            <input type="number" id="loan-${id}-r" class="form-input has-suffix" placeholder="0" value="${loan.rate}" step="0.05" />
             <span class="input-suffix">%</span>
           </div>
         </div>
@@ -112,7 +112,7 @@ export function initLoanComparator(container) {
             <label class="form-label" for="loan-${id}-t">Tenure (Years)</label>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="loan-${id}-t" class="form-input has-suffix" value="${loan.tenureYears}" step="1" />
+            <input type="number" id="loan-${id}-t" class="form-input has-suffix" placeholder="1" value="${loan.tenureYears}" step="1" />
             <span class="input-suffix">Yrs</span>
           </div>
         </div>
@@ -123,7 +123,7 @@ export function initLoanComparator(container) {
           </div>
           <div class="input-wrapper">
             <span class="input-prefix">${curr.symbol}</span>
-            <input type="number" id="loan-${id}-f" class="form-input has-prefix" value="${loan.fee}" step="500" />
+            <input type="number" id="loan-${id}-f" class="form-input has-prefix" placeholder="0" value="${loan.fee}" step="500" />
           </div>
         </div>
 
@@ -131,22 +131,62 @@ export function initLoanComparator(container) {
         <div class="breakdown-section" style="margin-top: 1rem;">
           <div class="breakdown-row">
             <span>Total Interest</span>
-            <span class="breakdown-val">${formatCurrency(result.totalInterest)}</span>
+            <span class="breakdown-val" id="loan-${id}-int-val">${formatCurrency(result.totalInterest)}</span>
           </div>
           <div class="breakdown-row">
             <span>Total Payment</span>
-            <span class="breakdown-val">${formatCurrency(result.totalPayment)}</span>
+            <span class="breakdown-val" id="loan-${id}-pay-val">${formatCurrency(result.totalPayment)}</span>
           </div>
           <div class="breakdown-row">
             <span>Net Lifetime Cost</span>
-            <span class="breakdown-val"><strong>${formatCurrency(result.netTotalCost)}</strong></span>
+            <span class="breakdown-val"><strong id="loan-${id}-cost-val">${formatCurrency(result.netTotalCost)}</strong></span>
           </div>
         </div>
       </div>
     `;
   }
 
+  function updateOutputs() {
+    const { r1, r2, r3, bestId } = calculateAll();
+    const results = { 1: r1, 2: r2, 3: r3 };
+
+    [1, 2, 3].forEach((id) => {
+      const res = results[id];
+      const card = container.querySelector(`#loan-card-${id}`);
+      const isBest = bestId === id;
+
+      if (card) {
+        if (isBest) card.classList.add('best-value');
+        else card.classList.remove('best-value');
+      }
+
+      const badgeSlot = container.querySelector(`#loan-${id}-badge-slot`);
+      if (badgeSlot) {
+        badgeSlot.innerHTML = isBest ? '<span class="badge badge-best">Best Value (Lowest Total Cost)</span>' : '';
+      }
+
+      const emiVal = container.querySelector(`#loan-${id}-emi-val`);
+      if (emiVal) emiVal.textContent = formatCurrency(res.monthlyEMI);
+
+      const netSub = container.querySelector(`#loan-${id}-net-sub`);
+      if (netSub) netSub.textContent = `Total Cost: ${formatCurrency(res.netTotalCost)}`;
+
+      const intVal = container.querySelector(`#loan-${id}-int-val`);
+      if (intVal) intVal.textContent = formatCurrency(res.totalInterest);
+
+      const payVal = container.querySelector(`#loan-${id}-pay-val`);
+      if (payVal) payVal.textContent = formatCurrency(res.totalPayment);
+
+      const costVal = container.querySelector(`#loan-${id}-cost-val`);
+      if (costVal) costVal.textContent = formatCurrency(res.netTotalCost);
+    });
+  }
+
   function attachEvents() {
+    container.querySelectorAll('.form-input').forEach((input) => {
+      input.addEventListener('focus', () => input.select());
+    });
+
     [1, 2, 3].forEach((id) => {
       const loanKey = `loan${id}`;
       bindText(`loan-${id}-name`, (v) => { state[loanKey].name = v; });
@@ -179,9 +219,10 @@ export function initLoanComparator(container) {
     const input = container.querySelector(`#${id}`);
     if (input) {
       input.addEventListener('input', (e) => {
-        const val = Math.max(0, Number(e.target.value) || 0);
+        const raw = e.target.value;
+        const val = raw === '' ? 0 : Math.max(0, Number(raw));
         setter(val);
-        render();
+        updateOutputs();
       });
     }
   }

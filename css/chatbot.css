@@ -1,411 +1,492 @@
 /* ==========================================================================
-   FINCULATOR FINBOT — AI ASSISTANT & ACTIVE CONTROLLER
-   Frosted Glassmorphism, Fluid Responsiveness & Non-Obscuring Dock
+   FINCULATOR AI CHATBOT (FINBOT) DESIGN SYSTEM
+   Modern Glassmorphism, Floating Capsule, & Responsive Chat Window
    ========================================================================== */
 
-/* Floating Launcher Capsule Button */
+/* Launcher Floating Capsule */
 .finbot-launcher {
   position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  z-index: 999999;
-  display: inline-flex;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  display: flex;
   align-items: center;
-  gap: 0.55rem;
-  background: rgba(13, 21, 38, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  color: #FFFFFF;
-  border: 1.5px solid rgba(6, 182, 212, 0.45);
-  padding: 0.6rem 1.15rem;
+  gap: 0.65rem;
+  padding: 0.75rem 1.25rem;
   border-radius: 9999px;
-  box-shadow: 0 8px 28px rgba(13, 21, 38, 0.35), 0 0 16px rgba(6, 182, 212, 0.2);
+  background: rgba(13, 17, 23, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(6, 182, 212, 0.2);
+  color: #FFFFFF;
   cursor: pointer;
-  font-family: var(--font-sans, -apple-system, sans-serif);
-  font-size: 0.84rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  transition: all 180ms ease;
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Inter', sans-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
 }
 
 .finbot-launcher:hover {
-  transform: translateY(-2px);
-  border-color: #06B6D4;
-  background: rgba(13, 21, 38, 0.98);
-  box-shadow: 0 12px 32px rgba(13, 21, 38, 0.45), 0 0 24px rgba(6, 182, 212, 0.35);
+  transform: translateY(-3px) scale(1.02);
+  border-color: rgba(6, 182, 212, 0.5);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.5), 0 0 25px rgba(6, 182, 212, 0.35);
 }
 
-.finbot-launcher:active {
-  transform: scale(0.96);
+.finbot-launcher.hidden {
+  display: none !important;
 }
 
-.finbot-launcher.is-active {
-  background: #0D1526;
-  border-color: #06B6D4;
-}
-
-.finbot-pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #06B6D4;
-  display: inline-block;
-  animation: finbot-pulse-anim 2s infinite;
-  flex-shrink: 0;
-}
-
-@keyframes finbot-pulse-anim {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); }
-  70% { transform: scale(1.1); box-shadow: 0 0 0 7px rgba(6, 182, 212, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
-}
-
-.finbot-launcher-svg {
-  color: #06B6D4;
+.finbot-launcher-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.finbot-launcher-label {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563EB, #06B6D4);
   color: #FFFFFF;
 }
 
-/* Chat Drawer Window (Frosted Glass Docked Panel) */
-.finbot-drawer {
+.finbot-online-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+  animation: pulse-online 2s infinite ease-in-out;
+}
+
+@keyframes pulse-online {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+/* Chat Window Modal */
+.finbot-window {
   position: fixed;
-  bottom: 4.6rem;
-  right: 1.5rem;
-  width: 360px;
+  bottom: 2rem;
+  right: 2rem;
+  width: 420px;
   max-width: calc(100vw - 2rem);
-  height: 485px;
-  max-height: calc(100vh - 6rem);
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1.5px solid rgba(203, 213, 225, 0.85);
-  border-radius: 14px;
-  box-shadow: 0 20px 48px -8px rgba(13, 21, 38, 0.25), 0 0 24px rgba(6, 182, 212, 0.08);
-  display: none;
-  flex-direction: column;
-  z-index: 999999;
-  overflow: hidden;
-  font-family: var(--font-sans, -apple-system, sans-serif);
-}
-
-.finbot-drawer.is-open {
+  height: 600px;
+  max-height: calc(100vh - 4rem);
+  z-index: 1000;
   display: flex;
-  animation: finbot-drawer-in 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  flex-direction: column;
+  border-radius: 1.25rem;
+  background: rgba(13, 17, 23, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), 0 0 32px rgba(37, 99, 235, 0.15);
+  color: #F3F4F6;
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Inter', sans-serif);
+  overflow: hidden;
+  animation: finbot-appear 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes finbot-drawer-in {
-  from { opacity: 0; transform: translateY(12px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes finbot-appear {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-/* Header */
+.finbot-window.minimized {
+  height: 56px;
+  overflow: hidden;
+}
+
+.finbot-window.hidden {
+  display: none !important;
+}
+
+/* Chat Header */
 .finbot-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1rem;
-  background: linear-gradient(135deg, rgba(13, 21, 38, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%);
-  color: #FFFFFF;
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.1);
-  flex-shrink: 0;
+  padding: 0.9rem 1.2rem;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.finbot-header-info {
+.finbot-header-left {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.65rem;
 }
 
-.finbot-avatar-badge {
-  width: 28px;
-  height: 28px;
+.finbot-avatar {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: rgba(6, 182, 212, 0.2);
-  border: 1px solid #06B6D4;
-  color: #06B6D4;
+  background: linear-gradient(135deg, #2563EB, #06B6D4);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #FFFFFF;
+}
+
+.finbot-header-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.finbot-title {
   font-size: 0.95rem;
   font-weight: 700;
-  flex-shrink: 0;
-}
-
-.finbot-header-title {
-  font-size: 0.85rem;
-  font-weight: 700;
   color: #FFFFFF;
-  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
-.finbot-header-sub {
-  font-size: 0.67rem;
+.finbot-status-tag {
+  font-size: 0.72rem;
   color: #94A3B8;
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-}
-
-.finbot-live-status {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #10B981;
-  display: inline-block;
-}
-
-.finbot-header-ctrls {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.finbot-ctrl-btn {
-  background: transparent;
-  border: none;
-  color: #94A3B8;
-  padding: 0.35rem;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 120ms ease;
-}
-
-.finbot-ctrl-btn:hover {
-  color: #FFFFFF;
-  background: rgba(255, 255, 255, 0.15);
-}
-
-/* Quick Suggestion Chips */
-.finbot-chips-bar {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 0.75rem;
-  background: rgba(248, 250, 252, 0.8);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.85);
-  overflow-x: auto;
-  scrollbar-width: none;
-  flex-shrink: 0;
-}
-
-.finbot-chips-bar::-webkit-scrollbar {
-  display: none;
-}
-
-.finbot-chip {
-  white-space: nowrap;
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.25rem 0.6rem;
-  border-radius: 9999px;
-  background: #FFFFFF;
-  border: 1px solid #CBD5E1;
-  color: #334155;
-  cursor: pointer;
-  transition: all 120ms ease;
-  flex-shrink: 0;
-}
-
-.finbot-chip:hover {
-  border-color: #0D1526;
-  color: #0D1526;
-  background: #F1F5F9;
-}
-
-/* Message Log */
-.finbot-msg-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0.95rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  background: rgba(248, 250, 252, 0.65);
-  scrollbar-width: thin;
-}
-
-.finbot-msg {
-  max-width: 88%;
-  font-size: 0.81rem;
-  line-height: 1.48;
-  border-radius: 8px;
-  padding: 0.65rem 0.85rem;
-  word-break: break-word;
-}
-
-.finbot-user-bubble {
-  align-self: flex-end;
-  background: #0D1526;
-  color: #FFFFFF;
-  border-bottom-right-radius: 2px;
-  font-weight: 500;
-  box-shadow: 0 2px 8px rgba(13, 21, 38, 0.15);
-}
-
-.finbot-bot-bubble {
-  align-self: flex-start;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  color: #0D1526;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-bottom-left-radius: 2px;
-  box-shadow: 0 2px 8px rgba(13, 21, 38, 0.04);
-}
-
-.finbot-bot-bubble strong {
-  color: #0D1526;
-}
-
-.finbot-bot-bubble code {
-  background: #F1F5F9;
-  padding: 0.15rem 0.35rem;
-  border-radius: 3px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.76rem;
-  color: #2563EB;
-}
-
-/* Direct Action Button Inside Bot Bubble */
-.finbot-card-action {
-  margin-top: 0.65rem;
-  padding-top: 0.55rem;
-  border-top: 1px solid rgba(226, 232, 240, 0.85);
-  display: flex;
-  flex-direction: column;
   gap: 0.35rem;
 }
 
-.finbot-card-action-title {
-  font-size: 0.68rem;
-  color: #64748B;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.finbot-nav-action-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #0D1526;
-  color: #FFFFFF;
-  border: 1px solid #0D1526;
-  border-radius: 6px;
-  padding: 0.48rem 0.75rem;
-  font-size: 0.77rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 120ms ease;
-  width: 100%;
-}
-
-.finbot-nav-action-btn:hover {
-  background: #1E293B;
-  border-color: #06B6D4;
-  color: #06B6D4;
-}
-
-/* Typing Dots Animation */
-.finbot-typing-dots {
+.finbot-header-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 0.55rem 0.85rem;
+  gap: 0.35rem;
+}
+
+.finbot-btn-icon {
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.finbot-btn-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+}
+
+/* Settings Drawer */
+.finbot-settings-drawer {
+  background: rgba(20, 26, 36, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  font-size: 0.82rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  animation: finbot-slide-down 0.25s ease-out;
+}
+
+@keyframes finbot-slide-down {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.finbot-settings-drawer.hidden {
+  display: none !important;
+}
+
+.finbot-setting-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.finbot-setting-label {
+  font-weight: 600;
+  color: #CBD5E1;
+}
+
+.finbot-setting-input {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  color: #FFFFFF;
+  font-size: 0.82rem;
+  font-family: inherit;
+  outline: none;
+}
+
+.finbot-setting-input:focus {
+  border-color: #06B6D4;
+}
+
+/* Messages Container */
+.finbot-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  scroll-behavior: smooth;
+}
+
+.finbot-messages::-webkit-scrollbar {
+  width: 5px;
+}
+.finbot-messages::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+
+/* Message Bubbles */
+.finbot-msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 88%;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  animation: finbot-msg-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes finbot-msg-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.finbot-msg.user {
+  align-self: flex-end;
+}
+
+.finbot-msg.assistant {
+  align-self: flex-start;
+}
+
+.finbot-bubble {
+  padding: 0.85rem 1.05rem;
+  border-radius: 1rem;
+  word-wrap: break-word;
+}
+
+.finbot-msg.user .finbot-bubble {
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+  color: #FFFFFF;
+  border-bottom-right-radius: 0.25rem;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+
+.finbot-msg.assistant .finbot-bubble {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #E2E8F0;
+  border-bottom-left-radius: 0.25rem;
+}
+
+.finbot-bubble p {
+  margin: 0 0 0.5rem 0;
+}
+.finbot-bubble p:last-child {
+  margin-bottom: 0;
+}
+
+.finbot-bubble ul, .finbot-bubble ol {
+  margin: 0.4rem 0;
+  padding-left: 1.25rem;
+}
+.finbot-bubble li {
+  margin-bottom: 0.3rem;
+}
+
+.finbot-bubble strong {
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.finbot-bubble code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.3rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
+  color: #38BDF8;
+}
+
+/* Action Navigation Buttons embedded in AI message */
+.finbot-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  margin-right: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.25), rgba(6, 182, 212, 0.25));
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  color: #38BDF8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.finbot-action-btn:hover {
+  background: linear-gradient(135deg, #2563EB, #06B6D4);
+  color: #FFFFFF;
+  border-color: transparent;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.35);
+}
+
+/* Suggestion Quick Chips */
+.finbot-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.finbot-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  color: #94A3B8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.finbot-chip:hover {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: rgba(6, 182, 212, 0.4);
+  color: #38BDF8;
+  transform: translateY(-1px);
+}
+
+/* Typing / Loading Indicator */
+.finbot-typing {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   width: fit-content;
 }
 
-.finbot-typing-dots span {
+.finbot-dot {
   width: 6px;
   height: 6px;
-  background: #06B6D4;
   border-radius: 50%;
-  animation: finbot-dots-bounce 1.2s infinite ease-in-out both;
+  background: #38BDF8;
+  animation: finbot-dot-pulse 1.4s infinite ease-in-out both;
 }
 
-.finbot-typing-dots span:nth-child(1) { animation-delay: 0s; }
-.finbot-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-.finbot-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+.finbot-dot:nth-child(1) { animation-delay: -0.32s; }
+.finbot-dot:nth-child(2) { animation-delay: -0.16s; }
 
-@keyframes finbot-dots-bounce {
-  0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
-  40% { transform: scale(1.1); opacity: 1; }
+@keyframes finbot-dot-pulse {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+  40% { transform: scale(1); opacity: 1; }
 }
 
-/* Form Input Bar with Frosted Glass */
-.finbot-form {
+/* Chat Input Footer */
+.finbot-footer {
+  padding: 0.85rem 1.1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.finbot-input-row {
   display: flex;
   align-items: center;
-  padding: 0.65rem 0.75rem;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-top: 1.5px solid rgba(226, 232, 240, 0.9);
-  gap: 0.45rem;
-  flex-shrink: 0;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.75rem;
+  padding: 0.35rem 0.5rem 0.35rem 0.85rem;
+  transition: border-color 0.2s ease;
 }
 
-.finbot-input-field {
+.finbot-input-row:focus-within {
+  border-color: #06B6D4;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
+}
+
+.finbot-input {
   flex: 1;
-  border: 1px solid #CBD5E1;
-  background: #F8FAFC;
-  border-radius: 6px;
-  padding: 0.52rem 0.75rem;
-  font-size: 0.82rem;
-  color: #0D1526;
-  outline: none;
-  font-family: inherit;
-  transition: all 120ms ease;
-}
-
-.finbot-input-field:focus {
-  border-color: #0D1526;
-  background: #FFFFFF;
-  box-shadow: 0 0 0 2px rgba(13, 21, 38, 0.08);
-}
-
-.finbot-submit-btn {
-  background: #0D1526;
-  color: #06B6D4;
+  background: transparent;
   border: none;
-  border-radius: 6px;
+  color: #FFFFFF;
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+}
+
+.finbot-input::placeholder {
+  color: #64748B;
+}
+
+.finbot-send-btn {
   width: 32px;
   height: 32px;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, #2563EB, #06B6D4);
+  border: none;
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  flex-shrink: 0;
-  transition: all 120ms ease;
+  transition: all 0.2s ease;
 }
 
-.finbot-submit-btn:hover {
-  background: #1E293B;
-  color: #FFFFFF;
+.finbot-send-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 10px rgba(6, 182, 212, 0.4);
 }
 
-/* Enhanced Mobile Responsiveness */
+.finbot-send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.finbot-footnote {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: #64748B;
+}
+
+/* Mobile Responsive */
 @media (max-width: 640px) {
-  .finbot-drawer {
-    right: 0.75rem;
-    left: 0.75rem;
-    width: auto;
-    bottom: 4.5rem;
-    height: min(490px, 80vh);
-    border-radius: 12px;
-  }
   .finbot-launcher {
-    right: 1rem;
-    bottom: 1rem;
-    padding: 0.52rem 0.95rem;
-    font-size: 0.8rem;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    padding: 0.65rem 1rem;
+    font-size: 0.82rem;
+  }
+  .finbot-window {
+    bottom: 0.5rem;
+    right: 0.5rem;
+    left: 0.5rem;
+    width: auto;
+    height: 80vh;
+    max-height: 80vh;
   }
 }

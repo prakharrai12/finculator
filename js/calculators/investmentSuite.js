@@ -139,7 +139,9 @@ export function initInvestmentSuite(container) {
               <span class="panel-subtitle">COMPOUNDED PERFORMANCE</span>
             </div>
 
-            ${renderTabMetrics(type, res, curr)}
+            <div id="invest-metrics-container">
+              ${renderTabMetrics(type, res, curr)}
+            </div>
 
             <!-- Donut Chart (if applicable) -->
             ${(type !== 'cagr' && type !== 'returns') ? '<div id="invest-donut-chart-box"></div>' : ''}
@@ -147,9 +149,22 @@ export function initInvestmentSuite(container) {
         </div>
 
         <!-- Milestone Timeline & Schedule (if available) -->
-        ${renderScheduleSection(type, res)}
+        <div id="invest-schedule-container">
+          ${renderScheduleSection(type, res)}
+        </div>
       </div>
     `;
+
+    updateOutputs();
+    attachEvents();
+  }
+
+  function updateOutputs() {
+    const { type, res } = calculateActiveTab();
+    const curr = getGlobalCurrency();
+
+    const metricsBox = container.querySelector('#invest-metrics-container');
+    if (metricsBox) metricsBox.innerHTML = renderTabMetrics(type, res, curr);
 
     // Render Donut
     if (type !== 'cagr' && type !== 'returns') {
@@ -172,6 +187,10 @@ export function initInvestmentSuite(container) {
       }
     }
 
+    // Render Schedule
+    const schedBox = container.querySelector('#invest-schedule-container');
+    if (schedBox) schedBox.innerHTML = renderScheduleSection(type, res);
+
     // Render Growth Area Chart
     const growthBox = container.querySelector('#invest-growth-chart-box');
     if (growthBox && res.yearlyBreakdown && res.yearlyBreakdown.length > 0) {
@@ -187,7 +206,21 @@ export function initInvestmentSuite(container) {
       });
     }
 
-    attachEvents();
+    // Attach CSV export if rendered
+    const csvBtn = container.querySelector('#btn-export-inv-csv');
+    if (csvBtn) {
+      csvBtn.onclick = () => {
+        const { res: curRes } = calculateActiveTab();
+        const headers = ['Year', 'Invested Capital', 'Returns', 'Portfolio Value'];
+        const rows = (curRes.yearlyBreakdown || []).map((r) => [
+          `Year ${r.year}`,
+          r.totalInvested || r.invested || 0,
+          r.returns || 0,
+          r.futureValue || 0
+        ]);
+        exportToCSV(`investment_schedule_${state.activeTab}`, headers, rows);
+      };
+    }
   }
 
   function getTabTitle(tab) {
@@ -625,6 +658,10 @@ export function initInvestmentSuite(container) {
   }
 
   function attachEvents() {
+    container.querySelectorAll('.form-input').forEach((input) => {
+      input.addEventListener('focus', () => input.select());
+    });
+
     const tabBtns = container.querySelectorAll('.tab-btn');
     tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -641,21 +678,6 @@ export function initInvestmentSuite(container) {
       });
     }
 
-    const csvBtn = container.querySelector('#btn-export-inv-csv');
-    if (csvBtn) {
-      csvBtn.addEventListener('click', () => {
-        const { type, res } = calculateActiveTab();
-        const headers = ['Year', 'Invested Capital', 'Returns', 'Portfolio Value'];
-        const rows = (res.yearlyBreakdown || []).map((r) => [
-          `Year ${r.year}`,
-          r.totalInvested || r.invested || 0,
-          r.returns || 0,
-          r.futureValue || 0
-        ]);
-        exportToCSV(`investment_schedule_${state.activeTab}`, headers, rows);
-      });
-    }
-
     if (state.activeTab === 'sip') {
       bindInput('sip-m-input', 'sip-m-slider', (v) => { state.sipMonthly = v; });
       bindInput('sip-r-input', 'sip-r-slider', (v) => { state.sipRate = v; });
@@ -667,33 +689,34 @@ export function initInvestmentSuite(container) {
     } else if (state.activeTab === 'combined') {
       bindInput('comb-l-input', 'comb-l-slider', (v) => { state.combLump = v; });
       bindInput('comb-m-input', 'comb-m-slider', (v) => { state.combMonthly = v; });
-      const rInp = container.querySelector('#comb-r-input');
-      if (rInp) rInp.addEventListener('input', (e) => { state.combRate = Math.max(0, Number(e.target.value) || 0); render(); });
-      const yInp = container.querySelector('#comb-y-input');
-      if (yInp) yInp.addEventListener('input', (e) => { state.combYears = Math.max(1, Number(e.target.value) || 1); render(); });
+      bindSimpleInput('comb-r-input', (v) => { state.combRate = v; });
+      bindSimpleInput('comb-y-input', (v) => { state.combYears = v; });
     } else if (state.activeTab === 'stepup') {
       bindInput('step-m-input', 'step-m-slider', (v) => { state.stepMonthly = v; });
       bindInput('step-u-input', 'step-u-slider', (v) => { state.stepUpPct = v; });
-      const rInp = container.querySelector('#step-r-input');
-      if (rInp) rInp.addEventListener('input', (e) => { state.stepRate = Math.max(0, Number(e.target.value) || 0); render(); });
-      const yInp = container.querySelector('#step-y-input');
-      if (yInp) yInp.addEventListener('input', (e) => { state.stepYears = Math.max(1, Number(e.target.value) || 1); render(); });
+      bindSimpleInput('step-r-input', (v) => { state.stepRate = v; });
+      bindSimpleInput('step-y-input', (v) => { state.stepYears = v; });
     } else if (state.activeTab === 'cagr') {
-      const iInp = container.querySelector('#cagr-i-input');
-      if (iInp) iInp.addEventListener('input', (e) => { state.cagrInitial = Math.max(0, Number(e.target.value) || 0); render(); });
-      const fInp = container.querySelector('#cagr-f-input');
-      if (fInp) fInp.addEventListener('input', (e) => { state.cagrFinal = Math.max(0, Number(e.target.value) || 0); render(); });
-      const yInp = container.querySelector('#cagr-y-input');
-      if (yInp) yInp.addEventListener('input', (e) => { state.cagrYears = Math.max(0.1, Number(e.target.value) || 0.1); render(); });
+      bindSimpleInput('cagr-i-input', (v) => { state.cagrInitial = v; });
+      bindSimpleInput('cagr-f-input', (v) => { state.cagrFinal = v; });
+      bindSimpleInput('cagr-y-input', (v) => { state.cagrYears = v; });
     } else {
-      const iInp = container.querySelector('#ret-i-input');
-      if (iInp) iInp.addEventListener('input', (e) => { state.retInitial = Math.max(0, Number(e.target.value) || 0); render(); });
-      const fInp = container.querySelector('#ret-f-input');
-      if (fInp) fInp.addEventListener('input', (e) => { state.retFinal = Math.max(0, Number(e.target.value) || 0); render(); });
-      const dInp = container.querySelector('#ret-d-input');
-      if (dInp) dInp.addEventListener('input', (e) => { state.retDividends = Math.max(0, Number(e.target.value) || 0); render(); });
-      const yInp = container.querySelector('#ret-y-input');
-      if (yInp) yInp.addEventListener('input', (e) => { state.retYears = Math.max(0.1, Number(e.target.value) || 0.1); render(); });
+      bindSimpleInput('ret-i-input', (v) => { state.retInitial = v; });
+      bindSimpleInput('ret-f-input', (v) => { state.retFinal = v; });
+      bindSimpleInput('ret-d-input', (v) => { state.retDividends = v; });
+      bindSimpleInput('ret-y-input', (v) => { state.retYears = v; });
+    }
+  }
+
+  function bindSimpleInput(inputId, setter) {
+    const input = container.querySelector(`#${inputId}`);
+    if (input) {
+      input.addEventListener('input', (e) => {
+        const raw = e.target.value;
+        const val = raw === '' ? 0 : Math.max(0, Number(raw));
+        setter(val);
+        updateOutputs();
+      });
     }
   }
 
@@ -702,10 +725,11 @@ export function initInvestmentSuite(container) {
     const slider = container.querySelector(`#${sliderId}`);
     if (input) {
       input.addEventListener('input', (e) => {
-        const val = Math.max(0, Number(e.target.value) || 0);
+        const raw = e.target.value;
+        const val = raw === '' ? 0 : Math.max(0, Number(raw));
         setter(val);
         if (slider) slider.value = val;
-        render();
+        updateOutputs();
       });
     }
     if (slider) {
@@ -713,7 +737,7 @@ export function initInvestmentSuite(container) {
         const val = Number(e.target.value);
         setter(val);
         if (input) input.value = val;
-        render();
+        updateOutputs();
       });
     }
   }

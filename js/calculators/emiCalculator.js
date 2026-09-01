@@ -62,7 +62,7 @@ export function initEMICalculator(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="emi-amount-input">Principal Loan Amount</label>
-                <span class="form-hint" id="emi-amount-display">${formatCurrency(state.loanAmount, undefined, false)}</span>
+                <span class="form-hint" id="emi-amount-hint">${formatCurrency(state.loanAmount, undefined, false)}</span>
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
@@ -70,9 +70,10 @@ export function initEMICalculator(container) {
                   type="number"
                   id="emi-amount-input"
                   class="form-input has-prefix"
-                  min="50000"
+                  min="0"
                   max="50000000"
                   step="50000"
+                  placeholder="0"
                   value="${state.loanAmount}"
                 />
               </div>
@@ -98,16 +99,17 @@ export function initEMICalculator(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="emi-rate-input">Annual Interest Rate</label>
-                <span class="form-hint">${formatPercent(state.interestRate, 2)}</span>
+                <span class="form-hint" id="emi-rate-hint">${formatPercent(state.interestRate, 2)}</span>
               </div>
               <div class="input-wrapper">
                 <input
                   type="number"
                   id="emi-rate-input"
                   class="form-input has-suffix"
-                  min="0.1"
+                  min="0"
                   max="30"
                   step="0.05"
+                  placeholder="0"
                   value="${state.interestRate}"
                 />
                 <span class="input-suffix">%</span>
@@ -147,9 +149,10 @@ export function initEMICalculator(container) {
                   min="1"
                   max="${state.isYears ? 40 : 480}"
                   step="1"
+                  placeholder="1"
                   value="${state.tenureValue}"
                 />
-                <span class="input-suffix">${state.isYears ? 'Years' : 'Months'}</span>
+                <span class="input-suffix" id="emi-tenure-suffix">${state.isYears ? 'Years' : 'Months'}</span>
               </div>
               <div class="slider-container">
                 <input
@@ -163,9 +166,9 @@ export function initEMICalculator(container) {
                 />
               </div>
               <div class="slider-limits">
-                <span>1 ${state.isYears ? 'Yr' : 'Mo'}</span>
+                <span id="emi-limit-min">1 ${state.isYears ? 'Yr' : 'Mo'}</span>
                 <span>20 Yrs (Standard)</span>
-                <span>${state.isYears ? '30 Yrs' : '360 Mos'}</span>
+                <span id="emi-limit-max">${state.isYears ? '30 Yrs' : '360 Mos'}</span>
               </div>
             </div>
 
@@ -173,7 +176,7 @@ export function initEMICalculator(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="emi-fee-input">Bank Processing Fee</label>
-                <span class="form-hint">${formatPercent(state.processingFeePct, 1)} (${formatCurrency(emiResult.processingFee)})</span>
+                <span class="form-hint" id="emi-fee-hint">${formatPercent(state.processingFeePct, 1)} (${formatCurrency(emiResult.processingFee)})</span>
               </div>
               <div class="input-wrapper">
                 <input
@@ -183,6 +186,7 @@ export function initEMICalculator(container) {
                   min="0"
                   max="5"
                   step="0.1"
+                  placeholder="0"
                   value="${state.processingFeePct}"
                 />
                 <span class="input-suffix">%</span>
@@ -197,32 +201,32 @@ export function initEMICalculator(container) {
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                 Repayment Outlay Summary
               </span>
-              <span class="panel-subtitle">${months} PAYMENTS</span>
+              <span class="panel-subtitle" id="emi-payments-subtitle">${months} PAYMENTS</span>
             </div>
 
             <div class="summary-grid">
               <div class="summary-card highlight">
                 <span class="metric-label">Monthly EMI</span>
-                <span class="metric-value">${formatCurrency(emiResult.monthlyEMI)}</span>
+                <span class="metric-value" id="emi-monthly-val">${formatCurrency(emiResult.monthlyEMI)}</span>
                 <span class="metric-subtext">Principal & interest per month</span>
               </div>
 
               <div class="summary-card">
                 <span class="metric-label">Total Interest</span>
-                <span class="metric-value">${formatCurrency(emiResult.totalInterest)}</span>
-                <span class="metric-subtext">${emiResult.interestPercent}% of total repayment</span>
+                <span class="metric-value" id="emi-interest-val">${formatCurrency(emiResult.totalInterest)}</span>
+                <span class="metric-subtext" id="emi-interest-sub">${emiResult.interestPercent}% of total repayment</span>
               </div>
 
               <div class="summary-card">
                 <span class="metric-label">Total Repayment</span>
-                <span class="metric-value">${formatCurrency(emiResult.totalPayment)}</span>
+                <span class="metric-value" id="emi-total-val">${formatCurrency(emiResult.totalPayment)}</span>
                 <span class="metric-subtext">Principal + Interest</span>
               </div>
 
               <div class="summary-card">
                 <span class="metric-label">Net Lifetime Cost</span>
-                <span class="metric-value">${formatCurrency(emiResult.netTotalCost)}</span>
-                <span class="metric-subtext">Incl. ${formatCurrency(emiResult.processingFee)} fee</span>
+                <span class="metric-value" id="emi-net-val">${formatCurrency(emiResult.netTotalCost)}</span>
+                <span class="metric-subtext" id="emi-net-sub">Incl. ${formatCurrency(emiResult.processingFee)} fee</span>
               </div>
             </div>
 
@@ -231,21 +235,21 @@ export function initEMICalculator(container) {
 
             <div class="breakdown-section">
               <div class="ratio-bar">
-                <div class="ratio-bar-segment primary" style="width: ${emiResult.principalPercent}%"></div>
+                <div class="ratio-bar-segment primary" id="emi-ratio-bar" style="width: ${emiResult.principalPercent}%"></div>
               </div>
               <div class="breakdown-row">
                 <span class="breakdown-label">
                   <span class="breakdown-dot principal"></span>
                   Principal Amount
                 </span>
-                <span class="breakdown-val">${formatCurrency(state.loanAmount)} (${emiResult.principalPercent}%)</span>
+                <span class="breakdown-val" id="emi-bd-principal">${formatCurrency(state.loanAmount)} (${emiResult.principalPercent}%)</span>
               </div>
               <div class="breakdown-row">
                 <span class="breakdown-label">
                   <span class="breakdown-dot interest"></span>
                   Total Interest Charges
                 </span>
-                <span class="breakdown-val">${formatCurrency(emiResult.totalInterest)} (${emiResult.interestPercent}%)</span>
+                <span class="breakdown-val" id="emi-bd-interest">${formatCurrency(emiResult.totalInterest)} (${emiResult.interestPercent}%)</span>
               </div>
             </div>
           </div>
@@ -256,69 +260,127 @@ export function initEMICalculator(container) {
       </div>
     `;
 
-    // Render Donut
-    const donutBox = container.querySelector('#emi-donut-chart-box');
-    renderDonutChart(donutBox, {
-      segments: [
-        { label: 'Principal', value: state.loanAmount, percent: emiResult.principalPercent, colorClass: 'principal' },
-        { label: 'Interest', value: emiResult.totalInterest, percent: emiResult.interestPercent, colorClass: 'interest' }
-      ],
-      centerLabel: 'Principal Ratio',
-      centerValue: `${emiResult.principalPercent}%`
-    });
-
-    // Render Amortization Table
-    const tableContainer = container.querySelector('#emi-amortization-table-container');
-    createAmortizationTable(tableContainer, scheduleResult, {
-      title: 'Full Loan Amortization Schedule',
-      filename: `amortization_${state.loanAmount}_${state.interestRate}pct`
-    });
-
-    // Attach Event Listeners
+    updateOutputs(emiResult, scheduleResult, months);
     attachEvents();
   }
 
+  function updateOutputs(emiResult, scheduleResult, months) {
+    const subtitle = container.querySelector('#emi-payments-subtitle');
+    if (subtitle) subtitle.textContent = `${months} PAYMENTS`;
+
+    const monthlyVal = container.querySelector('#emi-monthly-val');
+    if (monthlyVal) monthlyVal.textContent = formatCurrency(emiResult.monthlyEMI);
+
+    const interestVal = container.querySelector('#emi-interest-val');
+    if (interestVal) interestVal.textContent = formatCurrency(emiResult.totalInterest);
+
+    const interestSub = container.querySelector('#emi-interest-sub');
+    if (interestSub) interestSub.textContent = `${emiResult.interestPercent}% of total repayment`;
+
+    const totalVal = container.querySelector('#emi-total-val');
+    if (totalVal) totalVal.textContent = formatCurrency(emiResult.totalPayment);
+
+    const netVal = container.querySelector('#emi-net-val');
+    if (netVal) netVal.textContent = formatCurrency(emiResult.netTotalCost);
+
+    const netSub = container.querySelector('#emi-net-sub');
+    if (netSub) netSub.textContent = `Incl. ${formatCurrency(emiResult.processingFee)} fee`;
+
+    const ratioBar = container.querySelector('#emi-ratio-bar');
+    if (ratioBar) ratioBar.style.width = `${emiResult.principalPercent}%`;
+
+    const bdPrincipal = container.querySelector('#emi-bd-principal');
+    if (bdPrincipal) bdPrincipal.textContent = `${formatCurrency(state.loanAmount)} (${emiResult.principalPercent}%)`;
+
+    const bdInterest = container.querySelector('#emi-bd-interest');
+    if (bdInterest) bdInterest.textContent = `${formatCurrency(emiResult.totalInterest)} (${emiResult.interestPercent}%)`;
+
+    // Render Donut
+    const donutBox = container.querySelector('#emi-donut-chart-box');
+    if (donutBox) {
+      renderDonutChart(donutBox, {
+        segments: [
+          { label: 'Principal', value: state.loanAmount, percent: emiResult.principalPercent, colorClass: 'principal' },
+          { label: 'Interest', value: emiResult.totalInterest, percent: emiResult.interestPercent, colorClass: 'interest' }
+        ],
+        centerLabel: 'Principal Ratio',
+        centerValue: `${emiResult.principalPercent}%`
+      });
+    }
+
+    // Render Amortization Table
+    const tableContainer = container.querySelector('#emi-amortization-table-container');
+    if (tableContainer) {
+      createAmortizationTable(tableContainer, scheduleResult, {
+        title: 'Full Loan Amortization Schedule',
+        filename: `amortization_${state.loanAmount}_${state.interestRate}pct`
+      });
+    }
+  }
+
+  function updateLive() {
+    const { emiResult, scheduleResult, months } = calculate();
+    updateOutputs(emiResult, scheduleResult, months);
+  }
+
   function attachEvents() {
+    // Auto-select on focus for all inputs
+    container.querySelectorAll('.form-input').forEach((input) => {
+      input.addEventListener('focus', () => input.select());
+    });
+
     // Amount
     const amountInput = container.querySelector('#emi-amount-input');
     const amountSlider = container.querySelector('#emi-amount-slider');
+    const amountHint = container.querySelector('#emi-amount-hint');
+
     amountInput.addEventListener('input', (e) => {
-      state.loanAmount = Math.max(0, Number(e.target.value) || 0);
+      const val = e.target.value;
+      state.loanAmount = val === '' ? 0 : Math.max(0, Number(val));
       if (amountSlider) amountSlider.value = Math.min(state.loanAmount, 15000000);
-      updateDisplay();
+      if (amountHint) amountHint.textContent = formatCurrency(state.loanAmount, undefined, false);
+      updateLive();
     });
     amountSlider.addEventListener('input', (e) => {
       state.loanAmount = Number(e.target.value);
       amountInput.value = state.loanAmount;
-      updateDisplay();
+      if (amountHint) amountHint.textContent = formatCurrency(state.loanAmount, undefined, false);
+      updateLive();
     });
 
     // Rate
     const rateInput = container.querySelector('#emi-rate-input');
     const rateSlider = container.querySelector('#emi-rate-slider');
+    const rateHint = container.querySelector('#emi-rate-hint');
+
     rateInput.addEventListener('input', (e) => {
-      state.interestRate = Math.max(0, Number(e.target.value) || 0);
+      const val = e.target.value;
+      state.interestRate = val === '' ? 0 : Math.max(0, Number(val));
       if (rateSlider) rateSlider.value = state.interestRate;
-      updateDisplay();
+      if (rateHint) rateHint.textContent = formatPercent(state.interestRate, 2);
+      updateLive();
     });
     rateSlider.addEventListener('input', (e) => {
       state.interestRate = Number(e.target.value);
       rateInput.value = state.interestRate;
-      updateDisplay();
+      if (rateHint) rateHint.textContent = formatPercent(state.interestRate, 2);
+      updateLive();
     });
 
     // Tenure
     const tenureInput = container.querySelector('#emi-tenure-input');
     const tenureSlider = container.querySelector('#emi-tenure-slider');
+
     tenureInput.addEventListener('input', (e) => {
-      state.tenureValue = Math.max(1, Number(e.target.value) || 1);
+      const val = e.target.value;
+      state.tenureValue = val === '' ? 1 : Math.max(1, Number(val));
       if (tenureSlider) tenureSlider.value = state.tenureValue;
-      updateDisplay();
+      updateLive();
     });
     tenureSlider.addEventListener('input', (e) => {
       state.tenureValue = Number(e.target.value);
       tenureInput.value = state.tenureValue;
-      updateDisplay();
+      updateLive();
     });
 
     // Tenure Toggle
@@ -340,9 +402,14 @@ export function initEMICalculator(container) {
 
     // Fee
     const feeInput = container.querySelector('#emi-fee-input');
+    const feeHint = container.querySelector('#emi-fee-hint');
+
     feeInput.addEventListener('input', (e) => {
-      state.processingFeePct = Math.max(0, Number(e.target.value) || 0);
-      updateDisplay();
+      const val = e.target.value;
+      state.processingFeePct = val === '' ? 0 : Math.max(0, Number(val));
+      const { emiResult } = calculate();
+      if (feeHint) feeHint.textContent = `${formatPercent(state.processingFeePct, 1)} (${formatCurrency(emiResult.processingFee)})`;
+      updateLive();
     });
 
     // Reset Defaults
@@ -351,10 +418,6 @@ export function initEMICalculator(container) {
       Object.assign(state, defaultState);
       render();
     });
-  }
-
-  function updateDisplay() {
-    render();
   }
 
   render();

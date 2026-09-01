@@ -60,11 +60,11 @@ export function initInflationCalculator(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="inf-amount-input">Base Amount</label>
-                <span class="form-hint">${formatCurrency(state.amount, undefined, false)}</span>
+                <span class="form-hint" id="inf-amount-hint">${formatCurrency(state.amount, undefined, false)}</span>
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="inf-amount-input" class="form-input has-prefix" min="100" max="10000000" step="1000" value="${state.amount}" />
+                <input type="number" id="inf-amount-input" class="form-input has-prefix" min="0" max="10000000" step="1000" placeholder="0" value="${state.amount}" />
               </div>
               <div class="slider-container">
                 <input type="range" id="inf-amount-slider" class="range-slider" min="5000" max="1000000" step="5000" value="${Math.min(state.amount, 1000000)}" />
@@ -75,10 +75,10 @@ export function initInflationCalculator(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="inf-rate-input">Annual Inflation Rate</label>
-                <span class="form-hint">${state.inflationRate}%</span>
+                <span class="form-hint" id="inf-rate-hint">${state.inflationRate}%</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="inf-rate-input" class="form-input has-suffix" min="0.1" max="25" step="0.1" value="${state.inflationRate}" />
+                <input type="number" id="inf-rate-input" class="form-input has-suffix" min="0" max="25" step="0.1" placeholder="6" value="${state.inflationRate}" />
                 <span class="input-suffix">%</span>
               </div>
               <div class="slider-container">
@@ -90,10 +90,10 @@ export function initInflationCalculator(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="inf-years-input">Time Horizon</label>
-                <span class="form-hint">${state.years} Years</span>
+                <span class="form-hint" id="inf-years-hint">${state.years} Years</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="inf-years-input" class="form-input has-suffix" min="1" max="50" step="1" value="${state.years}" />
+                <input type="number" id="inf-years-input" class="form-input has-suffix" min="1" max="50" step="1" placeholder="20" value="${state.years}" />
                 <span class="input-suffix">Years</span>
               </div>
               <div class="slider-container">
@@ -106,37 +106,37 @@ export function initInflationCalculator(container) {
           <div class="panel">
             <div class="panel-header">
               <span class="panel-title">Inflation Impact Summary</span>
-              <span class="panel-subtitle">Over ${state.years} years</span>
+              <span class="panel-subtitle" id="inf-impact-sub">Over ${state.years} years</span>
             </div>
 
             <div class="summary-grid">
               <div class="summary-card highlight">
-                <span class="metric-label">${state.direction === 'future_cost' ? 'Future Equivalent Cost' : 'Future Purchasing Value'}</span>
-                <span class="metric-value">${formatCurrency(res.adjustedAmount)}</span>
-                <span class="metric-subtext">${state.direction === 'future_cost' ? `Requires +${formatCurrency(res.adjustedAmount - state.amount)} more` : `Lost ${formatCurrency(state.amount - res.adjustedAmount)} in real value`}</span>
+                <span class="metric-label" id="inf-hero-lbl">${state.direction === 'future_cost' ? 'Future Equivalent Cost' : 'Future Purchasing Value'}</span>
+                <span class="metric-value" id="inf-hero-val">${formatCurrency(res.adjustedAmount)}</span>
+                <span class="metric-subtext" id="inf-hero-sub">${state.direction === 'future_cost' ? `Requires +${formatCurrency(res.adjustedAmount - state.amount)} more` : `Lost ${formatCurrency(state.amount - res.adjustedAmount)} in real value`}</span>
               </div>
 
               <div class="summary-card">
                 <span class="metric-label">Purchasing Power Lost</span>
-                <span class="metric-value">${res.purchasingPowerLossPct}%</span>
+                <span class="metric-value" id="inf-loss-pct">${res.purchasingPowerLossPct}%</span>
                 <span class="metric-subtext">Real value degradation</span>
               </div>
 
               <div class="summary-card">
                 <span class="metric-label">Inflation Multiplier</span>
-                <span class="metric-value">${(Math.pow(1 + state.inflationRate / 100, state.years)).toFixed(2)}x</span>
+                <span class="metric-value" id="inf-mult-val">${(Math.pow(1 + state.inflationRate / 100, state.years)).toFixed(2)}x</span>
                 <span class="metric-subtext">Price expansion index</span>
               </div>
 
               <div class="summary-card">
                 <span class="metric-label">Base Principal</span>
-                <span class="metric-value">${formatCurrency(state.amount)}</span>
+                <span class="metric-value" id="inf-base-val">${formatCurrency(state.amount)}</span>
                 <span class="metric-subtext">Nominal baseline</span>
               </div>
             </div>
 
             <div class="breakdown-section">
-              <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
+              <p id="inf-narrative" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
                 ${state.direction === 'future_cost'
                   ? `An item or lifestyle that costs <strong>${formatCurrency(state.amount)}</strong> today will cost <strong>${formatCurrency(res.adjustedAmount)}</strong> in ${state.years} years with an annual inflation rate of ${state.inflationRate}%.`
                   : `In ${state.years} years, <strong>${formatCurrency(state.amount)}</strong> will only have the purchasing power equivalent of <strong>${formatCurrency(res.adjustedAmount)}</strong> today.`}
@@ -163,7 +163,7 @@ export function initInflationCalculator(container) {
                   <th>Value Loss %</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="inf-table-tbody">
                 ${renderTableRows(res.yearlyBreakdown)}
               </tbody>
             </table>
@@ -172,26 +172,62 @@ export function initInflationCalculator(container) {
       </div>
     `;
 
+    updateOutputs(res);
+    attachEvents();
+  }
+
+  function updateOutputs(res) {
+    const impactSub = container.querySelector('#inf-impact-sub');
+    if (impactSub) impactSub.textContent = `Over ${state.years} years`;
+
+    const heroLbl = container.querySelector('#inf-hero-lbl');
+    if (heroLbl) heroLbl.textContent = state.direction === 'future_cost' ? 'Future Equivalent Cost' : 'Future Purchasing Value';
+
+    const heroVal = container.querySelector('#inf-hero-val');
+    if (heroVal) heroVal.textContent = formatCurrency(res.adjustedAmount);
+
+    const heroSub = container.querySelector('#inf-hero-sub');
+    if (heroSub) heroSub.textContent = state.direction === 'future_cost' ? `Requires +${formatCurrency(res.adjustedAmount - state.amount)} more` : `Lost ${formatCurrency(state.amount - res.adjustedAmount)} in real value`;
+
+    const lossPct = container.querySelector('#inf-loss-pct');
+    if (lossPct) lossPct.textContent = `${res.purchasingPowerLossPct}%`;
+
+    const multVal = container.querySelector('#inf-mult-val');
+    if (multVal) multVal.textContent = `${(Math.pow(1 + state.inflationRate / 100, state.years)).toFixed(2)}x`;
+
+    const baseVal = container.querySelector('#inf-base-val');
+    if (baseVal) baseVal.textContent = formatCurrency(state.amount);
+
+    const narrative = container.querySelector('#inf-narrative');
+    if (narrative) {
+      narrative.innerHTML = state.direction === 'future_cost'
+        ? `An item or lifestyle that costs <strong>${formatCurrency(state.amount)}</strong> today will cost <strong>${formatCurrency(res.adjustedAmount)}</strong> in ${state.years} years with an annual inflation rate of ${state.inflationRate}%.`
+        : `In ${state.years} years, <strong>${formatCurrency(state.amount)}</strong> will only have the purchasing power equivalent of <strong>${formatCurrency(res.adjustedAmount)}</strong> today.`;
+    }
+
+    const tbody = container.querySelector('#inf-table-tbody');
+    if (tbody) tbody.innerHTML = renderTableRows(res.yearlyBreakdown);
+
     // Render chart
     const chartBox = container.querySelector('#inf-chart-box');
-    const chartData = res.yearlyBreakdown.map((row) => ({
-      year: row.year,
-      invested: row.purchasingPower,
-      total: row.futureCost
-    }));
+    if (chartBox) {
+      const chartData = res.yearlyBreakdown.map((row) => ({
+        year: row.year,
+        invested: row.purchasingPower,
+        total: row.futureCost
+      }));
 
-    renderGrowthChart(chartBox, {
-      data: chartData,
-      primaryLabel: 'Future Cost Escalation',
-      secondaryLabel: 'Remaining Purchasing Power'
-    });
-
-    attachEvents();
+      renderGrowthChart(chartBox, {
+        data: chartData,
+        primaryLabel: 'Future Cost Escalation',
+        secondaryLabel: 'Remaining Purchasing Power'
+      });
+    }
   }
 
   function renderTableRows(breakdown) {
     return breakdown.map((row) => {
-      const lossPct = Math.round((1 - row.purchasingPower / state.amount) * 100);
+      const lossPct = Math.round((1 - row.purchasingPower / Math.max(1, state.amount)) * 100);
       return `
         <tr>
           <td><strong>Year ${row.year}</strong></td>
@@ -203,10 +239,19 @@ export function initInflationCalculator(container) {
     }).join('');
   }
 
+  function updateLive() {
+    const res = calculate();
+    updateOutputs(res);
+  }
+
   function attachEvents() {
-    bindInput('inf-amount-input', 'inf-amount-slider', (v) => { state.amount = v; });
-    bindInput('inf-rate-input', 'inf-rate-slider', (v) => { state.inflationRate = v; });
-    bindInput('inf-years-input', 'inf-years-slider', (v) => { state.years = v; });
+    container.querySelectorAll('.form-input').forEach((input) => {
+      input.addEventListener('focus', () => input.select());
+    });
+
+    bindInput('inf-amount-input', 'inf-amount-slider', 'inf-amount-hint', (v) => { state.amount = v; }, (v) => formatCurrency(v, undefined, false));
+    bindInput('inf-rate-input', 'inf-rate-slider', 'inf-rate-hint', (v) => { state.inflationRate = v; }, (v) => `${v}%`);
+    bindInput('inf-years-input', 'inf-years-slider', 'inf-years-hint', (v) => { state.years = v; }, (v) => `${v} Years`);
 
     const modeBtns = container.querySelectorAll('#inflation-mode-toggle .tab-btn');
     modeBtns.forEach((btn) => {
@@ -233,22 +278,26 @@ export function initInflationCalculator(container) {
           `Year ${r.year}`,
           r.futureCost,
           r.purchasingPower,
-          Math.round((1 - r.purchasingPower / state.amount) * 100) + '%'
+          Math.round((1 - r.purchasingPower / Math.max(1, state.amount)) * 100) + '%'
         ]);
         exportToCSV('inflation_purchasing_power_projection', headers, rows);
       });
     }
   }
 
-  function bindInput(inputId, sliderId, setter) {
+  function bindInput(inputId, sliderId, hintId, setter, hintFormatter) {
     const input = container.querySelector(`#${inputId}`);
     const slider = container.querySelector(`#${sliderId}`);
+    const hint = hintId ? container.querySelector(`#${hintId}`) : null;
+
     if (input) {
       input.addEventListener('input', (e) => {
-        const val = Math.max(0, Number(e.target.value) || 0);
+        const raw = e.target.value;
+        const val = raw === '' ? 0 : Math.max(0, Number(raw));
         setter(val);
         if (slider) slider.value = val;
-        render();
+        if (hint && hintFormatter) hint.textContent = hintFormatter(val);
+        updateLive();
       });
     }
     if (slider) {
@@ -256,7 +305,8 @@ export function initInflationCalculator(container) {
         const val = Number(e.target.value);
         setter(val);
         if (input) input.value = val;
-        render();
+        if (hint && hintFormatter) hint.textContent = hintFormatter(val);
+        updateLive();
       });
     }
   }

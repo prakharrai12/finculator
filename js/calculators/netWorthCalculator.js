@@ -69,8 +69,8 @@ export function initNetWorthCalculator(container) {
         <!-- Hero Net Worth Box -->
         <div class="hero-metric-box">
           <span class="metric-label">Total Net Worth</span>
-          <span class="metric-value">${formatCurrency(res.netWorth)}</span>
-          <span class="metric-subtext">Total Assets (${formatCurrency(res.totalAssets)}) − Total Liabilities (${formatCurrency(res.totalLiabilities)})</span>
+          <span class="metric-value" id="nw-hero-val">${formatCurrency(res.netWorth)}</span>
+          <span class="metric-subtext" id="nw-hero-sub">Total Assets (${formatCurrency(res.totalAssets)}) − Total Liabilities (${formatCurrency(res.totalLiabilities)})</span>
         </div>
 
         <div class="calc-grid">
@@ -78,14 +78,14 @@ export function initNetWorthCalculator(container) {
           <div class="panel">
             <div class="panel-header">
               <span class="panel-title">Asset Inventory</span>
-              <span class="panel-subtitle">Total: ${formatCurrency(res.totalAssets)}</span>
+              <span class="panel-subtitle" id="nw-assets-sub">Total: ${formatCurrency(res.totalAssets)}</span>
             </div>
 
             <div class="form-group">
               <label class="form-label">Cash, Savings & Emergency Funds</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-cash-input" class="form-input has-prefix" value="${state.cash}" step="10000" />
+                <input type="number" id="nw-cash-input" class="form-input has-prefix" placeholder="0" value="${state.cash}" step="10000" />
               </div>
             </div>
 
@@ -93,7 +93,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Brokerage, Stocks & Mutual Funds</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-inv-input" class="form-input has-prefix" value="${state.investments}" step="25000" />
+                <input type="number" id="nw-inv-input" class="form-input has-prefix" placeholder="0" value="${state.investments}" step="25000" />
               </div>
             </div>
 
@@ -101,7 +101,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Primary Real Estate & Property</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-re-input" class="form-input has-prefix" value="${state.realEstate}" step="50000" />
+                <input type="number" id="nw-re-input" class="form-input has-prefix" placeholder="0" value="${state.realEstate}" step="50000" />
               </div>
             </div>
 
@@ -109,7 +109,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Retirement Accounts (EPF, PPF, NPS, Superannuation, 401k)</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-ret-input" class="form-input has-prefix" value="${state.retirement}" step="25000" />
+                <input type="number" id="nw-ret-input" class="form-input has-prefix" placeholder="0" value="${state.retirement}" step="25000" />
               </div>
             </div>
 
@@ -117,7 +117,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Vehicles & Personal Valuables</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-veh-input" class="form-input has-prefix" value="${state.vehicles}" step="10000" />
+                <input type="number" id="nw-veh-input" class="form-input has-prefix" placeholder="0" value="${state.vehicles}" step="10000" />
               </div>
             </div>
           </div>
@@ -126,14 +126,14 @@ export function initNetWorthCalculator(container) {
           <div class="panel">
             <div class="panel-header">
               <span class="panel-title">Liabilities & Debts</span>
-              <span class="panel-subtitle">Total: ${formatCurrency(res.totalLiabilities)}</span>
+              <span class="panel-subtitle" id="nw-liab-sub">Total: ${formatCurrency(res.totalLiabilities)}</span>
             </div>
 
             <div class="form-group">
               <label class="form-label">Mortgage / Home Loan Balance</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-mort-input" class="form-input has-prefix" value="${state.mortgage}" step="50000" />
+                <input type="number" id="nw-mort-input" class="form-input has-prefix" placeholder="0" value="${state.mortgage}" step="50000" />
               </div>
             </div>
 
@@ -141,7 +141,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Auto Loans</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-auto-input" class="form-input has-prefix" value="${state.autoLoans}" step="5000" />
+                <input type="number" id="nw-auto-input" class="form-input has-prefix" placeholder="0" value="${state.autoLoans}" step="5000" />
               </div>
             </div>
 
@@ -149,7 +149,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Student & Personal Loans</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-stu-input" class="form-input has-prefix" value="${state.studentLoans}" step="5000" />
+                <input type="number" id="nw-stu-input" class="form-input has-prefix" placeholder="0" value="${state.studentLoans}" step="5000" />
               </div>
             </div>
 
@@ -157,7 +157,7 @@ export function initNetWorthCalculator(container) {
               <label class="form-label">Credit Card Debt</label>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="nw-cc-input" class="form-input has-prefix" value="${state.creditCards}" step="1000" />
+                <input type="number" id="nw-cc-input" class="form-input has-prefix" placeholder="0" value="${state.creditCards}" step="1000" />
               </div>
             </div>
 
@@ -165,12 +165,12 @@ export function initNetWorthCalculator(container) {
             <div class="summary-grid" style="margin-top: 1.5rem; margin-bottom: 0;">
               <div class="summary-card">
                 <span class="metric-label">Liquid Assets</span>
-                <span class="metric-value">${formatCurrency(res.liquidAssets)}</span>
+                <span class="metric-value" id="nw-liquid-val">${formatCurrency(res.liquidAssets)}</span>
                 <span class="metric-subtext">Cash + Investments</span>
               </div>
               <div class="summary-card">
                 <span class="metric-label">Debt-to-Asset</span>
-                <span class="metric-value">${res.debtToAssetRatio}%</span>
+                <span class="metric-value" id="nw-dta-val">${res.debtToAssetRatio}%</span>
                 <span class="metric-subtext">Solvency ratio</span>
               </div>
             </div>
@@ -186,7 +186,7 @@ export function initNetWorthCalculator(container) {
 
           <div id="nw-donut-box"></div>
 
-          <div class="breakdown-section" style="margin-top: 1.5rem;">
+          <div class="breakdown-section" id="nw-breakdown-box" style="margin-top: 1.5rem;">
             ${res.assetsBreakdown.map((item) => `
               <div class="breakdown-row">
                 <span>${item.label}</span>
@@ -198,26 +198,68 @@ export function initNetWorthCalculator(container) {
       </div>
     `;
 
-    // Render Asset Donut
-    const donutBox = container.querySelector('#nw-donut-box');
-    const totAssets = res.totalAssets || 1;
-    const segments = [
-      { label: 'Real Estate', value: state.realEstate, percent: Math.round((state.realEstate / totAssets) * 100), colorClass: 'principal' },
-      { label: 'Investments', value: state.investments, percent: Math.round((state.investments / totAssets) * 100), colorClass: 'interest' },
-      { label: 'Cash', value: state.cash, percent: Math.round((state.cash / totAssets) * 100), colorClass: 'extra' },
-      { label: 'Retirement', value: state.retirement, percent: Math.round((state.retirement / totAssets) * 100), colorClass: 'principal' }
-    ];
-
-    renderDonutChart(donutBox, {
-      segments,
-      centerLabel: 'Total Assets',
-      centerValue: formatCurrency(res.totalAssets, undefined, false)
-    });
-
+    updateOutputs(res);
     attachEvents();
   }
 
+  function updateOutputs(res) {
+    const heroVal = container.querySelector('#nw-hero-val');
+    if (heroVal) heroVal.textContent = formatCurrency(res.netWorth);
+
+    const heroSub = container.querySelector('#nw-hero-sub');
+    if (heroSub) heroSub.textContent = `Total Assets (${formatCurrency(res.totalAssets)}) − Total Liabilities (${formatCurrency(res.totalLiabilities)})`;
+
+    const assetsSub = container.querySelector('#nw-assets-sub');
+    if (assetsSub) assetsSub.textContent = `Total: ${formatCurrency(res.totalAssets)}`;
+
+    const liabSub = container.querySelector('#nw-liab-sub');
+    if (liabSub) liabSub.textContent = `Total: ${formatCurrency(res.totalLiabilities)}`;
+
+    const liquidVal = container.querySelector('#nw-liquid-val');
+    if (liquidVal) liquidVal.textContent = formatCurrency(res.liquidAssets);
+
+    const dtaVal = container.querySelector('#nw-dta-val');
+    if (dtaVal) dtaVal.textContent = `${res.debtToAssetRatio}%`;
+
+    const breakdownBox = container.querySelector('#nw-breakdown-box');
+    if (breakdownBox) {
+      breakdownBox.innerHTML = res.assetsBreakdown.map((item) => `
+        <div class="breakdown-row">
+          <span>${item.label}</span>
+          <span><strong>${formatCurrency(item.value)}</strong> (${item.percent}%)</span>
+        </div>
+      `).join('');
+    }
+
+    // Render Asset Donut
+    const donutBox = container.querySelector('#nw-donut-box');
+    if (donutBox) {
+      const totAssets = res.totalAssets || 1;
+      const segments = [
+        { label: 'Real Estate', value: state.realEstate, percent: Math.round((state.realEstate / totAssets) * 100), colorClass: 'principal' },
+        { label: 'Investments', value: state.investments, percent: Math.round((state.investments / totAssets) * 100), colorClass: 'interest' },
+        { label: 'Cash', value: state.cash, percent: Math.round((state.cash / totAssets) * 100), colorClass: 'extra' },
+        { label: 'Retirement', value: state.retirement, percent: Math.round((state.retirement / totAssets) * 100), colorClass: 'principal' }
+      ];
+
+      renderDonutChart(donutBox, {
+        segments,
+        centerLabel: 'Total Assets',
+        centerValue: formatCurrency(res.totalAssets, undefined, false)
+      });
+    }
+  }
+
+  function updateLive() {
+    const res = calculate();
+    updateOutputs(res);
+  }
+
   function attachEvents() {
+    container.querySelectorAll('.form-input').forEach((input) => {
+      input.addEventListener('focus', () => input.select());
+    });
+
     bindNum('nw-cash-input', (v) => { state.cash = v; });
     bindNum('nw-inv-input', (v) => { state.investments = v; });
     bindNum('nw-re-input', (v) => { state.realEstate = v; });
@@ -242,9 +284,10 @@ export function initNetWorthCalculator(container) {
     const input = container.querySelector(`#${id}`);
     if (input) {
       input.addEventListener('input', (e) => {
-        const val = Math.max(0, Number(e.target.value) || 0);
+        const raw = e.target.value;
+        const val = raw === '' ? 0 : Math.max(0, Number(raw));
         setter(val);
-        render();
+        updateLive();
       });
     }
   }

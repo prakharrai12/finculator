@@ -60,17 +60,17 @@ export function initBuyVsRentCalculator(container) {
         <!-- High-Impact Outcome Banner -->
         <div class="savings-banner">
           <div class="savings-info">
-            <span class="savings-label">Financial Verdict at Year ${state.timeHorizonYears}</span>
-            <span class="savings-amount">${res.winner === 'Buy' ? 'Buying' : 'Renting'} is Ahead by ${formatCurrency(res.netAdvantage)}</span>
+            <span class="savings-label" id="bvr-verdict-label">Financial Verdict at Year ${state.timeHorizonYears}</span>
+            <span class="savings-amount" id="bvr-verdict-amt">${res.winner === 'Buy' ? 'Buying' : 'Renting'} is Ahead by ${formatCurrency(res.netAdvantage)}</span>
           </div>
           <div class="savings-meta">
             <div class="savings-subitem">
               <span class="sub-label">Homeowner Net Equity</span>
-              <span class="sub-val">${formatCurrency(res.finalBuyerNetWorth)}</span>
+              <span class="sub-val" id="bvr-buyer-nw">${formatCurrency(res.finalBuyerNetWorth)}</span>
             </div>
             <div class="savings-subitem">
               <span class="sub-label">Renter Investment Portfolio</span>
-              <span class="sub-val">${formatCurrency(res.finalRenterNetWorth)}</span>
+              <span class="sub-val" id="bvr-renter-nw">${formatCurrency(res.finalRenterNetWorth)}</span>
             </div>
           </div>
         </div>
@@ -87,11 +87,11 @@ export function initBuyVsRentCalculator(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="bvr-hp-input">Home Purchase Price</label>
-                <span class="form-hint">${formatCurrency(state.homePrice, undefined, false)}</span>
+                <span class="form-hint" id="bvr-hp-hint">${formatCurrency(state.homePrice, undefined, false)}</span>
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="bvr-hp-input" class="form-input has-prefix" min="500000" max="50000000" step="50000" value="${state.homePrice}" />
+                <input type="number" id="bvr-hp-input" class="form-input has-prefix" min="0" max="50000000" step="50000" placeholder="0" value="${state.homePrice}" />
               </div>
               <div class="slider-container">
                 <input type="range" id="bvr-hp-slider" class="range-slider" min="1000000" max="20000000" step="50000" value="${Math.min(state.homePrice, 20000000)}" />
@@ -102,10 +102,10 @@ export function initBuyVsRentCalculator(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="bvr-dp-input">Down Payment Percentage</label>
-                <span class="form-hint">${state.downPaymentPct}% (${formatCurrency(res.initialDownPayment, undefined, false)})</span>
+                <span class="form-hint" id="bvr-dp-hint">${state.downPaymentPct}% (${formatCurrency(res.initialDownPayment, undefined, false)})</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bvr-dp-input" class="form-input has-suffix" min="0" max="60" step="5" value="${state.downPaymentPct}" />
+                <input type="number" id="bvr-dp-input" class="form-input has-suffix" min="0" max="90" step="5" placeholder="20" value="${state.downPaymentPct}" />
                 <span class="input-suffix">%</span>
               </div>
             </div>
@@ -114,10 +114,10 @@ export function initBuyVsRentCalculator(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="bvr-mr-input">Mortgage Interest Rate</label>
-                <span class="form-hint">${state.mortgageRate}%</span>
+                <span class="form-hint" id="bvr-mr-hint">${state.mortgageRate}%</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bvr-mr-input" class="form-input has-suffix" min="1" max="18" step="0.1" value="${state.mortgageRate}" />
+                <input type="number" id="bvr-mr-input" class="form-input has-suffix" min="0" max="25" step="0.1" placeholder="8.5" value="${state.mortgageRate}" />
                 <span class="input-suffix">%</span>
               </div>
             </div>
@@ -126,10 +126,10 @@ export function initBuyVsRentCalculator(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="bvr-ha-input">Expected Property Appreciation</label>
-                <span class="form-hint">${state.homeAppreciationRate}% / yr</span>
+                <span class="form-hint" id="bvr-ha-hint">${state.homeAppreciationRate}% / yr</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bvr-ha-input" class="form-input has-suffix" min="0" max="15" step="0.5" value="${state.homeAppreciationRate}" />
+                <input type="number" id="bvr-ha-input" class="form-input has-suffix" min="0" max="20" step="0.5" placeholder="5" value="${state.homeAppreciationRate}" />
                 <span class="input-suffix">%</span>
               </div>
             </div>
@@ -146,11 +146,11 @@ export function initBuyVsRentCalculator(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="bvr-rent-input">Starting Monthly Rent</label>
-                <span class="form-hint">${formatCurrency(state.monthlyRent, undefined, false)} / mo</span>
+                <span class="form-hint" id="bvr-rent-hint">${formatCurrency(state.monthlyRent, undefined, false)} / mo</span>
               </div>
               <div class="input-wrapper">
                 <span class="input-prefix">${curr.symbol}</span>
-                <input type="number" id="bvr-rent-input" class="form-input has-prefix" min="5000" max="300000" step="1000" value="${state.monthlyRent}" />
+                <input type="number" id="bvr-rent-input" class="form-input has-prefix" min="0" max="300000" step="1000" placeholder="0" value="${state.monthlyRent}" />
               </div>
               <div class="slider-container">
                 <input type="range" id="bvr-rent-slider" class="range-slider" min="10000" max="100000" step="1000" value="${Math.min(state.monthlyRent, 100000)}" />
@@ -161,10 +161,10 @@ export function initBuyVsRentCalculator(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="bvr-ri-input">Annual Rent Inflation</label>
-                <span class="form-hint">${state.rentInflationRate}% / yr</span>
+                <span class="form-hint" id="bvr-ri-hint">${state.rentInflationRate}% / yr</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bvr-ri-input" class="form-input has-suffix" min="0" max="15" step="0.5" value="${state.rentInflationRate}" />
+                <input type="number" id="bvr-ri-input" class="form-input has-suffix" min="0" max="20" step="0.5" placeholder="5" value="${state.rentInflationRate}" />
                 <span class="input-suffix">%</span>
               </div>
             </div>
@@ -173,10 +173,10 @@ export function initBuyVsRentCalculator(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="bvr-ir-input">Renter Stock Market Return</label>
-                <span class="form-hint">${state.investmentReturnRate}% / yr</span>
+                <span class="form-hint" id="bvr-ir-hint">${state.investmentReturnRate}% / yr</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bvr-ir-input" class="form-input has-suffix" min="1" max="25" step="0.5" value="${state.investmentReturnRate}" />
+                <input type="number" id="bvr-ir-input" class="form-input has-suffix" min="0" max="30" step="0.5" placeholder="12" value="${state.investmentReturnRate}" />
                 <span class="input-suffix">%</span>
               </div>
             </div>
@@ -185,10 +185,10 @@ export function initBuyVsRentCalculator(container) {
             <div class="form-group">
               <div class="label-row">
                 <label class="form-label" for="bvr-th-input">Comparison Time Horizon</label>
-                <span class="form-hint">${state.timeHorizonYears} Years</span>
+                <span class="form-hint" id="bvr-th-hint">${state.timeHorizonYears} Years</span>
               </div>
               <div class="input-wrapper">
-                <input type="number" id="bvr-th-input" class="form-input has-suffix" min="3" max="30" step="1" value="${state.timeHorizonYears}" />
+                <input type="number" id="bvr-th-input" class="form-input has-suffix" min="1" max="40" step="1" placeholder="15" value="${state.timeHorizonYears}" />
                 <span class="input-suffix">Years</span>
               </div>
               <div class="slider-container">
@@ -202,7 +202,7 @@ export function initBuyVsRentCalculator(container) {
         <div class="panel" style="margin-top: 1.5rem;">
           <div class="panel-header">
             <span class="panel-title">Cumulative Wealth Trajectory: Home Equity vs Renter Portfolio</span>
-            <span class="panel-subtitle">Over ${state.timeHorizonYears} Years</span>
+            <span class="panel-subtitle" id="bvr-chart-sub">Over ${state.timeHorizonYears} Years</span>
           </div>
 
           <div id="bvr-chart-box"></div>
@@ -210,29 +210,61 @@ export function initBuyVsRentCalculator(container) {
       </div>
     `;
 
-    // Render Trajectory Chart
-    const chartBox = container.querySelector('#bvr-chart-box');
-    const origSched = res.trajectory.map((r) => ({ year: r.year, closingBalance: r.buyerEquity }));
-    const revSched = res.trajectory.map((r) => ({ year: r.year, closingBalance: r.renterPortfolio }));
-
-    renderComparisonChart(chartBox, {
-      original: origSched,
-      revised: revSched
-    });
-
+    updateOutputs(res);
     attachEvents();
   }
 
-  function attachEvents() {
-    bindInput('bvr-hp-input', 'bvr-hp-slider', (v) => { state.homePrice = v; });
-    bindNum('bvr-dp-input', (v) => { state.downPaymentPct = v; });
-    bindNum('bvr-mr-input', (v) => { state.mortgageRate = v; });
-    bindNum('bvr-ha-input', (v) => { state.homeAppreciationRate = v; });
+  function updateOutputs(res) {
+    const verdictLbl = container.querySelector('#bvr-verdict-label');
+    if (verdictLbl) verdictLbl.textContent = `Financial Verdict at Year ${state.timeHorizonYears}`;
 
-    bindInput('bvr-rent-input', 'bvr-rent-slider', (v) => { state.monthlyRent = v; });
-    bindNum('bvr-ri-input', (v) => { state.rentInflationRate = v; });
-    bindNum('bvr-ir-input', (v) => { state.investmentReturnRate = v; });
-    bindInput('bvr-th-input', 'bvr-th-slider', (v) => { state.timeHorizonYears = v; });
+    const verdictAmt = container.querySelector('#bvr-verdict-amt');
+    if (verdictAmt) verdictAmt.textContent = `${res.winner === 'Buy' ? 'Buying' : 'Renting'} is Ahead by ${formatCurrency(res.netAdvantage)}`;
+
+    const buyerNw = container.querySelector('#bvr-buyer-nw');
+    if (buyerNw) buyerNw.textContent = formatCurrency(res.finalBuyerNetWorth);
+
+    const renterNw = container.querySelector('#bvr-renter-nw');
+    if (renterNw) renterNw.textContent = formatCurrency(res.finalRenterNetWorth);
+
+    const dpHint = container.querySelector('#bvr-dp-hint');
+    if (dpHint) dpHint.textContent = `${state.downPaymentPct}% (${formatCurrency(res.initialDownPayment, undefined, false)})`;
+
+    const chartSub = container.querySelector('#bvr-chart-sub');
+    if (chartSub) chartSub.textContent = `Over ${state.timeHorizonYears} Years`;
+
+    // Render Trajectory Chart
+    const chartBox = container.querySelector('#bvr-chart-box');
+    if (chartBox) {
+      const origSched = res.trajectory.map((r) => ({ year: r.year, closingBalance: r.buyerEquity }));
+      const revSched = res.trajectory.map((r) => ({ year: r.year, closingBalance: r.renterPortfolio }));
+
+      renderComparisonChart(chartBox, {
+        original: origSched,
+        revised: revSched
+      });
+    }
+  }
+
+  function updateLive() {
+    const res = calculate();
+    updateOutputs(res);
+  }
+
+  function attachEvents() {
+    container.querySelectorAll('.form-input').forEach((input) => {
+      input.addEventListener('focus', () => input.select());
+    });
+
+    bindInput('bvr-hp-input', 'bvr-hp-slider', 'bvr-hp-hint', (v) => { state.homePrice = v; }, (v) => formatCurrency(v, undefined, false));
+    bindNum('bvr-dp-input', 'bvr-dp-hint', (v) => { state.downPaymentPct = v; }, (v) => `${v}%`);
+    bindNum('bvr-mr-input', 'bvr-mr-hint', (v) => { state.mortgageRate = v; }, (v) => `${v}%`);
+    bindNum('bvr-ha-input', 'bvr-ha-hint', (v) => { state.homeAppreciationRate = v; }, (v) => `${v}% / yr`);
+
+    bindInput('bvr-rent-input', 'bvr-rent-slider', 'bvr-rent-hint', (v) => { state.monthlyRent = v; }, (v) => `${formatCurrency(v, undefined, false)} / mo`);
+    bindNum('bvr-ri-input', 'bvr-ri-hint', (v) => { state.rentInflationRate = v; }, (v) => `${v}% / yr`);
+    bindNum('bvr-ir-input', 'bvr-ir-hint', (v) => { state.investmentReturnRate = v; }, (v) => `${v}% / yr`);
+    bindInput('bvr-th-input', 'bvr-th-slider', 'bvr-th-hint', (v) => { state.timeHorizonYears = v; }, (v) => `${v} Years`);
 
     const resetBtn = container.querySelector('#btn-reset-bvr');
     if (resetBtn) {
@@ -243,26 +275,33 @@ export function initBuyVsRentCalculator(container) {
     }
   }
 
-  function bindNum(id, setter) {
+  function bindNum(id, hintId, setter, hintFormatter) {
     const input = container.querySelector(`#${id}`);
+    const hint = hintId ? container.querySelector(`#${hintId}`) : null;
     if (input) {
       input.addEventListener('input', (e) => {
-        const val = Math.max(0, Number(e.target.value) || 0);
+        const raw = e.target.value;
+        const val = raw === '' ? 0 : Math.max(0, Number(raw));
         setter(val);
-        render();
+        if (hint && hintFormatter) hint.textContent = hintFormatter(val);
+        updateLive();
       });
     }
   }
 
-  function bindInput(inputId, sliderId, setter) {
+  function bindInput(inputId, sliderId, hintId, setter, hintFormatter) {
     const input = container.querySelector(`#${inputId}`);
     const slider = container.querySelector(`#${sliderId}`);
+    const hint = hintId ? container.querySelector(`#${hintId}`) : null;
+
     if (input) {
       input.addEventListener('input', (e) => {
-        const val = Math.max(0, Number(e.target.value) || 0);
+        const raw = e.target.value;
+        const val = raw === '' ? 0 : Math.max(0, Number(raw));
         setter(val);
         if (slider) slider.value = val;
-        render();
+        if (hint && hintFormatter) hint.textContent = hintFormatter(val);
+        updateLive();
       });
     }
     if (slider) {
@@ -270,7 +309,8 @@ export function initBuyVsRentCalculator(container) {
         const val = Number(e.target.value);
         setter(val);
         if (input) input.value = val;
-        render();
+        if (hint && hintFormatter) hint.textContent = hintFormatter(val);
+        updateLive();
       });
     }
   }
