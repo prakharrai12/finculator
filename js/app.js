@@ -29,8 +29,9 @@ import { initNetWorthCalculator } from './calculators/netWorthCalculator.js';
 import { initBudgetPlanner } from './calculators/budgetPlanner.js';
 import { initBuyVsRentCalculator } from './calculators/buyVsRentCalculator.js';
 
-// AI Copilot
+// AI Copilot & Portfolio Builder
 import { FinBot } from './components/chatbot.js';
+import { PortfolioModal } from './components/portfolioModal.js';
 
 class FinculatorApp {
   constructor() {
@@ -41,10 +42,21 @@ class FinculatorApp {
     this.sidebar = document.getElementById('app-sidebar');
     this.sidebarBackdrop = document.getElementById('sidebar-backdrop');
     this.printBtn = document.getElementById('btn-global-print');
+    this.portfolioBtn = document.getElementById('btn-open-portfolio');
 
     this.currentRoute = 'emi';
     this.init();
     this.finbot = new FinBot(this);
+    this.portfolio = new PortfolioModal(this);
+    this.initPortfolioButton();
+  }
+
+  initPortfolioButton() {
+    if (this.portfolioBtn) {
+      this.portfolioBtn.addEventListener('click', () => {
+        if (this.portfolio) this.portfolio.toggle(true);
+      });
+    }
   }
 
   init() {
@@ -246,6 +258,11 @@ class FinculatorApp {
   }
 
   navigateTo(target) {
+    if (target === 'portfolio' || target === 'my-portfolio') {
+      if (this.portfolio) this.portfolio.toggle(true);
+      return;
+    }
+
     let normalized = target;
     if (target === 'taxes' || target === 'tax') normalized = 'tax-income';
     else if (target === 'investments' || target === 'invest' || target === 'sip') normalized = 'invest-sip';

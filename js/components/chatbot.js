@@ -418,6 +418,20 @@ Whenever relevant, format navigation links as [NAVIGATE:route_name|Button Label]
   generateRAGResponse(query) {
     const q = query.toLowerCase();
 
+    // 0. Personal Finance Portfolio Builder
+    if (q.includes('portfolio') || q.includes('balance sheet') || q.includes('pfs') || q.includes('financial statement') || q.includes('my portfolio')) {
+      return `### Personal Finance Portfolio & Balance Sheet Builder
+
+Finculator includes an institutional-grade **Personal Finance Portfolio Builder** combining:
+- **Personal Financial Statement (PFS):** Full balance sheet mapping liquid assets, fixed deposits, equities, real estate, vehicles, and valuables against mortgages and liabilities.
+- **Investment Portfolio & Asset Allocation:** Live monochrome donut chart updating in real time across Equities, Debt, Cash, Real Estate, and Gold.
+- **Holdings Ledger:** Individual stock & mutual fund positions with live gain/loss tracking.
+- **Emergency Runway & Solvency:** Dynamic computation of monthly cash surplus, savings rate %, DTI %, and emergency months of runway.
+- **Institutional PDF Export:** Download an advisory-quality wealth statement anytime.
+
+[NAVIGATE:portfolio|Open My Portfolio Builder] [NAVIGATE:net-worth|View Net Worth Tracker]`;
+    }
+
     // 1. Tax Old vs New Regime
     if (q.includes('tax') || q.includes('regime') || q.includes('80c') || q.includes('80d') || q.includes('slab')) {
       return `### Income Tax Comparison (FY 2024–25 / FY 2025–26)

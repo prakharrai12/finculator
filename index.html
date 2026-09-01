@@ -12,12 +12,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Stylesheets with cache-busting -->
-  <link rel="stylesheet" href="css/main.css?v=3.5" />
-  <link rel="stylesheet" href="css/components.css?v=3.5" />
-  <link rel="stylesheet" href="css/calculators.css?v=3.5" />
-  <link rel="stylesheet" href="css/charts.css?v=3.5" />
-  <link rel="stylesheet" href="css/chatbot.css?v=3.5" />
-  <link rel="stylesheet" href="css/print.css?v=3.5" />
+  <link rel="stylesheet" href="css/main.css?v=3.6" />
+  <link rel="stylesheet" href="css/components.css?v=3.6" />
+  <link rel="stylesheet" href="css/calculators.css?v=3.6" />
+  <link rel="stylesheet" href="css/charts.css?v=3.6" />
+  <link rel="stylesheet" href="css/portfolio.css?v=3.6" />
+  <link rel="stylesheet" href="css/chatbot.css?v=3.6" />
+  <link rel="stylesheet" href="css/print.css?v=3.6" />
 </head>
 <body>
   <div class="app-container">
@@ -68,6 +69,12 @@
             <option value="CHF">CHF (₣)</option>
           </select>
         </div>
+
+        <!-- Portfolio Builder Drawer Button -->
+        <button class="btn btn-primary btn-sm" id="btn-open-portfolio" title="Open Personal Finance Portfolio Builder">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+          My Portfolio
+        </button>
 
         <!-- Print Action -->
         <button class="btn btn-secondary btn-sm" id="btn-global-print">
