@@ -1,46 +1,52 @@
 /* ==========================================================================
-   FINCULATOR LANDING GATE — INSTITUTIONAL REDESIGN
-   Compliant with Landing Page Redesign Specification
+   FINCULATOR LANDING GATE — ULTRA-PREMIUM INSTITUTIONAL WHITE THEME
+   - Pristine white & light slate aesthetic
+   - Hero illustration strictly in background (z-index: 1, full cover behind content)
+   - Left-to-right crystal-clear readability vignette
+   - Bottom Gaussian blur & gradient fade into the slim trust bar
+   - Premium aesthetic buttons with micro-interactions
+   - Standardized card typography and unified icon containers
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. DESIGN TOKENS & SYSTEM PROPERTIES
+   1. DESIGN TOKENS & SYSTEM PROPERTIES (PREMIUM WHITE PALETTE)
    -------------------------------------------------------------------------- */
 :root {
-  /* Base Backgrounds */
-  --color-bg-primary: #0a0e1a;       /* Main dark background, matches navbar & footer */
-  --color-bg-surface: #0f1420;        /* Card & section background, one step up from primary */
-  --color-bg-elevated: #151b2b;       /* Modals, elevated cards, hover states */
+  /* Base Surfaces */
+  --color-bg-primary: #FFFFFF;        /* Pure crisp white main background */
+  --color-bg-surface: #F8FAFC;        /* Subtle slate-50 section & secondary background */
+  --color-bg-elevated: #FFFFFF;       /* Pure white elevated cards & modals */
 
   /* Typography Colors */
-  --color-text-primary: #f5f6f8;      /* Headlines */
-  --color-text-secondary: #a3aab8;    /* Body copy, subtext */
-  --color-text-tertiary: #6b7280;     /* Muted labels, captions */
+  --color-text-primary: #0F172A;      /* Deep obsidian charcoal for maximum legibility */
+  --color-text-secondary: #475569;    /* Clean dark slate for subtext and body copy */
+  --color-text-tertiary: #64748B;     /* Muted labels, captions */
 
-  /* Accent System (Restrained & Muted) */
-  --color-accent: #3b6fd4;            /* Muted, deeper institutional blue */
-  --color-accent-hover: #4a7fe0;      /* Hover state */
-  --color-accent-muted: rgba(59, 111, 212, 0.12); /* Tinted icon & badge backgrounds */
+  /* Accent System (Cobalt Institutional Blue) */
+  --color-accent: #2563EB;            /* Vibrant cobalt blue */
+  --color-accent-hover: #1D4ED8;      /* Deep blue hover */
+  --color-accent-muted: #EFF6FF;      /* Tinted icon & badge background */
+  --color-accent-border: #BFDBFE;     /* Delicate blue border */
 
-  /* Primary Button (Premium Dark, subtle border) */
-  --btn-primary-bg: #12151f;
-  --btn-primary-bg-hover: #1a1e2c;
-  --btn-primary-border: rgba(255, 255, 255, 0.08);
-  --btn-primary-text: #ffffff;
+  /* Primary Button (Ultra-Premium Deep Obsidian with Subtle Highlight) */
+  --btn-primary-bg: #0F172A;
+  --btn-primary-bg-hover: #1E293B;
+  --btn-primary-border: #0F172A;
+  --btn-primary-text: #FFFFFF;
 
-  /* Secondary / Outline Button */
-  --btn-secondary-bg: transparent;
-  --btn-secondary-bg-hover: rgba(255, 255, 255, 0.04);
-  --btn-secondary-border: rgba(255, 255, 255, 0.14);
-  --btn-secondary-text: #e5e7eb;
+  /* Secondary / Outline Button (Crisp Elevated White Card Button) */
+  --btn-secondary-bg: #FFFFFF;
+  --btn-secondary-bg-hover: #F8FAFC;
+  --btn-secondary-border: #CBD5E1;
+  --btn-secondary-text: #0F172A;
 
   /* Borders & Dividers */
-  --color-border-subtle: rgba(255, 255, 255, 0.08);
-  --color-border-medium: rgba(255, 255, 255, 0.14);
+  --color-border-subtle: #E2E8F0;
+  --color-border-medium: #CBD5E1;
 
   /* Status Tokens */
-  --color-success: #34d399;
-  --color-success-muted: rgba(52, 211, 153, 0.1);
+  --color-success: #10B981;
+  --color-success-muted: #ECFDF5;
 
   /* Section Spacing System */
   --space-section-y: 96px;
@@ -48,9 +54,9 @@
   --space-element-gap: 24px;
 
   /* Typography Scale Tokens */
-  --text-hero: 56px;
-  --text-h1: 40px;
-  --text-h2: 24px;
+  --text-hero: clamp(2.5rem, 4.5vw, 3.75rem);
+  --text-h1: clamp(1.85rem, 3.5vw, 2.5rem);
+  --text-h2: 22px;
   --text-eyebrow: 13px;
   --text-body-lg: 18px;
   --text-body: 15px;
@@ -92,54 +98,61 @@ body.gate-locked {
 }
 
 /* --------------------------------------------------------------------------
-   3. UNIFIED BUTTON SYSTEM
+   3. PREMIUM BUTTON SYSTEM
    -------------------------------------------------------------------------- */
 .landing-gate-overlay .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 15px;
   font-weight: 600;
   line-height: 1;
-  padding: 14px 28px;
+  padding: 14px 32px;
   cursor: pointer;
   box-sizing: border-box;
 }
 
-/* 3.1 Primary Button */
+/* 3.1 Primary Button (Obsidian with Top Bevel Glow) */
 .landing-gate-overlay .btn-primary {
   background: var(--btn-primary-bg);
   color: var(--btn-primary-text);
   border: 1px solid var(--btn-primary-border);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08), 
+              0 4px 12px rgba(15, 23, 42, 0.12), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.16);
   transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .landing-gate-overlay .btn-primary:hover {
   background: var(--btn-primary-bg-hover);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-  transform: translateY(-1px);
+  border-color: #0F172A;
+  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.1), 
+              0 14px 28px -4px rgba(15, 23, 42, 0.24);
+  transform: translateY(-1.5px);
 }
 
-/* 3.2 Secondary / Outline Button */
+/* 3.2 Secondary / Outline Button (Crisp Elevated White) */
 .landing-gate-overlay .btn-secondary {
   background: var(--btn-secondary-bg);
   color: var(--btn-secondary-text);
-  border: 1px solid var(--btn-secondary-border);
+  border: 1.5px solid var(--btn-secondary-border);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
   transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .landing-gate-overlay .btn-secondary:hover {
   background: var(--btn-secondary-bg-hover);
   border-color: var(--color-border-medium);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+  transform: translateY(-1.5px);
 }
 
 .landing-gate-overlay .btn-arrow {
   display: inline-block;
-  margin-left: 6px;
+  margin-left: 8px;
   font-size: 16px;
   line-height: 1;
   transition: transform 180ms ease;
@@ -151,9 +164,9 @@ body.gate-locked {
 
 /* Compact Nav Button Variants */
 .landing-gate-overlay .btn-sm {
-  padding: 8px 18px !important;
-  font-size: 13px !important;
-  border-radius: 6px !important;
+  padding: 9px 20px !important;
+  font-size: 13.5px !important;
+  border-radius: 8px !important;
 }
 
 /* 3.3 Text / Link Buttons (Card Links & Secondary Conversion Actions) */
@@ -194,7 +207,7 @@ body.gate-locked {
 }
 
 /* --------------------------------------------------------------------------
-   4. TOP NAVIGATION BAR
+   4. TOP NAVIGATION BAR (Crisp Frosted White Surface)
    -------------------------------------------------------------------------- */
 .landing-nav-bar {
   position: sticky;
@@ -203,8 +216,8 @@ body.gate-locked {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.1rem 2.5rem;
-  background: rgba(10, 14, 26, 0.92);
+  padding: 1.15rem 2.5rem;
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--color-border-subtle);
@@ -264,27 +277,110 @@ body.gate-locked {
 }
 
 /* --------------------------------------------------------------------------
-   5. HERO SECTION (Strictly 5 Elements: Eyebrow, Title, Subtext, 2 Buttons, Image)
+   5. HERO SECTION (Image Fully Covers Background Behind Content)
    -------------------------------------------------------------------------- */
 .hero-section {
   position: relative;
-  background-color: var(--color-bg-primary);
-  padding: 80px 1.5rem 56px 1.5rem;
+  background-color: #FFFFFF;
+  padding: 88px 2rem 72px 2rem;
   width: 100%;
+  min-height: 720px;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  overflow: hidden;
   flex-shrink: 0;
 }
 
+/* Background Artwork Layer: Positioned strictly in the background behind content */
+.hero-bg-art-wrapper,
+.visual-card {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Strictly behind all content */
+  pointer-events: none;
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+/* Crisp image spanning right and across hero background */
+.hero-bg-art-img,
+.hero-img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 72%;
+  max-width: 1300px;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  opacity: 0.95;
+  filter: contrast(1.02);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Left readability vignette to guarantee 100% white backing for headlines and buttons */
+.hero-bg-overlay-left,
+.card-overlay-edge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 58%;
+  background: linear-gradient(to right, 
+    #FFFFFF 50%, 
+    rgba(255, 255, 255, 0.94) 72%, 
+    rgba(255, 255, 255, 0.45) 88%, 
+    rgba(255, 255, 255, 0) 100%
+  );
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Bottom Gaussian Blur: "a bit blurred from the bottom" */
+.hero-bg-blur-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 180px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Bottom Gradient Fade into the Trust Bar */
+.hero-bg-fade-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 150px;
+  background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.45) 35%,
+    rgba(248, 250, 252, 0.92) 80%,
+    #F8FAFC 100%
+  );
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* Foreground Content: Sitting in front of the background at z-index: 10 */
 .hero-container {
-  max-width: 1040px;
+  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  position: relative;
+  z-index: 10; /* Strictly in front of background artwork */
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
 }
 
 /* 5.1 Eyebrow Badge */
@@ -293,12 +389,12 @@ body.gate-locked {
   align-items: center;
   gap: 6px;
   background: var(--color-accent-muted);
-  border: 1px solid rgba(59, 111, 212, 0.25);
+  border: 1px solid var(--color-accent-border);
   padding: 6px 14px;
   border-radius: 20px;
   font-size: var(--text-eyebrow);
-  font-weight: 600;
-  color: var(--color-accent);
+  font-weight: 700;
+  color: var(--color-accent-hover);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin-bottom: 22px;
@@ -309,24 +405,26 @@ body.gate-locked {
   font-family: 'Fraunces', Georgia, serif;
   font-size: var(--text-hero);
   font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
   margin: 0 0 20px 0;
   color: var(--color-text-primary);
-  max-width: 860px;
+  max-width: 680px;
 }
 
 .landing-title-accent {
-  color: var(--color-accent);
+  background: linear-gradient(135deg, #2563EB 0%, #0284C7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* 5.3 Subtext */
 .hero-subtitle {
   font-size: var(--text-body-lg);
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--color-text-secondary);
-  max-width: 680px;
+  max-width: 580px;
   margin: 0 0 34px 0;
 }
 
@@ -334,58 +432,13 @@ body.gate-locked {
 .hero-actions {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 16px;
-  margin-bottom: 56px;
   flex-wrap: wrap;
 }
 
-/* 5.5 Hero Reference Image */
-.hero-visual.visual-card {
-  position: relative;
-  width: 100%;
-  max-width: 980px;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid var(--color-border-subtle);
-  background: var(--color-bg-surface);
-  box-shadow: 0 24px 60px -16px rgba(0, 0, 0, 0.7);
-}
-
-.hero-img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  object-position: center top;
-}
-
-.card-overlay-edge {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  box-shadow: inset 0 0 24px 4px rgba(10, 14, 26, 0.5);
-  border-radius: 16px;
-}
-
-/* Bottom Blur / Fade Layer */
-.hero-image-blur-bottom {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 90px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
-  background: linear-gradient(to bottom, transparent 0%, rgba(10, 14, 26, 0.85) 100%);
-  pointer-events: none;
-}
-
 /* --------------------------------------------------------------------------
-   6. SLIM TRUST BAR SECTION
+   6. SLIM TRUST BAR SECTION (Light Institutional Strip)
    -------------------------------------------------------------------------- */
 .landing-trust-bar {
   width: 100%;
@@ -397,6 +450,8 @@ body.gate-locked {
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  position: relative;
+  z-index: 5;
 }
 
 .trust-bar-container {
@@ -417,7 +472,7 @@ body.gate-locked {
   gap: 10px;
   color: var(--color-text-secondary);
   font-size: var(--text-caption);
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.4;
 }
 
@@ -441,6 +496,7 @@ body.gate-locked {
 
 .landing-benefits-section {
   border-top: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
   background: var(--color-bg-surface);
 }
 
@@ -458,7 +514,7 @@ body.gate-locked {
 .landing-services-tag {
   display: inline-block;
   font-size: var(--text-eyebrow);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-accent);
@@ -495,37 +551,39 @@ body.gate-locked {
 /* Standardized Card Container */
 .landing-service-card,
 .landing-benefit-item {
-  background: var(--color-bg-surface);
+  background: #FFFFFF;
   border: 1px solid var(--color-border-subtle);
-  border-radius: 12px;
-  padding: 32px;
+  border-radius: 16px;
+  padding: 36px 32px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: border-color 200ms ease, transform 200ms ease;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 0 1px rgba(15, 23, 42, 0.08);
+  transition: all 220ms cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
   box-sizing: border-box;
 }
 
 .landing-benefits-section .landing-benefit-item {
-  background: var(--color-bg-primary);
   cursor: default;
   justify-content: flex-start;
   gap: 20px;
 }
 
 .landing-service-card:hover {
-  border-color: var(--color-border-medium);
-  transform: translateY(-2px);
+  border-color: var(--color-accent-border);
+  box-shadow: 0 16px 40px -8px rgba(37, 99, 235, 0.12);
+  transform: translateY(-3px);
 }
 
 /* Unified Icon Container Across All Cards */
 .landing-service-icon-wrap,
 .landing-benefit-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   background: var(--color-accent-muted) !important;
+  border: 1px solid #DBEAFE;
   color: var(--color-accent) !important;
   display: flex;
   align-items: center;
@@ -536,8 +594,8 @@ body.gate-locked {
 
 .landing-service-icon-wrap svg,
 .landing-benefit-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   stroke: var(--color-accent);
 }
 
@@ -549,7 +607,7 @@ body.gate-locked {
 .landing-benefit-title {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: var(--text-h2);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.3;
   color: var(--color-text-primary);
   margin: 0 0 12px 0;
@@ -565,25 +623,24 @@ body.gate-locked {
 }
 
 /* --------------------------------------------------------------------------
-   8. FINAL CALL TO ACTION SECTION
+   8. FINAL CALL TO ACTION SECTION (Institutional White Card)
    -------------------------------------------------------------------------- */
 .landing-cta-section {
   width: 100%;
   padding: var(--space-section-y) 1.5rem;
   background: var(--color-bg-primary);
-  border-top: 1px solid var(--color-border-subtle);
   flex-shrink: 0;
 }
 
 .landing-cta-card {
   max-width: 960px;
   margin: 0 auto;
-  background: var(--color-bg-surface);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: 16px;
-  padding: 64px 32px;
+  background: linear-gradient(135deg, #F0F7FF 0%, #FFFFFF 60%, #F8FAFC 100%);
+  border: 1.5px solid var(--color-accent-border);
+  border-radius: 20px;
+  padding: 64px 36px;
   text-align: center;
-  box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 48px -12px rgba(37, 99, 235, 0.1);
 }
 
 .landing-cta-title {
@@ -613,7 +670,7 @@ body.gate-locked {
 }
 
 /* --------------------------------------------------------------------------
-   9. SITEWIDE FOOTER INTEGRATION
+   9. SITEWIDE FOOTER INTEGRATION (Pristine Light Surface)
    -------------------------------------------------------------------------- */
 .landing-gate-overlay .app-footer {
   width: 100%;
@@ -621,7 +678,7 @@ body.gate-locked {
   position: relative;
   z-index: 10;
   flex-shrink: 0;
-  background: var(--color-bg-primary);
+  background: #FFFFFF;
   border-top: 1px solid var(--color-border-subtle);
   color: var(--color-text-primary);
 }
@@ -645,7 +702,7 @@ body.gate-locked {
 }
 
 .landing-gate-overlay .footer-links a:hover {
-  color: var(--color-accent-hover) !important;
+  color: var(--color-accent) !important;
 }
 
 .landing-gate-overlay .footer-newsletter-sub {
@@ -654,20 +711,20 @@ body.gate-locked {
 
 .landing-gate-overlay .footer-github-btn,
 .landing-gate-overlay .app-footer a.footer-github-btn {
-  background: var(--color-bg-surface) !important;
+  background: #F1F5F9 !important;
   border-color: var(--color-border-subtle) !important;
   color: var(--color-text-primary) !important;
 }
 
 .landing-gate-overlay .footer-github-btn:hover {
-  background: var(--color-bg-elevated) !important;
-  border-color: var(--color-border-medium) !important;
-  color: var(--color-accent-hover) !important;
+  background: var(--color-accent-muted) !important;
+  border-color: var(--color-accent-border) !important;
+  color: var(--color-accent) !important;
 }
 
 .landing-gate-overlay .footer-email-input {
   background: var(--color-bg-surface) !important;
-  border-color: var(--color-border-subtle) !important;
+  border-color: var(--color-border-medium) !important;
   color: var(--color-text-primary) !important;
 }
 
@@ -697,7 +754,7 @@ body.gate-locked {
 
 .landing-gate-overlay .footer-bottom-links a:hover,
 .landing-gate-overlay .footer-back-to-top:hover {
-  color: var(--color-accent-hover) !important;
+  color: var(--color-accent) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -714,6 +771,18 @@ body.gate-locked {
 
   .hero-section {
     padding: 64px 1.5rem 48px 1.5rem;
+    min-height: 640px;
+  }
+
+  .hero-bg-art-img,
+  .hero-img {
+    width: 65%;
+    opacity: 0.85;
+  }
+
+  .hero-bg-overlay-left,
+  .card-overlay-edge {
+    width: 65%;
   }
 
   .landing-services-grid,
@@ -735,8 +804,6 @@ body.gate-locked {
 @media (max-width: 768px) {
   :root {
     --space-section-y: var(--space-section-y-mobile);
-    --text-hero: 36px;
-    --text-h1: 28px;
   }
 
   .landing-nav-bar {
@@ -750,13 +817,27 @@ body.gate-locked {
 
   .hero-section {
     padding: 48px 1rem 36px 1rem;
+    min-height: auto;
+  }
+
+  .hero-bg-art-img,
+  .hero-img {
+    width: 100%;
+    opacity: 0.22;
+    object-position: center right;
+  }
+
+  .hero-bg-overlay-left,
+  .card-overlay-edge {
+    width: 100%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.96) 100%);
   }
 
   .hero-actions {
     flex-direction: column;
     width: 100%;
     gap: 12px;
-    margin-bottom: 40px;
+    margin-bottom: 24px;
   }
 
   .landing-gate-overlay .btn {
@@ -788,7 +869,7 @@ body.gate-locked {
   }
 
   .hero-title {
-    font-size: 32px;
+    font-size: 30px;
   }
 
   .landing-cta-card {
