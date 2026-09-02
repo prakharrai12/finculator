@@ -10,7 +10,7 @@
 
 ---
 
-## 📸 Interface Preview
+## Interface Preview
 
 <div align="center">
   <img src="docs/images/finculator-portfolio-builder.png" alt="Finculator Personal Finance Portfolio Builder" width="100%" />
@@ -29,16 +29,16 @@
 
 ---
 
-## 🏛️ Comprehensive Financial Modules
+## Comprehensive Financial Modules
 
-### 1. 💳 Loans & Mortgages
+### 1. Loans & Mortgages
 * **EMI & Repayment Calculator**: Precision monthly amortization ($E = P \cdot r \cdot \frac{(1+r)^n}{(1+r)^n - 1}$), fee structuring, principal/interest breakdown, and step-down amortization schedule.
 * **Prepayment Analyzer**: Model recurring monthly prepayments and annual lump-sum debt acceleration to compute total interest saved and tenure cut-off.
 * **Multi-Scenario Loan Comparator**: Side-by-side evaluation of up to 3 competitive mortgage offers with dynamic **"Best Value (Lowest Lifetime Cost)"** detection.
 * **Loan Eligibility Calculator**: Reverse-solves maximum borrowing ceiling using institutional FOIR (Fixed Obligation to Income Ratio) and DTI metrics.
 * **Credit Card Minimum-Due Calculator**: Demonstrates the compound interest debt trap of minimum payments vs. accelerated fixed monthly payoff.
 
-### 2. 💰 Savings & Deposits
+### 2. Savings & Deposits
 * **Compound Interest Calculator**: Compounding across Daily (365x), Monthly (12x), Quarterly (4x), Semi-Annual (2x), and Annual (1x) frequencies with recurring deposits.
 * **Simple Interest Calculator**: Linear interest computations across fixed tenures.
 * **Fixed Deposit (FD) Calculator**: Fixed-term deposit accumulation with flexible compounding.
@@ -46,7 +46,7 @@
 * **PPF (Public Provident Fund) Calculator**: 15-year sovereign tax-exempt compounding and milestone schedules.
 * **Goal-Based Savings (Reverse Compound)**: Reverse-solves required monthly savings to achieve a target financial corpus.
 
-### 3. 📈 Wealth & Investing
+### 3. Wealth & Investing
 * **SIP (Systematic Investment Plan)**: Monthly mutual fund and equity forecasting using annuity-due compounding.
 * **Lump Sum Investment**: Long-term single-deposit compounding curves.
 * **SIP + Lump Sum Combined**: Simultaneous initial corpus deployment with ongoing monthly investments.
@@ -54,14 +54,14 @@
 * **CAGR Calculator**: Compound Annual Growth Rate and absolute gain metrics.
 * **Stock & Mutual Fund Returns**: Absolute and annualized performance analytics including dividend income.
 
-### 4. 🧾 Tax & Business
+### 4. Tax & Business
 * **Income Tax Calculator (Old vs New Regime)**: Comprehensive tax liability analysis under the Indian IT framework with automated regime recommendation and savings delta.
 * **GST Calculator**: Standard tax slabs (5%, 12%, 18%, 28%) with **Add GST (Exclusive)** and **Remove GST (Inclusive)** modes and CGST/SGST split.
 * **Take-Home / Net Salary Calculator**: Annual CTC breakdown into Basic, HRA, Employee PF, and Net Monthly In-Hand Pay.
 * **Profit Margin & Markup Calculator**: Cost price, selling price, gross margin %, markup %, and total business profit.
 * **Break-Even Analysis Calculator**: Fixed overhead recovery, unit variable cost, contribution margin, and break-even unit threshold.
 
-### 5. 🎯 Long-Term Planning & Economics
+### 5. Long-Term Planning & Economics
 * **Retirement & FIRE Corpus Engine**: Comprehensive FIRE targets accounting for inflation and Safe Withdrawal Rates (SWR 3%-5%), with **Lean FIRE (75%)**, **Standard FIRE (100%)**, **Fat FIRE (130%)**, and **Coast FIRE** milestones.
 * **Inflation Adjuster**: Real purchasing power degradation schedule and future equivalent costs.
 * **Net Worth Calculator**: Comprehensive asset inventory vs. liabilities analysis with Debt-to-Asset solvency ratios.
@@ -70,7 +70,7 @@
 
 ---
 
-## 🎨 Design System & Visual Identity
+## Design System & Visual Identity
 
 * **Palette**: `#0D1526` (Obsidian Navy), `#1E293B` (Slate Navy), `#2563EB` (Electric Blue), `#06B6D4` (Cyan Accent), `#F8FAFC` (Canvas Light), `#FFFFFF` (Surface White).
 * **Typography**:
@@ -84,7 +84,7 @@
 
 ---
 
-## 📂 Project Architecture
+## Project Architecture
 
 ```
 finance-calculator/
@@ -135,7 +135,7 @@ finance-calculator/
 
 ---
 
-## 🚀 Quick Start & Local Development
+## Quick Start & Local Development
 
 ### Prerequisites
 - Python 3.x (or any static HTTP server)
@@ -156,7 +156,7 @@ Visit **`http://localhost:3000`** in your browser.
 
 ---
 
-## 🧪 Testing & Verification
+## Testing & Verification
 
 ### Run Python Automated Unit Tests
 ```bash
@@ -169,7 +169,7 @@ Open `http://localhost:3000/tests/test_runner.html` in your browser to run live 
 
 ---
 
-## 🌐 Deployment & Hosting
+## Deployment & Hosting
 
 Finculator is 100% client-side compatible and can be hosted on any static hosting provider with zero configuration:
 
@@ -187,5 +187,5 @@ Finculator is 100% client-side compatible and can be hosted on any static hostin
 
 ---
 
-## 📄 License
+## License
 This project is open-source and available under the [MIT License](LICENSE).

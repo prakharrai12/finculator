@@ -128,7 +128,9 @@ export class AuthModal {
 
     const portfolioBanner = this.isPortfolioGate ? `
       <div style="background: rgba(37, 99, 235, 0.12); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 10px; padding: 12px 14px; margin-bottom: 1.25rem; display: flex; align-items: flex-start; gap: 10px;">
-        <div style="color: #38BDF8; font-size: 1.15rem; line-height: 1;">🔒</div>
+        <div style="color: #38BDF8; font-size: 1.15rem; line-height: 1; display: flex; align-items: center; margin-top: 2px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
         <div style="font-size: 0.8rem; color: #E2E8F0; line-height: 1.45;">
           <strong style="color: #38BDF8; display: block; margin-bottom: 2px;">Account Required for Portfolio Builder</strong>
           Please log in or create a free account to build your asset & liability balance sheet, save your investor profile, and export PDF statements.
@@ -200,8 +202,9 @@ export class AuthModal {
             </div>
           </div>
 
-          <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; padding: 12px; margin-top: 0.75rem; font-size: 0.78rem; color: #38BDF8; line-height: 1.45;">
-            ✉️ <strong>Direct Credentials Dispatch:</strong> A formal welcome email with your verified login credentials and security tokens will be sent directly to your email address.
+          <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; padding: 12px; margin-top: 0.75rem; font-size: 0.78rem; color: #38BDF8; line-height: 1.45; display: flex; align-items: flex-start; gap: 8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0; margin-top: 2px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <div><strong>Direct Credentials Dispatch:</strong> A formal welcome email with your verified login credentials and security tokens will be sent directly to your email address.</div>
           </div>
 
           <button type="submit" class="auth-submit-btn" id="btn-submit-signup">
@@ -305,7 +308,7 @@ export class AuthModal {
 
         try {
           const res = await auth.register({ name, email, password });
-          this.showToast(`🎉 Account created! Credentials sent directly to ${email}`);
+          this.showToast(`Account created! Credentials sent directly to ${email}`);
           this.close();
 
           if (this.isPortfolioGate) {

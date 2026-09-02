@@ -203,7 +203,7 @@ export class FooterComponent {
                 feedbackEl.className = 'newsletter-feedback success';
               }
               if (this.app && this.app.showToast) {
-                this.app.showToast('ℹ️ You are already subscribed to Finculator intelligence!');
+                this.app.showToast('You are already subscribed to Finculator intelligence!');
               }
             } else {
               if (feedbackEl) {
@@ -212,7 +212,7 @@ export class FooterComponent {
               }
               emailInput.value = '';
               if (this.app && this.app.showToast) {
-                this.app.showToast('🎉 Successfully subscribed to Finculator Intelligence!');
+                this.app.showToast('Successfully subscribed to Finculator Intelligence!');
               }
             }
           } else {
@@ -237,7 +237,7 @@ export class FooterComponent {
             }
             emailInput.value = '';
             if (this.app && this.app.showToast) {
-              this.app.showToast('🎉 Successfully subscribed to Finculator Intelligence!');
+              this.app.showToast('Successfully subscribed to Finculator Intelligence!');
             }
           } catch (localErr) {
             if (feedbackEl) {
