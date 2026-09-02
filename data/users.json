@@ -59,8 +59,32 @@
     "id": "77075258-b06f-4993-9406-5bf7ffca9bb6",
     "name": "Investor Test",
     "email": "tester_1788323097@example.com",
-    "passwordHash": "d8ca74bfb52821536a592d9063ba03223c2a669720f4ea4514b4dfbcf9e23a37",
+    "passwordHash": "123d846907b6ab7af0adb378c557046b9e6231a5bfe038177ad6239874b5bc5f",
     "createdAt": "2026-09-02 04:24:59 UTC",
     "lastLogin": "2026-09-02 04:25:01 UTC"
+  },
+  {
+    "id": "66c32a46-afb7-4c01-9f10-2154c6345bd7",
+    "name": "PRAKHAR RAI",
+    "email": "prakhar.rai2@s.amity.edu",
+    "passwordHash": "5e45e4e92b4edfaee04f3c4b02ddfbe7d54e81d4c057ee9714c2198d05fd324c",
+    "createdAt": "2026-09-02 04:27:35 UTC",
+    "lastLogin": "2026-09-02 04:27:35 UTC"
+  },
+  {
+    "id": "5b77a9f9-e46d-4a4e-8a5a-4dc2f44ed3b2",
+    "name": "Investor Test",
+    "email": "tester_1788324651@example.com",
+    "passwordHash": "e003f276c5b85c5ea278cfd39d7d11fb4f0c7a3c2fe6ad12e85a698e737c6402",
+    "createdAt": "2026-09-02 04:50:53 UTC",
+    "lastLogin": "2026-09-02 04:50:55 UTC"
+  },
+  {
+    "id": "3c1fb28c-e4a7-4cfa-b3fc-02460ac1f5d1",
+    "name": "Investor Test",
+    "email": "tester_1788324670@example.com",
+    "passwordHash": "d8ca74bfb52821536a592d9063ba03223c2a669720f4ea4514b4dfbcf9e23a37",
+    "createdAt": "2026-09-02 04:51:12 UTC",
+    "lastLogin": "2026-09-02 04:51:14 UTC"
   }
 ]

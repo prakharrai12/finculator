@@ -12,6 +12,7 @@ DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(DIRECTORY, 'data')
 USERS_FILE = os.path.join(DATA_DIR, 'users.json')
 EMAILS_FILE = os.path.join(DATA_DIR, 'sent_emails.json')
+NEWSLETTER_FILE = os.path.join(DATA_DIR, 'newsletter_subscribers.json')
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
@@ -22,6 +23,10 @@ if not os.path.exists(USERS_FILE):
 
 if not os.path.exists(EMAILS_FILE):
     with open(EMAILS_FILE, 'w', encoding='utf-8') as f:
+        json.dump([], f, indent=2)
+
+if not os.path.exists(NEWSLETTER_FILE):
+    with open(NEWSLETTER_FILE, 'w', encoding='utf-8') as f:
         json.dump([], f, indent=2)
 
 mimetypes.add_type('application/javascript', '.js')
@@ -194,6 +199,19 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
                 data = []
             self.wfile.write(json.dumps(data).encode('utf-8'))
             return
+
+        if self.path == '/api/newsletter/subscribers':
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            try:
+                with open(NEWSLETTER_FILE, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+            except Exception:
+                data = []
+            self.wfile.write(json.dumps(data).encode('utf-8'))
+            return
+
         super().do_GET()
 
     def do_POST(self):
@@ -331,6 +349,50 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
                 'message': f"Login credentials sent directly to {email}",
                 'emailPreview': email_rec
             }, 200)
+            return
+
+        # 4. NEWSLETTER SUBSCRIPTION
+        if self.path == '/api/newsletter/subscribe':
+            email = payload.get('email', '').strip().lower()
+            import re
+            email_pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+            if not email or not re.match(email_pattern, email):
+                self.respond_json({'error': 'Please enter a valid email address (e.g., name@example.com).'}, 400)
+                return
+
+            subscribers = []
+            try:
+                if os.path.exists(NEWSLETTER_FILE):
+                    with open(NEWSLETTER_FILE, 'r', encoding='utf-8') as f:
+                        subscribers = json.load(f)
+            except Exception:
+                subscribers = []
+
+            # Check if already subscribed
+            existing = next((s for s in subscribers if s.get('email') == email), None)
+            if existing:
+                self.respond_json({
+                    'success': True,
+                    'message': 'You are already subscribed to Finculator intelligence!',
+                    'alreadySubscribed': True
+                }, 200)
+                return
+
+            new_sub = {
+                'id': str(uuid.uuid4()),
+                'email': email,
+                'subscribedAt': time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime()),
+                'source': 'site_footer'
+            }
+            subscribers.insert(0, new_sub)
+            with open(NEWSLETTER_FILE, 'w', encoding='utf-8') as f:
+                json.dump(subscribers, f, indent=2)
+
+            self.respond_json({
+                'success': True,
+                'message': 'Subscribed! You will receive interest rate and wealth intelligence.',
+                'subscriber': new_sub
+            }, 201)
             return
 
         self.respond_json({'error': 'Endpoint not found'}, 404)
