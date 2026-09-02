@@ -198,19 +198,31 @@ export class HeroLandingGate {
       });
     }
 
-    // Continue as Guest Button (Main Title Card)
+    // Continue as Guest / Return to Active Session Button (Main Title Card)
     const guestBtn = this.container.querySelector('#gate-btn-guest');
     if (guestBtn) {
       guestBtn.addEventListener('click', () => {
-        this.dismissGuest();
+        const isAuth = auth.isAuthenticated();
+        const guestAccess = sessionStorage.getItem('finculator_guest_access') === 'true';
+        if (isAuth || guestAccess) {
+          this.unlock();
+        } else {
+          this.dismissGuest();
+        }
       });
     }
 
-    // Continue as Guest Button (Top Navigation)
+    // Continue as Guest / Return to Active Session Button (Top Navigation)
     const navGuestBtn = this.container.querySelector('#gate-nav-guest-btn');
     if (navGuestBtn) {
       navGuestBtn.addEventListener('click', () => {
-        this.dismissGuest();
+        const isAuth = auth.isAuthenticated();
+        const guestAccess = sessionStorage.getItem('finculator_guest_access') === 'true';
+        if (isAuth || guestAccess) {
+          this.unlock();
+        } else {
+          this.dismissGuest();
+        }
       });
     }
   }
@@ -229,12 +241,49 @@ export class HeroLandingGate {
     const overlay = this.container.querySelector('#auth-landing-gate-overlay');
     if (!overlay) return;
 
+    this.syncLandingButtons();
+
     if (isAuth || guestAccess) {
       overlay.classList.add('unlocked');
       document.body.classList.remove('gate-locked');
     } else {
       overlay.classList.remove('unlocked');
       document.body.classList.add('gate-locked');
+    }
+  }
+
+  showLanding() {
+    const overlay = this.container.querySelector('#auth-landing-gate-overlay');
+    if (overlay) overlay.classList.remove('unlocked');
+    document.body.classList.add('gate-locked');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.syncLandingButtons();
+  }
+
+  syncLandingButtons() {
+    const isAuth = auth.isAuthenticated();
+    const guestAccess = sessionStorage.getItem('finculator_guest_access') === 'true';
+
+    const navGuestBtn = this.container.querySelector('#gate-nav-guest-btn');
+    const guestBtnTitle = this.container.querySelector('#gate-btn-guest .landing-guest-title');
+    const guestBadge = this.container.querySelector('#gate-btn-guest .landing-guest-badge');
+    const guestNote = this.container.querySelector('#gate-btn-guest .landing-guest-note');
+
+    if (isAuth) {
+      if (navGuestBtn) navGuestBtn.textContent = 'Return to Calculators →';
+      if (guestBtnTitle) guestBtnTitle.textContent = 'Return to Workspace';
+      if (guestBadge) guestBadge.textContent = 'ACTIVE SESSION';
+      if (guestNote) guestNote.innerHTML = 'Return directly to your calculators and active calculations with full portfolio access.';
+    } else if (guestAccess) {
+      if (navGuestBtn) navGuestBtn.textContent = 'Return to Calculators →';
+      if (guestBtnTitle) guestBtnTitle.textContent = 'Return to Calculators';
+      if (guestBadge) guestBadge.textContent = 'GUEST SESSION ACTIVE';
+      if (guestNote) guestNote.innerHTML = 'Instant access to all 27+ loans, taxes, investments & FIRE models. No login required to compute numbers.';
+    } else {
+      if (navGuestBtn) navGuestBtn.textContent = 'Continue as Guest →';
+      if (guestBtnTitle) guestBtnTitle.textContent = 'Continue Without Login';
+      if (guestBadge) guestBadge.textContent = 'FREE GUEST ACCESS';
+      if (guestNote) guestNote.innerHTML = 'Instant access to all 27+ loans, taxes, investments & FIRE models. No login required to compute numbers. <em>(Account only needed to save a Portfolio & Statement).</em>';
     }
   }
 
@@ -249,5 +298,6 @@ export class HeroLandingGate {
     const overlay = this.container.querySelector('#auth-landing-gate-overlay');
     if (overlay) overlay.classList.remove('unlocked');
     document.body.classList.add('gate-locked');
+    this.syncLandingButtons();
   }
 }

@@ -335,7 +335,13 @@ export class AuthModal {
       authWrap = document.createElement('div');
       authWrap.className = 'header-auth-wrapper';
       authWrap.id = 'header-auth-wrapper';
-      headerActions.prepend(authWrap);
+
+      const homeBtn = headerActions.querySelector('#btn-header-home');
+      if (homeBtn && homeBtn.nextSibling) {
+        headerActions.insertBefore(authWrap, homeBtn.nextSibling);
+      } else {
+        headerActions.prepend(authWrap);
+      }
     }
 
     if (user && user.email) {

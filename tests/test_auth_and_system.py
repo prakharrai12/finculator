@@ -115,7 +115,22 @@ def run_tests():
         assert 'footer-github-btn' in html, "Icon-only GitHub button missing"
         assert 'Quick Jumps' not in html, "Redundant Quick Jumps was not removed"
         assert 'footer-copy-email-btn' not in html, "Personal email button was not removed"
-        print("[PASS 200] Footer DOM Verified: Full-width placement, no Quick Jumps, no email pill, icon GitHub")
+        assert 'id="btn-header-home"' in html, "Home icon button missing in navbar"
+        assert 'id="header-auth-wrapper"' in html, "Header auth wrapper missing in navbar"
+        print("[PASS 200] Header DOM Verified: Home icon button and Profile wrapper placed correctly")
+
+    # Verify CSS rules for tighter footer and circular FinBot FAB
+    with open("css/main.css", "r", encoding="utf-8") as f:
+        main_css = f.read()
+        assert '.header-home-btn' in main_css, "header-home-btn style missing"
+        assert 'padding-right: 4.5rem' in main_css, "footer-bottom clearance padding missing"
+        print("[PASS 200] main.css Verified: Home icon button and compact footer spacing rules active")
+
+    with open("css/chatbot.css", "r", encoding="utf-8") as f:
+        chat_css = f.read()
+        assert '.finbot-launcher-label' in chat_css, "finbot-launcher-label style missing"
+        assert 'border-radius: 50%' in chat_css, "circular FAB style missing"
+        print("[PASS 200] chatbot.css Verified: Compact circular FAB and hover/tap expansion active")
 
     # Test Newsletter Subscribe
     sub_email = f"subscriber_{int(time.time())}@institutional.com"
