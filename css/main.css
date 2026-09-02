@@ -494,10 +494,9 @@ p, span, label, input, select, button {
    ========================================================================== */
 .app-footer {
   width: 100%;
-  background: #0B1120;
-  background: radial-gradient(circle at 50% 0%, #111A2E 0%, #0B1120 100%);
-  color: #FFFFFF;
-  border-top: 1px solid #1E293B;
+  background: #FFFFFF;
+  color: #0F172A;
+  border-top: 1px solid #E2E8F0;
   margin-top: auto;
   position: relative;
   z-index: 10;
@@ -935,13 +934,12 @@ p, span, label, input, select, button {
   position: relative;
   width: 100%;
   max-width: 480px;
-  background: #0B1120;
-  background: radial-gradient(circle at 50% 0%, #111A2E 0%, #0B1120 100%);
-  border: 1px solid rgba(56, 189, 248, 0.25);
-  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 40px rgba(56, 189, 248, 0.1);
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.18), 0 0 40px rgba(37, 99, 235, 0.06);
   border-radius: 18px;
   padding: 2.2rem 2rem 1.8rem;
-  color: #FFFFFF;
+  color: #0F172A;
   transform: scale(0.96) translateY(8px);
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -960,16 +958,16 @@ p, span, label, input, select, button {
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #94A3B8;
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  color: #64748B;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .guest-confirm-close-btn:hover {
-  color: #FFFFFF;
-  background: rgba(255, 255, 255, 0.12);
+  color: #0F172A;
+  background: #E2E8F0;
 }
 
 .guest-confirm-header {
@@ -998,7 +996,7 @@ p, span, label, input, select, button {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #F59E0B;
+  color: #D97706;
   margin-bottom: 0.35rem;
 }
 
@@ -1006,7 +1004,7 @@ p, span, label, input, select, button {
   font-family: var(--font-sans);
   font-size: 1.35rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: #0F172A;
   margin-bottom: 0.55rem;
   letter-spacing: -0.015em;
 }
@@ -1014,20 +1012,20 @@ p, span, label, input, select, button {
 .guest-confirm-desc {
   font-size: 0.88rem;
   line-height: 1.55;
-  color: #94A3B8;
+  color: #475569;
   max-width: 400px;
 }
 
 .guest-confirm-desc strong {
-  color: #F1F5F9;
+  color: #0F172A;
 }
 
 .guest-confirm-callout {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(56, 189, 248, 0.2);
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
   border-radius: 12px;
   padding: 0.85rem 1rem;
   margin-bottom: 1.5rem;
@@ -1041,11 +1039,11 @@ p, span, label, input, select, button {
 .guest-confirm-callout-text {
   font-size: 0.82rem;
   line-height: 1.5;
-  color: #CBD5E1;
+  color: #1E40AF;
 }
 
 .guest-confirm-callout-text strong {
-  color: #38BDF8;
+  color: #1D4ED8;
 }
 
 .guest-confirm-actions {
@@ -1069,12 +1067,12 @@ p, span, label, input, select, button {
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
 }
 
 .guest-confirm-login-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
 }
 
 .guest-confirm-discard-btn {
@@ -1085,16 +1083,16 @@ p, span, label, input, select, button {
   padding: 0.68rem 1.25rem;
   font-size: 0.86rem;
   font-weight: 500;
-  color: #94A3B8;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #64748B;
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .guest-confirm-discard-btn:hover {
-  color: #F87171;
-  background: rgba(239, 68, 68, 0.08);
-  border-color: rgba(239, 68, 68, 0.35);
+  color: #DC2626;
+  background: #FEF2F2;
+  border-color: #FCA5A5;
 }

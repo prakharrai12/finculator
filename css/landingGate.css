@@ -1,6 +1,6 @@
 /**
  * Finculator Fullscreen Hero Landing Gate Styles
- * Dark Institutional Theme (#0b0f19)
+ * Ultra-Clean Institutional White Theme (#FFFFFF / #F8FAFC)
  * Natural Top-to-Bottom Flow:
  * Navbar -> Hero -> Advisory Services -> Institutional Pillars -> CTA -> Sitewide Footer
  */
@@ -13,11 +13,11 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  background-color: #0b0f19; /* Finculator dark background */
-  background: radial-gradient(circle at 80% 10%, rgba(6, 182, 212, 0.08) 0%, transparent 45%),
-              radial-gradient(circle at 15% 70%, rgba(37, 99, 235, 0.07) 0%, transparent 50%),
-              #0b0f19;
-  color: #f8fafc;
+  background-color: #FFFFFF;
+  background: radial-gradient(circle at 85% 15%, rgba(219, 234, 254, 0.45) 0%, transparent 45%),
+              radial-gradient(circle at 10% 80%, rgba(241, 245, 249, 0.8) 0%, transparent 45%),
+              #FFFFFF;
+  color: #0F172A;
   z-index: 99999;
   display: flex;
   flex-direction: column;
@@ -62,10 +62,11 @@ body.gate-locked .main-wrapper {
 .landing-nav-bar {
   width: 100%;
   padding: 1.15rem 3rem;
-  background: rgba(11, 15, 25, 0.88);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid #E2E8F0;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -87,13 +88,13 @@ body.gate-locked .main-wrapper {
   font-size: 1.25rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: #FFFFFF;
+  color: #0F172A;
 }
 
 .landing-brand-tagline {
   font-size: 0.72rem;
   font-weight: 500;
-  color: #94A3B8;
+  color: #64748B;
   display: block;
 }
 
@@ -107,13 +108,13 @@ body.gate-locked .main-wrapper {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
   padding: 0.4rem 0.85rem;
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #CBD5E1;
+  color: #475569;
 }
 
 .landing-security-dot {
@@ -125,17 +126,17 @@ body.gate-locked .main-wrapper {
 }
 
 .landing-nav-guest-btn {
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: #F8FAFC !important;
-  background: rgba(255, 255, 255, 0.06) !important;
-  font-weight: 600 !important;
+  border: 1.5px solid #2563EB !important;
+  color: #2563EB !important;
+  background: #EFF6FF !important;
+  font-weight: 700 !important;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .landing-nav-guest-btn:hover {
-  background: rgba(255, 255, 255, 0.12) !important;
+  background: #2563EB !important;
   color: #FFFFFF !important;
-  border-color: rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
   transform: translateY(-1px) !important;
 }
 
@@ -149,7 +150,7 @@ body.gate-locked .main-wrapper {
 
 #gate-nav-login-btn:hover {
   background: #1D4ED8 !important;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3) !important;
   transform: translateY(-1px) !important;
 }
 
@@ -159,7 +160,7 @@ body.gate-locked .main-wrapper {
 .hero-section {
   position: relative;
   background-color: transparent;
-  color: #f8fafc;
+  color: #0F172A;
   padding: 4.5rem 1.5rem 3.5rem 1.5rem;
   width: 100%;
   flex-shrink: 0;
@@ -194,13 +195,13 @@ body.gate-locked .main-wrapper {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(37, 99, 235, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.28);
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
   padding: 0.45rem 1rem;
   border-radius: 30px;
   font-size: 0.78rem;
   font-weight: 700;
-  color: #38BDF8;
+  color: #1D4ED8;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   margin-bottom: 1.25rem;
@@ -213,11 +214,11 @@ body.gate-locked .main-wrapper {
   line-height: 1.15;
   letter-spacing: -0.025em;
   margin: 0 0 1.25rem 0;
-  color: #FFFFFF;
+  color: #0F172A;
 }
 
 .landing-title-gradient {
-  background: linear-gradient(135deg, #38BDF8 0%, #3B82F6 100%);
+  background: linear-gradient(135deg, #2563EB 0%, #0284C7 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -225,7 +226,7 @@ body.gate-locked .main-wrapper {
 .hero-subtitle {
   font-size: 1.125rem;
   line-height: 1.6;
-  color: #94a3b8;
+  color: #475569;
   margin: 0 0 1.75rem 0;
 }
 
@@ -259,17 +260,18 @@ body.gate-locked .main-wrapper {
 .landing-gate-overlay .btn-primary:hover {
   background-color: #1d4ed8;
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
 }
 
 .landing-gate-overlay .btn-secondary {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: #f8fafc;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: #ffffff;
+  color: #0F172A;
+  border: 1.5px solid #CBD5E1;
 }
 
 .landing-gate-overlay .btn-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.14);
+  background-color: #F8FAFC;
+  border-color: #94A3B8;
   transform: translateY(-1px);
 }
 
@@ -282,9 +284,9 @@ body.gate-locked .main-wrapper {
 }
 
 .landing-btn-primary {
-  background: rgba(15, 23, 42, 0.95);
-  color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #FFFFFF;
+  color: #0F172A;
+  border: 1.5px solid #CBD5E1;
   border-radius: 12px;
   padding: 0.9rem 1.25rem;
   font-size: 0.92rem;
@@ -294,16 +296,16 @@ body.gate-locked .main-wrapper {
   flex-direction: column;
   align-items: flex-start;
   gap: 0.25rem;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: left;
 }
 
 .landing-btn-primary:hover {
-  background: rgba(30, 41, 59, 0.95);
-  border-color: rgba(56, 189, 248, 0.4);
+  background: #F8FAFC;
+  border-color: #2563EB;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
 }
 
 .landing-btn-title {
@@ -312,19 +314,19 @@ body.gate-locked .main-wrapper {
   gap: 0.5rem;
   font-size: 0.95rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: #0F172A;
 }
 
 .landing-btn-sub {
   font-size: 0.72rem;
-  color: #94A3B8;
+  color: #64748B;
   font-weight: 500;
 }
 
 .landing-btn-secondary {
-  background: rgba(37, 99, 235, 0.12);
-  color: #60A5FA;
-  border: 1.5px solid rgba(59, 130, 246, 0.4);
+  background: #EFF6FF;
+  color: #1D4ED8;
+  border: 1.5px solid #93C5FD;
   border-radius: 12px;
   padding: 0.9rem 1.25rem;
   font-size: 0.92rem;
@@ -334,21 +336,24 @@ body.gate-locked .main-wrapper {
   flex-direction: column;
   align-items: flex-start;
   gap: 0.25rem;
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: left;
 }
 
 .landing-btn-secondary:hover {
-  background: rgba(37, 99, 235, 0.25);
-  border-color: #3B82F6;
-  color: #93C5FD;
+  background: #DBEAFE;
+  border-color: #2563EB;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.2);
+}
+
+.landing-btn-secondary .landing-btn-title {
+  color: #1D4ED8;
 }
 
 .landing-btn-secondary .landing-btn-sub {
-  color: #93C5FD;
+  color: #3B82F6;
 }
 
 /* Guest Action */
@@ -358,8 +363,8 @@ body.gate-locked .main-wrapper {
 
 .landing-btn-guest {
   width: 100%;
-  background: rgba(16, 185, 129, 0.05);
-  border: 1.5px dashed rgba(16, 185, 129, 0.35);
+  background: #F0FDF4;
+  border: 1.5px dashed #86EFAC;
   border-radius: 14px;
   padding: 1rem 1.25rem;
   cursor: pointer;
@@ -374,7 +379,7 @@ body.gate-locked .main-wrapper {
 }
 
 .landing-btn-guest:hover {
-  background: rgba(16, 185, 129, 0.12);
+  background: #DCFCE7;
   border-color: #10B981;
   border-style: solid;
   transform: translateY(-2px);
@@ -388,9 +393,9 @@ body.gate-locked .main-wrapper {
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.04em;
-  color: #34D399;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #047857;
+  background: #DCFCE7;
+  border: 1px solid #BBF7D0;
   padding: 0.2rem 0.55rem;
   border-radius: 6px;
   text-transform: uppercase;
@@ -411,14 +416,14 @@ body.gate-locked .main-wrapper {
 .landing-guest-title {
   font-size: 0.98rem;
   font-weight: 800;
-  color: #F8FAFC;
+  color: #065F46;
   display: flex;
   align-items: center;
   gap: 0.4rem;
 }
 
 .landing-btn-guest:hover .landing-guest-title {
-  color: #34D399;
+  color: #047857;
 }
 
 .landing-guest-arrow-chip {
@@ -427,9 +432,9 @@ body.gate-locked .main-wrapper {
   gap: 0.35rem;
   font-size: 0.78rem;
   font-weight: 700;
-  color: #38BDF8;
-  background: rgba(56, 189, 248, 0.1);
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #047857;
+  background: #DCFCE7;
+  border: 1px solid #86EFAC;
   padding: 0.25rem 0.65rem;
   border-radius: 20px;
   transition: all 0.2s ease;
@@ -443,14 +448,14 @@ body.gate-locked .main-wrapper {
 
 .landing-guest-note {
   font-size: 0.8rem;
-  color: #94A3B8;
+  color: #475569;
   line-height: 1.45;
   margin: 0;
 }
 
 .landing-guest-note em {
   font-style: normal;
-  color: #E2E8F0;
+  color: #1E293B;
   font-weight: 600;
 }
 
@@ -471,10 +476,10 @@ body.gate-locked .main-wrapper {
   width: 100%;
   border-radius: 20px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6), 
-              0 0 30px 2px rgba(37, 99, 235, 0.18); /* Subtle blue halo */
-  background: #eae8e1; /* Matches graphic's light backdrop */
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.1), 
+              0 0 25px rgba(37, 99, 235, 0.06);
+  background: #FFFFFF;
 }
 
 .hero-img {
@@ -488,15 +493,15 @@ body.gate-locked .main-wrapper {
 }
 
 .visual-card:hover .hero-img {
-  transform: scale(1.025);
+  transform: scale(1.02);
 }
 
-/* Vignette border blend to soften image edges against dark backgrounds */
+/* Vignette border blend to soften image edges against canvas */
 .card-overlay-edge {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  box-shadow: inset 0 0 20px 3px rgba(11, 15, 25, 0.35);
+  box-shadow: inset 0 0 16px 2px rgba(15, 23, 42, 0.04);
   border-radius: 20px;
   z-index: 2;
 }
@@ -504,16 +509,16 @@ body.gate-locked .main-wrapper {
 /* Floating Badges on Image */
 .landing-floating-badge {
   position: absolute;
-  background: rgba(15, 23, 42, 0.92);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid #E2E8F0;
   border-radius: 14px;
   padding: 0.75rem 1.1rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
   z-index: 10;
   pointer-events: none;
 }
@@ -543,12 +548,12 @@ body.gate-locked .main-wrapper {
 .badge-text-title {
   font-size: 0.82rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: #0F172A;
 }
 
 .badge-text-sub {
   font-size: 0.7rem;
-  color: #34D399;
+  color: #059669;
   font-weight: 600;
 }
 
@@ -557,8 +562,10 @@ body.gate-locked .main-wrapper {
    ========================================================================== */
 .landing-services-section {
   width: 100%;
-  padding: 4rem 1.5rem 4rem 1.5rem;
-  background: transparent;
+  padding: 4.5rem 1.5rem 4.5rem 1.5rem;
+  background: #F8FAFC;
+  border-top: 1px solid #E2E8F0;
+  border-bottom: 1px solid #E2E8F0;
   flex-shrink: 0;
 }
 
@@ -582,14 +589,14 @@ body.gate-locked .main-wrapper {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #38BDF8;
+  color: #2563EB;
   margin-bottom: 0.6rem;
 }
 
 .landing-services-heading {
   font-size: clamp(1.6rem, 3vw, 2.2rem);
   font-weight: 800;
-  color: #FFFFFF;
+  color: #0F172A;
   letter-spacing: -0.025em;
   margin: 0 0 0.75rem 0;
   line-height: 1.25;
@@ -597,7 +604,7 @@ body.gate-locked .main-wrapper {
 
 .landing-services-sub {
   font-size: 1rem;
-  color: #94A3B8;
+  color: #64748B;
   line-height: 1.55;
   margin: 0;
 }
@@ -609,13 +616,11 @@ body.gate-locked .main-wrapper {
 }
 
 .landing-service-card {
-  background: rgba(17, 24, 39, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
   border-radius: 18px;
   padding: 2rem 1.75rem;
-  box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
   display: flex;
@@ -625,9 +630,9 @@ body.gate-locked .main-wrapper {
 }
 
 .landing-service-card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(56, 189, 248, 0.5);
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), 0 0 25px rgba(6, 182, 212, 0.2);
+  transform: translateY(-4px);
+  border-color: #93C5FD;
+  box-shadow: 0 18px 35px -8px rgba(37, 99, 235, 0.12);
 }
 
 .landing-service-icon-wrap {
@@ -643,14 +648,14 @@ body.gate-locked .main-wrapper {
 .landing-service-title {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: #0F172A;
   margin: 0;
   letter-spacing: -0.015em;
 }
 
 .landing-service-desc {
   font-size: 0.9rem;
-  color: #94A3B8;
+  color: #475569;
   line-height: 1.55;
   margin: 0;
   flex-grow: 1;
@@ -659,7 +664,7 @@ body.gate-locked .main-wrapper {
 .landing-service-link {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #38BDF8;
+  color: #2563EB;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -667,7 +672,7 @@ body.gate-locked .main-wrapper {
 }
 
 .landing-service-card:hover .landing-service-link {
-  color: #60A5FA;
+  color: #1D4ED8;
 }
 
 /* ==========================================================================
@@ -675,10 +680,9 @@ body.gate-locked .main-wrapper {
    ========================================================================== */
 .landing-benefits-section {
   width: 100%;
-  padding: 4rem 1.5rem;
-  background: rgba(13, 21, 38, 0.4);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 4.5rem 1.5rem;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E2E8F0;
   flex-shrink: 0;
 }
 
@@ -698,8 +702,8 @@ body.gate-locked .main-wrapper {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -709,14 +713,14 @@ body.gate-locked .main-wrapper {
 .landing-benefit-title {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: #0F172A;
   margin: 0 0 0.4rem 0;
   letter-spacing: -0.01em;
 }
 
 .landing-benefit-text {
-  font-size: 0.85rem;
-  color: #94A3B8;
+  font-size: 0.88rem;
+  color: #475569;
   line-height: 1.5;
   margin: 0;
 }
@@ -726,34 +730,35 @@ body.gate-locked .main-wrapper {
    ========================================================================== */
 .landing-cta-section {
   width: 100%;
-  padding: 4.5rem 1.5rem 5.5rem 1.5rem;
+  padding: 5rem 1.5rem 6rem 1.5rem;
+  background: #F8FAFC;
   flex-shrink: 0;
 }
 
 .landing-cta-card {
   max-width: 960px;
   margin: 0 auto;
-  background: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.22) 0%, rgba(13, 21, 38, 0.95) 75%);
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  background: linear-gradient(135deg, #EFF6FF 0%, #FFFFFF 100%);
+  border: 1.5px solid #BFDBFE;
   border-radius: 24px;
-  padding: 3.5rem 2.5rem;
+  padding: 3.75rem 2.5rem;
   text-align: center;
-  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 20px 50px -10px rgba(37, 99, 235, 0.1);
 }
 
 .landing-cta-title {
   font-size: clamp(1.8rem, 3.5vw, 2.5rem);
   font-weight: 800;
-  color: #FFFFFF;
+  color: #0F172A;
   letter-spacing: -0.025em;
   margin: 0 0 1rem 0;
 }
 
 .landing-cta-sub {
   font-size: 1.08rem;
-  color: #CBD5E1;
+  color: #475569;
   max-width: 620px;
-  margin: 0 auto 2rem auto;
+  margin: 0 auto 2.25rem auto;
   line-height: 1.6;
 }
 
@@ -772,7 +777,7 @@ body.gate-locked .main-wrapper {
 }
 
 /* ==========================================================================
-   8. SITEWIDE FOOTER (Natural Document Flow at Bottom)
+   8. SITEWIDE FOOTER (Clean Light Institutional Surface)
    ========================================================================== */
 .landing-gate-overlay .app-footer {
   width: 100%;
@@ -780,8 +785,73 @@ body.gate-locked .main-wrapper {
   position: relative;
   z-index: 10;
   flex-shrink: 0;
-  background: #0B1120;
-  border-top: 1px solid #1E293B;
+  background: #FFFFFF;
+  border-top: 1px solid #E2E8F0;
+  color: #0F172A;
+}
+
+.landing-gate-overlay .footer-brand-title {
+  color: #0F172A !important;
+}
+
+.landing-gate-overlay .footer-brand-desc,
+.landing-gate-overlay .footer-brand-tagline {
+  color: #64748B !important;
+}
+
+.landing-gate-overlay .footer-col-title,
+.landing-gate-overlay .footer-newsletter-title {
+  color: #0F172A !important;
+}
+
+.landing-gate-overlay .footer-links a {
+  color: #475569 !important;
+}
+
+.landing-gate-overlay .footer-links a:hover {
+  color: #2563EB !important;
+}
+
+.landing-gate-overlay .footer-newsletter-sub {
+  color: #64748B !important;
+}
+
+.landing-gate-overlay .footer-github-btn,
+.landing-gate-overlay .app-footer a.footer-github-btn {
+  background: #F1F5F9 !important;
+  border-color: #E2E8F0 !important;
+  color: #0F172A !important;
+}
+
+.landing-gate-overlay .footer-github-btn:hover {
+  background: #EFF6FF !important;
+  border-color: #93C5FD !important;
+  color: #2563EB !important;
+}
+
+.landing-gate-overlay .footer-email-input {
+  background: #F8FAFC !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+.landing-gate-overlay .footer-email-input::placeholder {
+  color: #94A3B8 !important;
+}
+
+.landing-gate-overlay .footer-bottom {
+  border-top: 1px solid #E2E8F0 !important;
+}
+
+.landing-gate-overlay .footer-copyright,
+.landing-gate-overlay .footer-bottom-links a,
+.landing-gate-overlay .footer-back-to-top {
+  color: #64748B !important;
+}
+
+.landing-gate-overlay .footer-bottom-links a:hover,
+.landing-gate-overlay .footer-back-to-top:hover {
+  color: #2563EB !important;
 }
 
 /* ==========================================================================
