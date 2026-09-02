@@ -42,7 +42,7 @@ export class HeroLandingGate {
                   <stop offset="100%" stop-color="#06B6D4" />
                 </linearGradient>
               </defs>
-              <path d="M 48 10 A 38 38 0 1 0 86 48" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" />
+              <path d="M 48 10 A 38 38 0 1 0 86 48" fill="none" stroke="#0F172A" stroke-width="10" stroke-linecap="round" />
               <rect x="34" y="52" width="7.5" height="20" rx="3.75" fill="#2563EB" />
               <rect x="46" y="40" width="7.5" height="32" rx="3.75" fill="#3B82F6" />
               <rect x="58" y="28" width="7.5" height="44" rx="3.75" fill="#06B6D4" />
