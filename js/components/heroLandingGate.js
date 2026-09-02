@@ -5,6 +5,7 @@
  */
 
 import { auth } from '../utils/auth.js';
+import { FooterComponent } from './footer.js';
 
 export class HeroLandingGate {
   constructor(app) {
@@ -169,8 +170,17 @@ export class HeroLandingGate {
 
           </div>
         </main>
+
+        <!-- Shared Institutional Full-Width Sitewide Footer -->
+        <footer class="app-footer" id="landing-site-footer"></footer>
       </div>
     `;
+
+    // Initialize shared Footer component
+    const footerEl = this.container.querySelector('#landing-site-footer');
+    if (footerEl) {
+      this.footer = new FooterComponent(footerEl, this.app, { isLanding: true });
+    }
   }
 
   attachEvents() {
