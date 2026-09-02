@@ -214,5 +214,21 @@
     "passwordHash": "eef851cb89a9388763069f202386a6058b5359162810f0fe307134a343261674",
     "createdAt": "2026-09-02 07:34:02 UTC",
     "lastLogin": "2026-09-02 07:34:04 UTC"
+  },
+  {
+    "id": "8ff807da-823d-46f4-a9cb-1d2ce60b4bf6",
+    "name": "Jaggu don",
+    "email": "prakhar1532006@gmail.com",
+    "passwordHash": "902dad4c880a632fcc32c1b8f810c9dafe58567ba03563a7b5cda2b7104bca4c",
+    "createdAt": "2026-09-02 07:36:19 UTC",
+    "lastLogin": "2026-09-02 07:36:19 UTC"
+  },
+  {
+    "id": "f1ed7726-e3df-4dbb-8b24-9c5390036e31",
+    "name": "Investor Test",
+    "email": "tester_1788334988@example.com",
+    "passwordHash": "c093bb240377cd22063b54472cc0e957d0144dc4949cf46bf62e40726f55f4b8",
+    "createdAt": "2026-09-02 07:43:10 UTC",
+    "lastLogin": "2026-09-02 07:43:13 UTC"
   }
 ]

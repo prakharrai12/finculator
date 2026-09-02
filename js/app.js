@@ -228,6 +228,22 @@ class FinculatorApp {
     } else if (rawHash === 'inbox') {
       if (this.authModal) this.authModal.open('inbox');
       return;
+    } else if (rawHash === 'portfolio' || rawHash === 'my-portfolio') {
+      if (this.portfolio) {
+        this.portfolio.toggle(true);
+      }
+      this.navLinks.forEach((link) => {
+        if (link.getAttribute('data-route') === 'portfolio') {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+      if (!this.currentRoute || this.currentRoute === 'portfolio') {
+        this.currentRoute = 'net-worth';
+        this.renderCurrentCalculator();
+      }
+      return;
     }
 
     this.currentRoute = rawHash;
