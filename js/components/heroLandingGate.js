@@ -38,14 +38,14 @@ export class HeroLandingGate {
             <svg width="34" height="34" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="gate-logo-grad" x1="30" y1="70" x2="85" y2="15" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#2563EB" />
-                  <stop offset="100%" stop-color="#06B6D4" />
+                  <stop offset="0%" stop-color="#3B6FD4" />
+                  <stop offset="100%" stop-color="#4A7FE0" />
                 </linearGradient>
               </defs>
-              <path d="M 48 10 A 38 38 0 1 0 86 48" fill="none" stroke="#0F172A" stroke-width="10" stroke-linecap="round" />
-              <rect x="34" y="52" width="7.5" height="20" rx="3.75" fill="#2563EB" />
-              <rect x="46" y="40" width="7.5" height="32" rx="3.75" fill="#3B82F6" />
-              <rect x="58" y="28" width="7.5" height="44" rx="3.75" fill="#06B6D4" />
+              <path d="M 48 10 A 38 38 0 1 0 86 48" fill="none" stroke="#F5F6F8" stroke-width="10" stroke-linecap="round" />
+              <rect x="34" y="52" width="7.5" height="20" rx="3.75" fill="#3B6FD4" />
+              <rect x="46" y="40" width="7.5" height="32" rx="3.75" fill="#4A7FE0" />
+              <rect x="58" y="28" width="7.5" height="44" rx="3.75" fill="#60A5FA" />
               <path d="M 32 68 L 76 24" fill="none" stroke="url(#gate-logo-grad)" stroke-width="9" stroke-linecap="round" />
               <path d="M 56 20 L 82 20 L 82 46 Z" fill="url(#gate-logo-grad)" stroke-linejoin="round" />
             </svg>
@@ -60,7 +60,7 @@ export class HeroLandingGate {
               <span class="landing-security-dot"></span>
               256-Bit TLS Security
             </div>
-            <button type="button" class="btn btn-outline btn-sm landing-nav-guest-btn" id="gate-nav-guest-btn">
+            <button type="button" class="btn btn-secondary btn-sm landing-nav-guest-btn" id="gate-nav-guest-btn">
               Continue as Guest &rarr;
             </button>
             <button type="button" class="btn btn-primary btn-sm" id="gate-nav-login-btn">
@@ -69,134 +69,96 @@ export class HeroLandingGate {
           </div>
         </header>
 
-        <!-- 2. Hero Section (Full Background Artwork, Blurred from Bottom) -->
+        <!-- 2. Hero Section (Strictly 5 elements: Eyebrow, Headline, Subtext, 2 Buttons, Reference Image) -->
         <section class="hero-section" id="landing-hero-section">
-          <!-- Background Artwork Layer (Spans full hero with bottom blur & fade) -->
-          <div class="hero-bg-art-wrapper visual-card" aria-hidden="true">
-            <picture>
-              <source 
-                srcset="hero-illustration-mobile.webp 540w, hero-illustration.webp 1200w" 
-                sizes="(max-width: 768px) 100vw, 100vw" 
-                type="image/webp"
-              >
-              <img 
-                src="image_435406.jpg" 
-                alt="Finculator Institutional Wealth Growth Illustration" 
-                class="hero-bg-art-img hero-img"
-                loading="eager" 
-                fetchpriority="high" 
-                width="1376" 
-                height="768"
-              >
-            </picture>
-            <div class="hero-bg-overlay-left card-overlay-edge"></div>
-            <div class="hero-bg-blur-bottom"></div>
-            <div class="hero-bg-fade-bottom"></div>
-          </div>
-
           <div class="hero-container">
-            <!-- Left Column: Copy & Actions -->
-            <div class="hero-content">
-              <div class="landing-eyebrow-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-                INSTITUTIONAL WEALTH SUITE
-              </div>
+            
+            <!-- 1. Eyebrow badge -->
+            <div class="landing-eyebrow-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+              INSTITUTIONAL WEALTH SUITE
+            </div>
 
-              <h1 class="hero-title">
-                Maximizing Growth,<br/>
-                <span class="landing-title-gradient">Minimizing Risk</span>
-              </h1>
-              
-              <p class="hero-subtitle">
-                Smarter financial tools designed to plan, project, and optimize your wealth trajectory with verified mathematical precision.
-              </p>
+            <!-- 2. Headline -->
+            <h1 class="hero-title">
+              Maximizing Growth,<br/>
+              <span class="landing-title-accent">Minimizing Risk</span>
+            </h1>
+            
+            <!-- 3. Subtext -->
+            <p class="hero-subtitle">
+              Smarter financial tools designed to plan, project, and optimize your wealth trajectory with verified mathematical precision. Instant calculation with zero forced login.
+            </p>
 
-              <!-- Hero Actions: Get Started & Learn More -->
-              <div class="hero-actions">
-                <a href="#get-started" class="btn btn-primary" id="hero-btn-get-started">Get Started</a>
-                <a href="#learn-more" class="btn btn-secondary" id="hero-btn-learn-more">Learn More</a>
-              </div>
+            <!-- 4. Exactly two buttons, side by side -->
+            <div class="hero-actions">
+              <button type="button" class="btn btn-primary" id="hero-btn-get-started">Get Started Free</button>
+              <button type="button" class="btn btn-secondary" id="gate-btn-guest">
+                Continue as Guest <span class="btn-arrow">&rarr;</span>
+              </button>
+            </div>
 
-              <!-- Two Primary Auth Buttons -->
-              <div class="landing-btn-group">
-                <!-- Button 1: Login — Existing User -->
-                <button type="button" class="landing-btn-primary" id="gate-btn-existing-user">
-                  <span class="landing-btn-title">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
-                    Login Account
-                  </span>
-                  <span class="landing-btn-sub">Existing User • Access Saved Portfolio</span>
-                </button>
+            <!-- 5. Hero Reference Image (Hands, Cash, Calculator, Upward Blue Arrows on Dark Canvas) -->
+            <div class="hero-visual visual-card">
+              <picture>
+                <source 
+                  srcset="hero-illustration-mobile.webp 540w, hero-illustration.webp 1200w" 
+                  sizes="(max-width: 768px) 100vw, 1000px" 
+                  type="image/webp"
+                >
+                <img 
+                  src="image_435406.jpg" 
+                  alt="Finculator Institutional Wealth Growth Illustration" 
+                  class="hero-img"
+                  loading="eager" 
+                  fetchpriority="high" 
+                  width="1376" 
+                  height="768"
+                >
+              </picture>
+              <div class="card-overlay-edge"></div>
+              <div class="hero-image-blur-bottom"></div>
+            </div>
 
-                <!-- Button 2: Sign In / Create Account — New User -->
-                <button type="button" class="landing-btn-secondary" id="gate-btn-new-user">
-                  <span class="landing-btn-title">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
-                    Create Account
-                  </span>
-                  <span class="landing-btn-sub">New User • Free Credentials Dispatch</span>
-                </button>
-              </div>
+          </div>
+        </section>
 
-              <!-- Prominent Continue Without Login Option -->
-              <div class="landing-guest-action-wrap">
-                <button type="button" class="landing-btn-guest" id="gate-btn-guest">
-                  <div class="landing-guest-badge">FREE GUEST ACCESS</div>
-                  <div class="landing-guest-content">
-                    <div class="landing-guest-title-row">
-                      <span class="landing-guest-title">Continue Without Login</span>
-                      <span class="landing-guest-arrow-chip">
-                        Open Calculators
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                      </span>
-                    </div>
-                    <p class="landing-guest-note">
-                      Instant access to all 27+ loans, taxes, investments & FIRE models. No login required to compute numbers. <em>(Account only needed to save a Portfolio & Statement).</em>
-                    </p>
-                  </div>
-                </button>
-              </div>
-
-              <!-- Trust Badges Row -->
-              <div class="hero-trust-chips-row">
-                <div class="hero-trust-chip">
-                  <div class="hero-chip-icon" style="background: linear-gradient(135deg, #2563EB, #06B6D4);">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
-                  </div>
-                  <span>27+ Financial Engines</span>
-                </div>
-                <div class="hero-trust-chip">
-                  <div class="hero-chip-icon" style="background: linear-gradient(135deg, #10B981, #059669);">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  </div>
-                  <span>Client-Side Privacy</span>
-                </div>
-                <div class="hero-trust-chip">
-                  <div class="hero-chip-icon" style="background: linear-gradient(135deg, #6366F1, #8B5CF6);">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                  </div>
-                  <span>Institutional Accuracy</span>
-                </div>
-              </div>
-
+        <!-- 3. Slim Trust Bar Section (Directly below hero, above capabilities) -->
+        <section class="landing-trust-bar" id="landing-trust-bar">
+          <div class="trust-bar-container">
+            <div class="trust-bar-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+              <span>27+ Financial Engines</span>
+            </div>
+            <div class="trust-bar-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <span>Client-Side Isolation</span>
+            </div>
+            <div class="trust-bar-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Institutional Accuracy</span>
+            </div>
+            <div class="trust-bar-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span>Zero Forced Tracking</span>
             </div>
           </div>
         </section>
 
-        <!-- 3. Core Advisory Capabilities Section (Sibling in flow) -->
+        <!-- 4. Core Advisory Capabilities Section (Sibling in flow) -->
         <section class="landing-services-section" id="landing-services-section">
           <div class="landing-section-container">
             <div class="landing-services-header">
               <span class="landing-services-tag">CORE ADVISORY CAPABILITIES</span>
-              <h2 class="landing-services-heading">Institutional Wealth & Strategic Calculation Engines</h2>
+              <h2 class="landing-services-heading">Institutional Wealth &amp; Strategic Calculation Engines</h2>
               <p class="landing-services-sub">From personal portfolio health to complex debt structuring, choose your financial instrument.</p>
             </div>
             <div class="landing-services-grid">
               
               <!-- Card 1: Portfolio Management -->
               <div class="landing-service-card" role="button" tabindex="0" data-route="portfolio">
-                <div class="landing-service-icon-wrap" style="background: rgba(37, 99, 235, 0.15); color: #3B82F6;">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="landing-service-icon-wrap">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
                     <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
                   </svg>
@@ -205,13 +167,13 @@ export class HeroLandingGate {
                   <h3 class="landing-service-title">Portfolio Management</h3>
                   <p class="landing-service-desc">Personal Financial Statement (PFS), asset allocation donut breakdown, and real-time net worth intelligence.</p>
                 </div>
-                <span class="landing-service-link">Launch Portfolio &rarr;</span>
+                <span class="landing-service-link">Launch Portfolio <span class="link-arrow">&rarr;</span></span>
               </div>
 
               <!-- Card 2: Financial Planning -->
               <div class="landing-service-card" role="button" tabindex="0" data-route="fire">
-                <div class="landing-service-icon-wrap" style="background: rgba(6, 182, 212, 0.15); color: #06B6D4;">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="landing-service-icon-wrap">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                     <polyline points="14 2 14 8 20 8"></polyline>
                     <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -223,13 +185,13 @@ export class HeroLandingGate {
                   <h3 class="landing-service-title">Financial Planning</h3>
                   <p class="landing-service-desc">FIRE freedom numbers, multi-regime income taxes, step-up SIP wealth models, and inflation forecasts.</p>
                 </div>
-                <span class="landing-service-link">Plan Trajectory &rarr;</span>
+                <span class="landing-service-link">Plan Trajectory <span class="link-arrow">&rarr;</span></span>
               </div>
 
               <!-- Card 3: Risk Analysis -->
               <div class="landing-service-card" role="button" tabindex="0" data-route="emi">
-                <div class="landing-service-icon-wrap" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="landing-service-icon-wrap">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                   </svg>
                 </div>
@@ -237,45 +199,45 @@ export class HeroLandingGate {
                   <h3 class="landing-service-title">Risk Analysis</h3>
                   <p class="landing-service-desc">Loan amortization schedules, prepayment interest savings, FOIR debt eligibility, and credit payoff analysis.</p>
                 </div>
-                <span class="landing-service-link">Analyze Debt &rarr;</span>
+                <span class="landing-service-link">Analyze Debt <span class="link-arrow">&rarr;</span></span>
               </div>
 
             </div>
           </div>
         </section>
 
-        <!-- 4. Institutional Pillars & Trust Section (Sibling in flow) -->
+        <!-- 5. Institutional Pillars & Trust Section ("Why Finculator") -->
         <section class="landing-benefits-section">
           <div class="landing-section-container">
             <div class="landing-services-header">
               <span class="landing-services-tag">ENGINEERED FOR PRECISION</span>
-              <h2 class="landing-services-heading">Why Institutional Investors & Planners Rely on Finculator</h2>
+              <h2 class="landing-services-heading">Why Institutional Investors &amp; Planners Rely on Finculator</h2>
             </div>
             <div class="landing-benefits-grid">
               <div class="landing-benefit-item">
                 <div class="landing-benefit-icon">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
                 </div>
                 <div>
                   <h4 class="landing-benefit-title">Verified Mathematical Accuracy</h4>
-                  <p class="landing-benefit-text">Amortization schedules and compounding engines rigorously tested against RBI and IRS benchmark calculations.</p>
+                  <p class="landing-benefit-text">Amortization schedules and compounding engines rigorously tested against benchmark calculation standards.</p>
                 </div>
               </div>
               <div class="landing-benefit-item">
                 <div class="landing-benefit-icon">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                 </div>
                 <div>
                   <h4 class="landing-benefit-title">Client-Side Data Privacy</h4>
-                  <p class="landing-benefit-text">Guest calculations run 100% in your local browser session. No forced tracking or unwanted third-party data scraping.</p>
+                  <p class="landing-benefit-text">Guest calculations run 100% in your local browser session. No forced tracking or unwanted third-party data harvesting.</p>
                 </div>
               </div>
               <div class="landing-benefit-item">
                 <div class="landing-benefit-icon">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
                 </div>
                 <div>
-                  <h4 class="landing-benefit-title">Advisory-Grade PDF Statements</h4>
+                  <h4 class="landing-benefit-title">Advisory-Grade Export Statements</h4>
                   <p class="landing-benefit-text">Export formatted balance sheets, debt amortization timetables, and FIRE milestones with print-ready precision.</p>
                 </div>
               </div>
@@ -283,19 +245,21 @@ export class HeroLandingGate {
           </div>
         </section>
 
-        <!-- 5. Final Call to Action Section (Sibling in flow) -->
+        <!-- 6. Final Call to Action Section (Sibling in flow) -->
         <section class="landing-cta-section">
           <div class="landing-cta-card">
-            <h2 class="landing-cta-title">Ready to Plan, Project, and Optimize Your Wealth?</h2>
-            <p class="landing-cta-sub">Instant access to 27+ institutional computation engines. Calculate as a guest or create an account to save your portfolio.</p>
+            <h2 class="landing-cta-title">Ready to Master Your Capital Trajectory?</h2>
+            <p class="landing-cta-sub">Join institutional investors, independent advisers, and forward-looking individuals who trust Finculator for uncompromising calculation accuracy.</p>
             <div class="landing-cta-actions">
-              <button type="button" class="btn btn-primary btn-lg" id="landing-cta-signup-btn">Get Started Free</button>
-              <button type="button" class="btn btn-secondary btn-lg" id="landing-cta-guest-btn">Launch Guest Calculators &rarr;</button>
+              <button type="button" class="btn btn-primary" id="landing-cta-signup-btn">Get Started Free</button>
+              <button type="button" class="landing-cta-link-btn" id="landing-cta-guest-btn">
+                Launch Guest Calculators <span class="link-arrow">&rarr;</span>
+              </button>
             </div>
           </div>
         </section>
 
-        <!-- 6. Shared Institutional Full-Width Sitewide Footer (Sibling in flow at true bottom) -->
+        <!-- 7. Shared Institutional Full-Width Sitewide Footer (Sibling in flow at true bottom) -->
         <footer class="app-footer" id="landing-site-footer"></footer>
       </div>
     `;
@@ -312,7 +276,7 @@ export class HeroLandingGate {
     const navLoginBtn = this.container.querySelector('#gate-nav-login-btn');
     if (navLoginBtn) {
       navLoginBtn.addEventListener('click', () => {
-        if (this.app.authModal) this.app.authModal.open('signin');
+        if (this.app && this.app.authModal) this.app.authModal.open('signin');
       });
     }
 
@@ -330,19 +294,11 @@ export class HeroLandingGate {
       });
     }
 
-    // Hero: Existing User Login Button
-    const loginBtn = this.container.querySelector('#gate-btn-existing-user');
-    if (loginBtn) {
-      loginBtn.addEventListener('click', () => {
-        if (this.app.authModal) this.app.authModal.open('signin');
-      });
-    }
-
-    // Hero: New User Create Account Button
-    const registerBtn = this.container.querySelector('#gate-btn-new-user');
-    if (registerBtn) {
-      registerBtn.addEventListener('click', () => {
-        if (this.app.authModal) this.app.authModal.open('signup');
+    // Hero: Get Started Free Button
+    const heroGetStarted = this.container.querySelector('#hero-btn-get-started');
+    if (heroGetStarted) {
+      heroGetStarted.addEventListener('click', () => {
+        if (this.app && this.app.authModal) this.app.authModal.open('signup');
       });
     }
 
@@ -356,26 +312,6 @@ export class HeroLandingGate {
           this.unlock();
         } else {
           this.dismissGuest();
-        }
-      });
-    }
-
-    // Hero Actions: Get Started & Learn More
-    const heroGetStarted = this.container.querySelector('#hero-btn-get-started');
-    if (heroGetStarted) {
-      heroGetStarted.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (this.app.authModal) this.app.authModal.open('signup');
-      });
-    }
-
-    const heroLearnMore = this.container.querySelector('#hero-btn-learn-more');
-    if (heroLearnMore) {
-      heroLearnMore.addEventListener('click', (e) => {
-        e.preventDefault();
-        const servicesSec = this.container.querySelector('#landing-services-section');
-        if (servicesSec) {
-          servicesSec.scrollIntoView({ behavior: 'smooth' });
         }
       });
     }
@@ -402,7 +338,7 @@ export class HeroLandingGate {
     const ctaSignup = this.container.querySelector('#landing-cta-signup-btn');
     if (ctaSignup) {
       ctaSignup.addEventListener('click', () => {
-        if (this.app.authModal) this.app.authModal.open('signup');
+        if (this.app && this.app.authModal) this.app.authModal.open('signup');
       });
     }
 
