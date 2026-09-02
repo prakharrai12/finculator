@@ -89,40 +89,51 @@ export class PortfolioModal {
 
       <!-- Scrollable Workspace -->
       <div class="portfolio-workspace">
-        <!-- Hero Net Worth Card (Obsidian Navy Signature Card) -->
+        <!-- Executive Obsidian Net Worth Statement Card -->
         <div class="portfolio-hero-card">
-          <div class="portfolio-hero-top">
-            <div class="portfolio-hero-main-stat">
-              <span class="portfolio-hero-label">Consolidated Net Worth</span>
-              <span class="portfolio-hero-value" id="pf-hero-nw">${formatCurrency(metrics.netWorth)}</span>
-              <span class="portfolio-hero-sub" id="pf-hero-sub">
-                Total Assets (${formatCurrency(metrics.totalAssets)}) − Total Liabilities (${formatCurrency(metrics.totalLiabilities)})
-              </span>
+          <div class="portfolio-hero-header">
+            <div class="portfolio-hero-title-wrap">
+              <div class="portfolio-shield-badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <span>VERIFIED PERSONAL STATEMENT</span>
+              </div>
+              <h3 class="portfolio-hero-label">Consolidated Net Worth</h3>
             </div>
-            <div class="portfolio-hero-quick-actions">
-              <button class="btn btn-secondary btn-sm" id="pf-btn-print-hero" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#FFFFFF;">
+            <div class="portfolio-hero-actions">
+              <button class="btn btn-secondary btn-sm pf-hero-btn" id="pf-btn-print-hero">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                Export Report
+                Export Statement
               </button>
             </div>
           </div>
 
-          <!-- Supporting 6-Metric Stat Grid -->
+          <div class="portfolio-hero-main-stat">
+            <div class="portfolio-hero-nw-row">
+              <span class="portfolio-hero-value" id="pf-hero-nw">${formatCurrency(metrics.netWorth)}</span>
+              <span class="portfolio-solvency-pill ${metrics.netWorth >= 0 ? 'solvency-positive' : 'solvency-negative'}" id="pf-solvency-badge">
+                ${metrics.netWorth >= 0 ? '● Positive Equity' : '● Negative Equity'}
+              </span>
+            </div>
+
+            <!-- Dual-Tone Balance Sheet Track Bar -->
+            <div class="portfolio-balance-bar-wrap">
+              <div class="portfolio-balance-bar-labels">
+                <span class="bar-lbl-assets">Assets: <strong id="pf-bar-val-assets">${formatCurrency(metrics.totalAssets)}</strong></span>
+                <span class="bar-lbl-liab">Liabilities: <strong id="pf-bar-val-liab">${formatCurrency(metrics.totalLiabilities)}</strong></span>
+              </div>
+              <div class="portfolio-balance-track">
+                <div class="portfolio-balance-fill-assets" id="pf-bar-fill-assets" style="width: ${metrics.totalAssets + metrics.totalLiabilities > 0 ? Math.round((metrics.totalAssets / (metrics.totalAssets + metrics.totalLiabilities)) * 100) : 100}%;"></div>
+                <div class="portfolio-balance-fill-liab" id="pf-bar-fill-liab" style="width: ${metrics.totalAssets + metrics.totalLiabilities > 0 ? Math.round((metrics.totalLiabilities / (metrics.totalAssets + metrics.totalLiabilities)) * 100) : 0}%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4-Stat Executive Strip -->
           <div class="portfolio-stat-grid">
             <div class="portfolio-stat-box">
-              <span class="portfolio-stat-lbl">Total Assets</span>
-              <span class="portfolio-stat-val positive" id="pf-stat-assets">${formatCurrency(metrics.totalAssets)}</span>
-              <span class="portfolio-stat-desc">Everything owned</span>
-            </div>
-            <div class="portfolio-stat-box">
-              <span class="portfolio-stat-lbl">Total Liabilities</span>
-              <span class="portfolio-stat-val negative" id="pf-stat-liab">${formatCurrency(metrics.totalLiabilities)}</span>
-              <span class="portfolio-stat-desc">Outstanding debts</span>
-            </div>
-            <div class="portfolio-stat-box">
-              <span class="portfolio-stat-lbl">Liquid Solvency</span>
+              <span class="portfolio-stat-lbl">Liquid Capital</span>
               <span class="portfolio-stat-val highlight" id="pf-stat-liquid">${formatCurrency(metrics.liquidNetWorth)}</span>
-              <span class="portfolio-stat-desc">Cash + MFs − Short debt</span>
+              <span class="portfolio-stat-desc">Cash & liquid holdings</span>
             </div>
             <div class="portfolio-stat-box">
               <span class="portfolio-stat-lbl">Monthly Cash Surplus</span>
@@ -130,16 +141,28 @@ export class PortfolioModal {
               <span class="portfolio-stat-desc">Savings Rate: <strong id="pf-stat-sav-rate">${metrics.savingsRatePct}%</strong></span>
             </div>
             <div class="portfolio-stat-box">
-              <span class="portfolio-stat-lbl">Debt-to-Income (DTI)</span>
-              <span class="portfolio-stat-val" id="pf-stat-dti">${metrics.debtToIncomeRatio}%</span>
-              <span class="portfolio-stat-desc">Monthly EMI burden</span>
+              <span class="portfolio-stat-lbl">Debt-to-Asset (DTA)</span>
+              <span class="portfolio-stat-val" id="pf-stat-dti">${metrics.debtToAssetRatio}%</span>
+              <span class="portfolio-stat-desc" id="pf-stat-dti-desc">${metrics.debtToAssetRatio < 30 ? '✓ Healthy leverage' : metrics.debtToAssetRatio < 50 ? 'Moderate leverage' : 'High leverage'}</span>
             </div>
             <div class="portfolio-stat-box">
               <span class="portfolio-stat-lbl">Emergency Runway</span>
               <span class="portfolio-stat-val highlight" id="pf-stat-runway">${metrics.emergencyRunwayMonths} Mo</span>
-              <span class="portfolio-stat-desc">Target: 6 Months</span>
+              <span class="portfolio-stat-desc">Benchmark: 6 Months</span>
             </div>
           </div>
+        </div>
+
+        <!-- Section Category Filter Tabs -->
+        <div class="portfolio-section-tabs" id="pf-section-tabs">
+          <button type="button" class="portfolio-tab-pill active" data-filter="all">All Modules</button>
+          <button type="button" class="portfolio-tab-pill" data-filter="profile">1. Profile</button>
+          <button type="button" class="portfolio-tab-pill" data-filter="assets">2. Assets</button>
+          <button type="button" class="portfolio-tab-pill" data-filter="liabilities">3. Liabilities</button>
+          <button type="button" class="portfolio-tab-pill" data-filter="cashflow">4. Cash Flow</button>
+          <button type="button" class="portfolio-tab-pill" data-filter="holdings">5. Holdings</button>
+          <button type="button" class="portfolio-tab-pill" data-filter="insurance">6. Insurance</button>
+          <button type="button" class="portfolio-tab-pill" data-filter="goals">7. Goals</button>
         </div>
 
         <!-- 2-Column Responsive Workspace Grid -->
@@ -658,7 +681,21 @@ export class PortfolioModal {
 
   renderAllocationLegend(breakdown, totalAssets) {
     if (!totalAssets || totalAssets === 0) {
-      return `<div style="text-align:center; color:#94A3B8; font-size:0.78rem; padding:0.5rem 0;">No asset values entered yet</div>`;
+      const benchmarkItems = [
+        { label: 'Equities & ETFs', percent: 50, dot: 'c2' },
+        { label: 'Fixed Income & FDs', percent: 25, dot: 'c1' },
+        { label: 'Real Estate / Property', percent: 15, dot: 'c3' },
+        { label: 'Liquid Cash Reserves', percent: 10, dot: 'c6' }
+      ];
+      return benchmarkItems.map((item) => `
+        <div class="portfolio-legend-row">
+          <div class="portfolio-legend-left">
+            <span class="portfolio-legend-dot ${item.dot}"></span>
+            <span style="color: #475569; font-weight: 500;">${item.label}</span>
+          </div>
+          <span class="portfolio-legend-val" style="color: #64748B;">Target: ${item.percent}%</span>
+        </div>
+      `).join('');
     }
 
     const dots = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6'];
@@ -683,16 +720,31 @@ export class PortfolioModal {
     if (!donutBox) return;
 
     if (!metrics.totalAssets || metrics.totalAssets === 0) {
-      donutBox.innerHTML = `
-        <div class="portfolio-chart-empty-state">
-          <div class="portfolio-chart-empty-circle">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
-          </div>
-          <span>Add your assets to see live allocation</span>
-        </div>
-      `;
+      renderDonutChart(donutBox, {
+        segments: [
+          { label: 'Equities & ETFs', value: 50, percent: 50, colorClass: 'interest' },
+          { label: 'Fixed Income & FDs', value: 25, percent: 25, colorClass: 'principal' },
+          { label: 'Real Estate / Property', value: 15, percent: 15, colorClass: 'extra' },
+          { label: 'Liquid Cash Buffer', value: 10, percent: 10, colorClass: 'accent' }
+        ],
+        centerLabel: 'Target Benchmark',
+        centerValue: '60 / 40'
+      });
+
+      // Subtle guide note
+      const existingNote = this.drawer.querySelector('.portfolio-benchmark-note');
+      if (!existingNote) {
+        const note = document.createElement('div');
+        note.className = 'portfolio-benchmark-note';
+        note.innerHTML = `<span>★ Balanced Target Benchmark (60/40 Equities & Debt) — Add your assets in Section 2 to build your real portfolio</span>`;
+        donutBox.parentNode.insertBefore(note, donutBox.nextSibling);
+      }
       return;
     }
+
+    // Remove benchmark note if custom assets are entered
+    const existingNote = this.drawer.querySelector('.portfolio-benchmark-note');
+    if (existingNote) existingNote.remove();
 
     const totAssets = metrics.totalAssets;
     const segments = [
@@ -717,14 +769,28 @@ export class PortfolioModal {
     const heroNw = this.drawer.querySelector('#pf-hero-nw');
     if (heroNw) heroNw.textContent = formatCurrency(metrics.netWorth);
 
-    const heroSub = this.drawer.querySelector('#pf-hero-sub');
-    if (heroSub) heroSub.textContent = `Total Assets (${formatCurrency(metrics.totalAssets)}) − Total Liabilities (${formatCurrency(metrics.totalLiabilities)})`;
+    const solvencyBadge = this.drawer.querySelector('#pf-solvency-badge');
+    if (solvencyBadge) {
+      solvencyBadge.textContent = metrics.netWorth >= 0 ? '● Positive Equity' : '● Negative Equity';
+      solvencyBadge.className = `portfolio-solvency-pill ${metrics.netWorth >= 0 ? 'solvency-positive' : 'solvency-negative'}`;
+    }
 
-    const statAssets = this.drawer.querySelector('#pf-stat-assets');
-    if (statAssets) statAssets.textContent = formatCurrency(metrics.totalAssets);
+    // Update Balance Sheet Track Bar
+    const barValAssets = this.drawer.querySelector('#pf-bar-val-assets');
+    if (barValAssets) barValAssets.textContent = formatCurrency(metrics.totalAssets);
 
-    const statLiab = this.drawer.querySelector('#pf-stat-liab');
-    if (statLiab) statLiab.textContent = formatCurrency(metrics.totalLiabilities);
+    const barValLiab = this.drawer.querySelector('#pf-bar-val-liab');
+    if (barValLiab) barValLiab.textContent = formatCurrency(metrics.totalLiabilities);
+
+    const totalVolume = metrics.totalAssets + metrics.totalLiabilities;
+    const assetsPct = totalVolume > 0 ? Math.round((metrics.totalAssets / totalVolume) * 100) : 100;
+    const liabPct = totalVolume > 0 ? Math.round((metrics.totalLiabilities / totalVolume) * 100) : 0;
+
+    const barFillAssets = this.drawer.querySelector('#pf-bar-fill-assets');
+    if (barFillAssets) barFillAssets.style.width = `${assetsPct}%`;
+
+    const barFillLiab = this.drawer.querySelector('#pf-bar-fill-liab');
+    if (barFillLiab) barFillLiab.style.width = `${liabPct}%`;
 
     const statLiquid = this.drawer.querySelector('#pf-stat-liquid');
     if (statLiquid) statLiquid.textContent = formatCurrency(metrics.liquidNetWorth);
@@ -739,12 +805,20 @@ export class PortfolioModal {
     if (statSavRate) statSavRate.textContent = `${metrics.savingsRatePct}%`;
 
     const statDti = this.drawer.querySelector('#pf-stat-dti');
-    if (statDti) statDti.textContent = `${metrics.debtToIncomeRatio}%`;
+    if (statDti) statDti.textContent = `${metrics.debtToAssetRatio}%`;
+
+    const statDtiDesc = this.drawer.querySelector('#pf-stat-dti-desc');
+    if (statDtiDesc) {
+      statDtiDesc.textContent = metrics.debtToAssetRatio < 30 ? '✓ Healthy leverage' : metrics.debtToAssetRatio < 50 ? 'Moderate leverage' : 'High leverage';
+    }
 
     const statRunway = this.drawer.querySelector('#pf-stat-runway');
     if (statRunway) statRunway.textContent = `${metrics.emergencyRunwayMonths} Mo`;
 
     // Update Accordion Summaries
+    const sumProfile = this.drawer.querySelector('#pf-sum-profile');
+    if (sumProfile) sumProfile.textContent = this.state.profile?.fullName || 'Not specified';
+
     const sumAssets = this.drawer.querySelector('#pf-sum-assets');
     if (sumAssets) sumAssets.textContent = `Total: ${formatCurrency(metrics.totalAssets)}`;
 
@@ -757,34 +831,27 @@ export class PortfolioModal {
     const tagPortVal = this.drawer.querySelector('#pf-tag-port-val');
     if (tagPortVal) tagPortVal.textContent = formatCurrency(metrics.totalAssets);
 
+    // Update Radar Meters
+    const progEmg = this.drawer.querySelector('#pf-prog-emg-pct');
+    if (progEmg) progEmg.textContent = `${metrics.emergencyFundProgressPct}%`;
+    const barEmg = this.drawer.querySelector('#pf-bar-emg');
+    if (barEmg) barEmg.style.width = `${Math.min(100, metrics.emergencyFundProgressPct)}%`;
+
+    const progSav = this.drawer.querySelector('#pf-prog-sav-pct');
+    if (progSav) progSav.textContent = `${metrics.savingsRatePct}%`;
+    const barSav = this.drawer.querySelector('#pf-bar-sav');
+    if (barSav) barSav.style.width = `${Math.min(100, Math.max(0, metrics.savingsRatePct))}%`;
+
+    const progDta = this.drawer.querySelector('#pf-prog-dta-pct');
+    if (progDta) progDta.textContent = `${metrics.debtToAssetRatio}%`;
+    const barDta = this.drawer.querySelector('#pf-bar-dta');
+    if (barDta) barDta.style.width = `${Math.min(100, metrics.debtToAssetRatio)}%`;
+
     // Update Legend & Donut Chart
     const legendBox = this.drawer.querySelector('#pf-legend-allocation');
     if (legendBox) legendBox.innerHTML = this.renderAllocationLegend(metrics.assetCategoryBreakdown, metrics.totalAssets);
 
     this.renderCharts(metrics);
-
-    // Update Solvency Bars
-    const barEmg = this.drawer.querySelector('#pf-bar-emg');
-    const progEmg = this.drawer.querySelector('#pf-prog-emg-pct');
-    if (barEmg && progEmg) {
-      barEmg.style.width = `${metrics.emergencyFundProgressPct}%`;
-      progEmg.textContent = `${metrics.emergencyFundProgressPct}%`;
-    }
-
-    const barSav = this.drawer.querySelector('#pf-bar-sav');
-    const progSav = this.drawer.querySelector('#pf-prog-sav-pct');
-    if (barSav && progSav) {
-      barSav.style.width = `${Math.min(100, Math.max(0, metrics.savingsRatePct))}%`;
-      progSav.textContent = `${metrics.savingsRatePct}%`;
-    }
-
-    const barDta = this.drawer.querySelector('#pf-bar-dta');
-    const progDta = this.drawer.querySelector('#pf-prog-dta-pct');
-    if (barDta && progDta) {
-      barDta.style.width = `${Math.min(100, metrics.debtToAssetRatio)}%`;
-      progDta.textContent = `${metrics.debtToAssetRatio}%`;
-    }
-
     this.triggerAutoSave();
   }
 
@@ -795,7 +862,10 @@ export class PortfolioModal {
 
     this.saveTimeout = setTimeout(() => {
       setStoredState('personal_portfolio', this.state);
-      if (badge) badge.textContent = '✓ Saved';
+      if (badge) {
+        const user = auth.getCurrentUser();
+        badge.textContent = user ? '✓ Saved to Account' : '⚡ Guest Session';
+      }
     }, 400);
   }
 
@@ -817,6 +887,29 @@ export class PortfolioModal {
         }
       });
     }
+
+    // Category Section Pill Tabs
+    const tabBtns = this.drawer.querySelectorAll('.portfolio-tab-pill');
+    const accItems = this.drawer.querySelectorAll('.portfolio-acc-item');
+    tabBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.getAttribute('data-filter');
+
+        accItems.forEach((item) => {
+          const accType = item.getAttribute('data-acc');
+          if (filter === 'all' || filter === accType) {
+            item.style.display = '';
+            if (filter !== 'all') {
+              item.classList.add('active');
+            }
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    });
 
     // Reset Defaults / Clear All
     this.drawer.querySelector('#pf-btn-reset').addEventListener('click', () => {

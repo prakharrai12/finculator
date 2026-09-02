@@ -430,7 +430,7 @@ p, span, label, input, select, button {
 .app-content {
   position: relative;
   z-index: 1;
-  padding: 2.25rem 3rem 4rem 3rem;
+  padding: 2rem 2.25rem 5.5rem 2.25rem;
   max-width: var(--max-content-width);
   margin: 0 auto;
   width: 100%;
@@ -468,11 +468,11 @@ p, span, label, input, select, button {
   gap: 0.5rem;
 }
 
-/* Grid Layout for Calculator Panes */
+/* Grid Layout for Calculator Panes: Balanced, Un-cramped Columns */
 .calc-grid {
   display: grid;
-  grid-template-columns: 1.15fr 1fr;
-  gap: 2rem;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 1.75rem;
   align-items: start;
   min-width: 0;
   width: 100%;
@@ -480,6 +480,13 @@ p, span, label, input, select, button {
 
 .calc-grid > * {
   min-width: 0;
+}
+
+@media (max-width: 1160px) {
+  .calc-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
 }
 
 /* Top Navbar Home Icon Button */
