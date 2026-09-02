@@ -409,9 +409,27 @@ p, span, label, input, select, button {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
+  background-color: var(--bg-app);
+}
+
+/* shadcn / Magic UI Dot Pattern Texture Across Workspace */
+.main-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(148, 163, 184, 0.28) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+  background-position: 0 0;
+  mask-image: radial-gradient(ellipse 95% 85% at 50% 15%, #000 65%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 95% 85% at 50% 15%, #000 65%, transparent 100%);
+  z-index: 0;
 }
 
 .app-content {
+  position: relative;
+  z-index: 1;
   padding: 2.25rem 3rem 4rem 3rem;
   max-width: var(--max-content-width);
   margin: 0 auto;
