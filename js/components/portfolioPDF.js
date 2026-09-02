@@ -11,6 +11,10 @@ import { calculatePortfolioMetrics } from '../math/portfolioMath.js';
  * @param {object} portfolioState 
  */
 export function generatePortfolioPDF(portfolioState) {
+  try {
+    sessionStorage.setItem('finculator_downloaded_pdf', 'true');
+  } catch (_) {}
+
   const metrics = calculatePortfolioMetrics(portfolioState);
   const profile = portfolioState.profile || {};
   const assets = portfolioState.assets || {};

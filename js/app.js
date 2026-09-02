@@ -35,6 +35,9 @@ import { PortfolioModal } from './components/portfolioModal.js';
 import { AuthModal } from './components/authModal.js';
 import { HeroLandingGate } from './components/heroLandingGate.js';
 import { FooterComponent } from './components/footer.js';
+import { GuestConfirmModal } from './components/guestConfirmModal.js';
+import { hasGuestSessionData, clearGuestSession } from './utils/storage.js';
+import { auth } from './utils/auth.js';
 
 class FinculatorApp {
   constructor() {
@@ -53,6 +56,7 @@ class FinculatorApp {
     this.finbot = new FinBot(this);
     this.portfolio = new PortfolioModal(this);
     this.footer = new FooterComponent(document.getElementById('site-footer'), this, { isLanding: false });
+    this.guestConfirmModal = new GuestConfirmModal(this);
 
     this.init();
     this.initPortfolioButton();
@@ -70,15 +74,67 @@ class FinculatorApp {
   initHomeButton() {
     const homeBtn = document.getElementById('btn-header-home');
     if (homeBtn) {
-      homeBtn.addEventListener('click', () => {
+      homeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         if (this.portfolio && this.portfolio.isOpen) {
           this.portfolio.toggle(false);
         }
-        if (this.landingGate) {
+
+        const isAuth = auth.isAuthenticated();
+        const isGuest = sessionStorage.getItem('finculator_guest_access') === 'true';
+
+        // Prompt guest users with confirmation modal before leaving workspace
+        if (isGuest && !isAuth) {
+          if (this.guestConfirmModal) {
+            this.guestConfirmModal.open();
+          } else if (this.landingGate) {
+            this.landingGate.showLanding();
+          }
+        } else if (this.landingGate) {
           this.landingGate.showLanding();
         }
       });
     }
+  }
+
+  updateHomeButtonVisibility() {
+    const homeBtn = document.getElementById('btn-header-home');
+    if (!homeBtn) return;
+    const isAuth = auth.isAuthenticated();
+    const isGuest = sessionStorage.getItem('finculator_guest_access') === 'true';
+
+    // Home icon appears ONLY for active guest sessions; hidden for logged-in accounts
+    if (isGuest && !isAuth) {
+      homeBtn.style.display = 'inline-flex';
+    } else {
+      homeBtn.style.display = 'none';
+    }
+  }
+
+  initGuestExitWarning() {
+    window.addEventListener('beforeunload', (e) => {
+      // 1. Bypass if flagged (e.g. user confirmed discard or logged in)
+      if (window.__bypassExitWarning) return;
+
+      // 2. Never trigger for authenticated accounts
+      if (auth.isAuthenticated()) return;
+
+      // 3. Trigger only for active guest sessions
+      const isGuest = sessionStorage.getItem('finculator_guest_access') === 'true';
+      if (!isGuest) return;
+
+      // 4. Do not prompt if user already printed or downloaded PDF
+      const hasDownloaded = sessionStorage.getItem('finculator_downloaded_pdf') === 'true';
+      if (hasDownloaded) return;
+
+      // 5. Prompt if guest has unsaved calculation inputs
+      if (hasGuestSessionData()) {
+        const warningMessage = "Your progress isn't saved. Download your PDF or log in to save it before leaving.";
+        e.preventDefault();
+        e.returnValue = warningMessage;
+        return warningMessage;
+      }
+    });
   }
 
   init() {
@@ -87,6 +143,9 @@ class FinculatorApp {
     this.initMobileMenu();
     this.initPrint();
     this.initFooterEvents();
+    this.initGuestExitWarning();
+    this.updateHomeButtonVisibility();
+    auth.onAuthChange(() => this.updateHomeButtonVisibility());
     this.handleRoute();
   }
 
@@ -133,6 +192,9 @@ class FinculatorApp {
   initPrint() {
     if (this.printBtn) {
       this.printBtn.addEventListener('click', () => {
+        try {
+          sessionStorage.setItem('finculator_downloaded_pdf', 'true');
+        } catch (_) {}
         window.print();
       });
     }

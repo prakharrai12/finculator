@@ -172,8 +172,46 @@ def run_tests():
         assert res_data.get('alreadySubscribed') is True
         print(f"[PASS 200] Duplicate Newsletter Subscribe Handled: {res_data.get('message')}")
 
+    # 7. Guest Session Data Isolation, Home Confirmation Modal & Exit Warning
+    print("\n--- 7. Testing Guest Session Isolation, Home Confirmation & Exit Warning ---")
+    with open("js/utils/storage.js", "r", encoding="utf-8") as f:
+        storage_js = f.read()
+        assert 'migrateGuestSessionToAccount' in storage_js, "migrateGuestSessionToAccount missing in storage.js"
+        assert 'clearGuestSession' in storage_js, "clearGuestSession missing in storage.js"
+        assert 'hasGuestSessionData' in storage_js, "hasGuestSessionData missing in storage.js"
+        assert 'sessionStorage' in storage_js, "sessionStorage usage missing in storage.js"
+        assert 'finculator_guest_state_' in storage_js, "finculator_guest_state_ prefix missing in storage.js"
+        print("[PASS 200] js/utils/storage.js Verified: Session-only guest storage & auto-migration engine active")
+
+    with open("js/utils/auth.js", "r", encoding="utf-8") as f:
+        auth_js = f.read()
+        assert 'migrateGuestSessionToAccount' in auth_js, "migrateGuestSessionToAccount not integrated in auth.js"
+        print("[PASS 200] js/utils/auth.js Verified: Automatic migration invoked upon login/signup")
+
+    with open("js/components/guestConfirmModal.js", "r", encoding="utf-8") as f:
+        modal_js = f.read()
+        assert 'export class GuestConfirmModal' in modal_js, "GuestConfirmModal class missing"
+        assert 'btn-guest-confirm-login' in modal_js, "Login action button missing in GuestConfirmModal"
+        assert 'btn-guest-confirm-discard' in modal_js, "Discard action button missing in GuestConfirmModal"
+        print("[PASS 200] js/components/guestConfirmModal.js Verified: Dark themed confirmation modal active")
+
+    with open("css/main.css", "r", encoding="utf-8") as f:
+        main_css = f.read()
+        assert '.guest-confirm-backdrop' in main_css, "guest-confirm-backdrop styles missing"
+        assert '.guest-confirm-card' in main_css, "guest-confirm-card styles missing"
+        assert 'display: none' in main_css, "header-home-btn hidden by default missing"
+        print("[PASS 200] css/main.css Verified: Dark obsidian modal styles and hidden-by-default home button active")
+
+    with open("js/app.js", "r", encoding="utf-8") as f:
+        app_js = f.read()
+        assert 'updateHomeButtonVisibility' in app_js, "updateHomeButtonVisibility missing in app.js"
+        assert 'initGuestExitWarning' in app_js, "initGuestExitWarning missing in app.js"
+        assert 'beforeunload' in app_js, "beforeunload listener missing in app.js"
+        assert "Your progress isn't saved" in app_js, "Unsaved progress message missing in app.js"
+        print("[PASS 200] js/app.js Verified: Home button visibility, confirmation dialog & beforeunload warning active")
+
     print("\n" + "=" * 60)
-    print("ALL TESTS PASSED: FULL-WIDTH FOOTER, GUEST GATE, AUTH & NEWSLETTER 100% OPERATIONAL")
+    print("ALL TESTS PASSED: GUEST ISOLATION, HOME CONFIRMATION & MIGRATION 100% OPERATIONAL")
     print("=" * 60)
 
 if __name__ == '__main__':
