@@ -34,6 +34,7 @@ import { FinBot } from './components/chatbot.js';
 import { PortfolioModal } from './components/portfolioModal.js';
 import { AuthModal } from './components/authModal.js';
 import { HeroLandingGate } from './components/heroLandingGate.js';
+import { FooterComponent } from './components/footer.js';
 
 class FinculatorApp {
   constructor() {
@@ -51,6 +52,7 @@ class FinculatorApp {
     this.landingGate = new HeroLandingGate(this);
     this.finbot = new FinBot(this);
     this.portfolio = new PortfolioModal(this);
+    this.footer = new FooterComponent(document.getElementById('site-footer'), this, { isLanding: false });
 
     this.init();
     this.initPortfolioButton();
@@ -137,110 +139,7 @@ class FinculatorApp {
   }
 
   initFooterEvents() {
-    // Back to Top Smooth Scroll
-    const backToTopBtn = document.getElementById('footer-back-to-top');
-    if (backToTopBtn) {
-      backToTopBtn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-    }
-
-    // Functional Newsletter Subscription
-    const newsletterForm = document.getElementById('footer-newsletter-form');
-    const emailInput = document.getElementById('newsletter-email-input');
-    const feedbackEl = document.getElementById('newsletter-feedback');
-    const submitBtn = document.getElementById('newsletter-submit-btn');
-
-    if (newsletterForm && emailInput) {
-      // Clear error styling on input change
-      emailInput.addEventListener('input', () => {
-        const inputGroup = emailInput.closest('.newsletter-input-group');
-        if (inputGroup) inputGroup.classList.remove('input-error');
-        if (feedbackEl && feedbackEl.classList.contains('error')) {
-          feedbackEl.textContent = '';
-          feedbackEl.className = 'newsletter-feedback';
-        }
-      });
-
-      newsletterForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = emailInput.value.trim().toLowerCase();
-        const inputGroup = emailInput.closest('.newsletter-input-group');
-
-        // Email regex pattern validation
-        const emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-        if (!email || !emailPattern.test(email)) {
-          if (inputGroup) inputGroup.classList.add('input-error');
-          if (feedbackEl) {
-            feedbackEl.textContent = 'Please enter a valid email address (e.g. name@example.com).';
-            feedbackEl.className = 'newsletter-feedback error';
-          }
-          emailInput.focus();
-          return;
-        }
-
-        // Processing state
-        if (inputGroup) inputGroup.classList.remove('input-error');
-        if (submitBtn) submitBtn.disabled = true;
-        if (feedbackEl) {
-          feedbackEl.textContent = 'Subscribing...';
-          feedbackEl.className = 'newsletter-feedback';
-        }
-
-        try {
-          const response = await fetch('/api/newsletter/subscribe', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
-          });
-
-          let data = {};
-          try {
-            data = await response.json();
-          } catch (_) {}
-
-          if (response.ok && data.success) {
-            if (feedbackEl) {
-              feedbackEl.textContent = data.message || 'Subscribed! You will receive interest rate and wealth intelligence.';
-              feedbackEl.className = 'newsletter-feedback success';
-            }
-            this.showToast(data.alreadySubscribed 
-              ? 'ℹ️ You are already subscribed to Finculator intelligence!' 
-              : '🎉 Successfully subscribed to Finculator Intelligence!');
-            emailInput.value = '';
-          } else {
-            const errorMsg = data.error || 'Subscription failed. Please check your email and try again.';
-            if (inputGroup) inputGroup.classList.add('input-error');
-            if (feedbackEl) {
-              feedbackEl.textContent = errorMsg;
-              feedbackEl.className = 'newsletter-feedback error';
-            }
-          }
-        } catch (err) {
-          // Offline / Static Server Fallback
-          try {
-            const stored = JSON.parse(localStorage.getItem('finculator_newsletter_subscribers') || '[]');
-            if (!stored.includes(email)) {
-              stored.push(email);
-              localStorage.setItem('finculator_newsletter_subscribers', JSON.stringify(stored));
-            }
-            if (feedbackEl) {
-              feedbackEl.textContent = 'Subscribed! You will receive interest rate and wealth intelligence.';
-              feedbackEl.className = 'newsletter-feedback success';
-            }
-            this.showToast('🎉 Successfully subscribed to Finculator Intelligence!');
-            emailInput.value = '';
-          } catch (_) {
-            if (feedbackEl) {
-              feedbackEl.textContent = 'Unable to subscribe right now. Please try again later.';
-              feedbackEl.className = 'newsletter-feedback error';
-            }
-          }
-        } finally {
-          if (submitBtn) submitBtn.disabled = false;
-        }
-      });
-    }
+    // Footer events and newsletter handling are managed centrally by FooterComponent (this.footer)
   }
 
   showToast(message) {

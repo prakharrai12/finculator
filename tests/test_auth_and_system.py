@@ -112,12 +112,26 @@ def run_tests():
         html = resp.read().decode('utf-8')
         assert 'id="site-footer"' in html, "Site footer element missing"
         assert 'class="app-footer"' in html, "app-footer class missing"
-        assert 'footer-github-btn' in html, "Icon-only GitHub button missing"
-        assert 'Quick Jumps' not in html, "Redundant Quick Jumps was not removed"
-        assert 'footer-copy-email-btn' not in html, "Personal email button was not removed"
         assert 'id="btn-header-home"' in html, "Home icon button missing in navbar"
         assert 'id="header-auth-wrapper"' in html, "Header auth wrapper missing in navbar"
-        print("[PASS 200] Header DOM Verified: Home icon button and Profile wrapper placed correctly")
+        print("[PASS 200] Header & Footer DOM Verified: Home icon button and Profile wrapper placed correctly")
+
+    # Verify shared Footer component
+    with open("js/components/footer.js", "r", encoding="utf-8") as f:
+        footer_js = f.read()
+        assert 'export class FooterComponent' in footer_js, "FooterComponent class missing"
+        assert 'export function getFooterHTML' in footer_js, "getFooterHTML function missing"
+        assert 'footer-github-btn' in footer_js, "Icon-only GitHub button missing"
+        assert 'Quick Jumps' not in footer_js, "Redundant Quick Jumps found in footer template"
+        assert 'footer-copy-email-btn' not in footer_js, "Personal email button found in footer template"
+        print("[PASS 200] js/components/footer.js Verified: Reusable FooterComponent active")
+
+    # Verify landing gate footer integration
+    with open("js/components/heroLandingGate.js", "r", encoding="utf-8") as f:
+        gate_js = f.read()
+        assert 'FooterComponent' in gate_js, "FooterComponent not imported in heroLandingGate.js"
+        assert 'landing-site-footer' in gate_js, "landing-site-footer missing in heroLandingGate.js"
+        print("[PASS 200] js/components/heroLandingGate.js Verified: Shared Footer mounted on Landing Gate")
 
     # Verify CSS rules for tighter footer and circular FinBot FAB
     with open("css/main.css", "r", encoding="utf-8") as f:
