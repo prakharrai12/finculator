@@ -74,8 +74,8 @@ export class PortfolioModal {
         </div>
 
         <div class="portfolio-header-actions">
-          ${user ? `<span class="portfolio-user-badge" style="background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.25); color: #38BDF8; font-size: 0.72rem; font-weight: 700; padding: 4px 8px; border-radius: 6px;">👤 ${user.name || user.email.split('@')[0]}</span>` : ''}
-          <span class="portfolio-save-status" id="pf-save-badge">✓ Saved</span>
+          ${user ? `<span class="portfolio-user-badge" style="background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.25); color: #38BDF8; font-size: 0.72rem; font-weight: 700; padding: 4px 8px; border-radius: 6px;">👤 ${user.name || user.email.split('@')[0]}</span>` : `<button type="button" class="btn btn-secondary btn-sm" id="pf-btn-guest-login" style="border-color: #2563EB; color: #2563EB;">🔒 Log in to Save</button>`}
+          <span class="portfolio-save-status" id="pf-save-badge">${user ? '✓ Saved to Account' : '⚡ Guest Session'}</span>
           <button class="btn btn-secondary btn-sm" id="pf-btn-reset" title="Clear all and reset to blank">Clear All</button>
           <button class="btn btn-primary btn-sm" id="pf-btn-download-pdf">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -809,6 +809,15 @@ export class PortfolioModal {
     this.drawer.querySelector('#pf-btn-download-pdf').addEventListener('click', () => generatePortfolioPDF(this.state));
     this.drawer.querySelector('#pf-btn-print-hero').addEventListener('click', () => generatePortfolioPDF(this.state));
 
+    const guestLoginBtn = this.drawer.querySelector('#pf-btn-guest-login');
+    if (guestLoginBtn) {
+      guestLoginBtn.addEventListener('click', () => {
+        if (this.app && this.app.authModal) {
+          this.app.authModal.open('signin');
+        }
+      });
+    }
+
     // Reset Defaults / Clear All
     this.drawer.querySelector('#pf-btn-reset').addEventListener('click', () => {
       if (confirm('Clear all fields and reset your portfolio?')) {
@@ -1020,12 +1029,6 @@ export class PortfolioModal {
   toggle(open) {
     const willOpen = open !== undefined ? open : !this.isOpen;
     if (willOpen) {
-      if (!auth.isAuthenticated()) {
-        if (this.app && this.app.authModal) {
-          this.app.authModal.openWithPortfolioGate();
-        }
-        return;
-      }
       this.isOpen = true;
       this.render();
       this.backdrop.classList.add('active');
@@ -1036,6 +1039,9 @@ export class PortfolioModal {
       this.backdrop.classList.remove('active');
       this.drawer.classList.remove('active');
       document.body.style.overflow = '';
+      if (window.location.hash === '#/portfolio' && this.app) {
+        window.location.hash = `#/${this.app.currentRoute || 'net-worth'}`;
+      }
     }
   }
 }
