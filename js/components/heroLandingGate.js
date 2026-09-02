@@ -69,28 +69,34 @@ export class HeroLandingGate {
         </header>
 
         <!-- 2. Main 2-Column Hero Body -->
-        <main class="landing-hero-body">
-          <div class="landing-grid">
+        <main class="landing-hero-body hero-section">
+          <div class="landing-grid hero-container">
             
-            <!-- Left Column -->
-            <div class="landing-left-col">
+            <!-- Left Column: Copy Section -->
+            <div class="landing-left-col hero-content">
               <div class="landing-upper-space">
                 <div class="landing-eyebrow-badge">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-                  Next-Gen Financial Computation Suite
+                  Institutional Wealth Suite
                 </div>
               </div>
 
               <!-- Lower Title Card -->
               <div class="landing-title-card">
-                <h1 class="landing-main-title">
-                  Institutional Intelligence. <br/>
-                  <span class="landing-title-gradient">Uncompromised Accuracy.</span>
+                <h1 class="landing-main-title hero-title">
+                  Maximizing Growth,<br/>
+                  <span class="landing-title-gradient">Minimizing Risk</span>
                 </h1>
                 
-                <p class="landing-description">
-                  Simulate complex loan amortization, compound wealth accumulation, multi-regime tax schedules, and calculate financial milestones with verified mathematical precision.
+                <p class="landing-description hero-subtitle">
+                  Smarter financial tools designed to plan, project, and optimize your wealth trajectory.
                 </p>
+
+                <!-- Hero Actions: Get Started & Learn More -->
+                <div class="hero-actions">
+                  <a href="#get-started" class="btn btn-primary" id="hero-btn-get-started">Get Started</a>
+                  <a href="#learn-more" class="btn btn-secondary" id="hero-btn-learn-more">Learn More</a>
+                </div>
 
                 <!-- Two Primary Auth Buttons -->
                 <div class="landing-btn-group">
@@ -135,14 +141,26 @@ export class HeroLandingGate {
               </div>
             </div>
 
-            <!-- Right Column: Hero Visual Image -->
-            <div class="landing-right-col">
-              <div class="landing-image-card">
-                <img 
-                  src="docs/images/finculator-hero-visual.jpg?v=3" 
-                  alt="Finculator Global Currency Collage & Financial Engines" 
-                  class="landing-visual-img" 
-                />
+            <!-- Right Column: Hero Visual Framing -->
+            <div class="landing-right-col hero-visual">
+              <div class="visual-card landing-image-card">
+                <picture>
+                  <source 
+                    srcset="hero-illustration-mobile.webp 480w, hero-illustration.webp 1000w" 
+                    sizes="(max-width: 768px) 100vw, 50vw" 
+                    type="image/webp"
+                  >
+                  <img 
+                    src="image_435406.jpg" 
+                    alt="Hands holding cash and calculator with upward growth arrows" 
+                    class="hero-img landing-visual-img"
+                    loading="eager" 
+                    fetchpriority="high" 
+                    width="600" 
+                    height="400"
+                  >
+                </picture>
+                <div class="card-overlay-edge"></div>
 
                 <!-- Top Left Floating Badge -->
                 <div class="landing-floating-badge badge-top-left">
@@ -169,6 +187,62 @@ export class HeroLandingGate {
             </div>
 
           </div>
+
+          <!-- Services Highlights Section -->
+          <div class="landing-services-section" id="landing-services-section">
+            <div class="landing-services-header">
+              <span class="landing-services-tag">CORE ADVISORY CAPABILITIES</span>
+              <h2 class="landing-services-heading">Institutional Wealth & Strategic Calculation Engines</h2>
+            </div>
+            <div class="landing-services-grid">
+              
+              <!-- Card 1: Portfolio Management -->
+              <div class="landing-service-card" role="button" tabindex="0" data-route="portfolio">
+                <div class="landing-service-icon-wrap" style="background: rgba(37, 99, 235, 0.15); color: #3B82F6;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                    <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                  </svg>
+                </div>
+                <div class="landing-service-content">
+                  <h3 class="landing-service-title">Portfolio Management</h3>
+                  <p class="landing-service-desc">Personal Financial Statement (PFS), asset allocation donut charts, and live net worth tracking.</p>
+                </div>
+              </div>
+
+              <!-- Card 2: Financial Planning -->
+              <div class="landing-service-card" role="button" tabindex="0" data-route="fire">
+                <div class="landing-service-icon-wrap" style="background: rgba(6, 182, 212, 0.15); color: #06B6D4;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                </div>
+                <div class="landing-service-content">
+                  <h3 class="landing-service-title">Financial Planning</h3>
+                  <p class="landing-service-desc">FIRE freedom numbers, multi-regime income taxes, step-up SIP wealth models, and inflation forecasts.</p>
+                </div>
+              </div>
+
+              <!-- Card 3: Risk Analysis -->
+              <div class="landing-service-card" role="button" tabindex="0" data-route="emi">
+                <div class="landing-service-icon-wrap" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                  </svg>
+                </div>
+                <div class="landing-service-content">
+                  <h3 class="landing-service-title">Risk Analysis</h3>
+                  <p class="landing-service-desc">Loan amortization schedules, prepayment interest savings, FOIR debt eligibility, and credit payoff analysis.</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
         </main>
 
         <!-- Shared Institutional Full-Width Sitewide Footer -->
@@ -235,6 +309,44 @@ export class HeroLandingGate {
         }
       });
     }
+
+    // Hero Actions: Get Started & Learn More
+    const heroGetStarted = this.container.querySelector('#hero-btn-get-started');
+    if (heroGetStarted) {
+      heroGetStarted.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (this.app.authModal) this.app.authModal.open('signup');
+      });
+    }
+
+    const heroLearnMore = this.container.querySelector('#hero-btn-learn-more');
+    if (heroLearnMore) {
+      heroLearnMore.addEventListener('click', (e) => {
+        e.preventDefault();
+        const servicesSec = this.container.querySelector('#landing-services-section');
+        if (servicesSec) {
+          servicesSec.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    }
+
+    // Interactive Service Cards: Enter Workspace Directly
+    const serviceCards = this.container.querySelectorAll('.landing-service-card');
+    serviceCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const route = card.getAttribute('data-route');
+        this.dismissGuest();
+        if (this.app) {
+          if (route === 'portfolio') {
+            setTimeout(() => {
+              if (this.app.portfolio) this.app.portfolio.toggle(true);
+            }, 150);
+          } else if (this.app.navigateTo) {
+            this.app.navigateTo(route);
+          }
+        }
+      });
+    });
   }
 
   dismissGuest() {

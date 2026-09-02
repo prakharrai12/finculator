@@ -130,7 +130,19 @@ def run_tests():
         gate_js = f.read()
         assert 'FooterComponent' in gate_js, "FooterComponent not imported in heroLandingGate.js"
         assert 'landing-site-footer' in gate_js, "landing-site-footer missing in heroLandingGate.js"
-        print("[PASS 200] js/components/heroLandingGate.js Verified: Shared Footer mounted on Landing Gate")
+        assert 'Maximizing Growth' in gate_js, "Maximizing Growth title missing in heroLandingGate.js"
+        assert 'visual-card' in gate_js, "visual-card class missing in heroLandingGate.js"
+        assert 'card-overlay-edge' in gate_js, "card-overlay-edge vignette missing in heroLandingGate.js"
+        assert 'landing-services-section' in gate_js, "landing-services-section missing in heroLandingGate.js"
+        print("[PASS 200] js/components/heroLandingGate.js Verified: Hero Visual Card, Growth title & Services active")
+
+    # Verify landingGate.css rules
+    with open("css/landingGate.css", "r", encoding="utf-8") as f:
+        gate_css = f.read()
+        assert '.visual-card' in gate_css, ".visual-card style missing in landingGate.css"
+        assert '.card-overlay-edge' in gate_css, ".card-overlay-edge style missing in landingGate.css"
+        assert '.hero-section' in gate_css, ".hero-section style missing in landingGate.css"
+        print("[PASS 200] landingGate.css Verified: Contrast containment, vignette edge & dark styling active")
 
     # Verify CSS rules for tighter footer and circular FinBot FAB
     with open("css/main.css", "r", encoding="utf-8") as f:
