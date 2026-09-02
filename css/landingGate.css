@@ -81,6 +81,7 @@ body.gate-locked {
   z-index: 99999;
   overflow-y: auto;
   overflow-x: hidden;
+  scroll-behavior: smooth;
   display: flex;
   flex-direction: column;
   opacity: 1;
@@ -223,6 +224,27 @@ body.gate-locked {
   border-bottom: 1px solid var(--color-border-subtle);
   z-index: 100;
   flex-shrink: 0;
+  transition: all 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Enhanced Navbar Elevation when Scrolled */
+.landing-nav-bar.scrolled {
+  background: rgba(255, 255, 255, 0.98);
+  border-bottom-color: var(--color-border-medium);
+  box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+/* Reading Progress Indicator Pinned Under Nav Bar */
+.landing-scroll-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, #2563EB, #06B6D4, #3B82F6);
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.45);
+  z-index: 101;
+  transition: width 0.08s ease-out;
 }
 
 .landing-brand-mark {
@@ -476,6 +498,14 @@ body.gate-locked {
   line-height: 1.4;
 }
 
+.trust-counter-val {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: -0.01em;
+}
+
 .trust-bar-item svg {
   width: 20px;
   height: 20px;
@@ -609,6 +639,41 @@ body.gate-locked {
   max-width: 660px;
 }
 
+/* Interactive Category Filter Pills */
+.landing-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 26px;
+  flex-wrap: wrap;
+}
+
+.service-filter-btn {
+  background: #F1F5F9;
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-filter-btn:hover {
+  background: #E2E8F0;
+  color: var(--color-text-primary);
+  transform: translateY(-1px);
+}
+
+.service-filter-btn.active {
+  background: #0F172A;
+  color: #FFFFFF;
+  border-color: #0F172A;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
+}
+
 /* Unified Grid */
 .landing-services-grid,
 .landing-benefits-grid {
@@ -619,10 +684,10 @@ body.gate-locked {
   z-index: 5;
 }
 
-/* Standardized Card Container */
+/* Standardized Card Container with 3D Spotlight & Magnetic Tilt */
 .landing-service-card,
 .landing-benefit-item {
-  background: #FFFFFF;
+  background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(37, 99, 235, 0.05), transparent 60%), #FFFFFF;
   border: 1px solid var(--color-border-subtle);
   border-radius: 16px;
   padding: 36px 32px;
@@ -630,11 +695,13 @@ body.gate-locked {
   flex-direction: column;
   justify-content: space-between;
   box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 0 1px rgba(15, 23, 42, 0.08);
-  transition: all 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.18s ease-out, box-shadow 0.22s ease, border-color 0.22s ease, opacity 0.3s ease;
   cursor: pointer;
   box-sizing: border-box;
   position: relative;
   z-index: 5;
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow;
 }
 
 .landing-benefits-section .landing-benefit-item {
@@ -646,7 +713,19 @@ body.gate-locked {
 .landing-service-card:hover {
   border-color: var(--color-accent-border);
   box-shadow: 0 20px 45px -10px rgba(37, 99, 235, 0.14);
-  transform: translateY(-4px);
+}
+
+/* Filter Interaction States */
+.landing-service-card.is-dimmed {
+  opacity: 0.38;
+  filter: grayscale(0.25);
+  transform: scale(0.98);
+}
+
+.landing-service-card.is-highlighted {
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18), 0 24px 48px -10px rgba(37, 99, 235, 0.22) !important;
+  transform: translateY(-6px) scale(1.02);
 }
 
 /* Card Header Top Row: Icon + Subtle Institutional Pill */
@@ -803,6 +882,76 @@ body.gate-locked {
   justify-content: center;
   gap: 24px;
   flex-wrap: wrap;
+}
+
+/* --------------------------------------------------------------------------
+   8.5 SCROLL REVEAL ANIMATIONS & FLOATING TOP ACTION
+   -------------------------------------------------------------------------- */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered Delay Hierarchy */
+.hero-section .landing-eyebrow-badge.reveal-on-scroll { transition-delay: 0.05s; }
+.hero-section .hero-title.reveal-on-scroll { transition-delay: 0.12s; }
+.hero-section .hero-subtitle.reveal-on-scroll { transition-delay: 0.20s; }
+.hero-section .hero-actions.reveal-on-scroll { transition-delay: 0.28s; }
+
+.trust-bar-container .trust-bar-item:nth-child(1) { transition-delay: 0.05s; }
+.trust-bar-container .trust-bar-item:nth-child(2) { transition-delay: 0.15s; }
+.trust-bar-container .trust-bar-item:nth-child(3) { transition-delay: 0.25s; }
+.trust-bar-container .trust-bar-item:nth-child(4) { transition-delay: 0.35s; }
+
+.landing-services-grid .landing-service-card:nth-child(1) { transition-delay: 0.06s; }
+.landing-services-grid .landing-service-card:nth-child(2) { transition-delay: 0.16s; }
+.landing-services-grid .landing-service-card:nth-child(3) { transition-delay: 0.26s; }
+
+.landing-benefits-grid .landing-benefit-item:nth-child(1) { transition-delay: 0.06s; }
+.landing-benefits-grid .landing-benefit-item:nth-child(2) { transition-delay: 0.16s; }
+.landing-benefits-grid .landing-benefit-item:nth-child(3) { transition-delay: 0.26s; }
+
+/* Floating Back-to-Top Button */
+.landing-float-top-btn {
+  position: fixed;
+  right: 28px;
+  bottom: 32px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #0F172A;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(15, 23, 42, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px) scale(0.9);
+  transition: all 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.landing-float-top-btn.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.landing-float-top-btn:hover {
+  background: #1E293B;
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.35);
 }
 
 /* --------------------------------------------------------------------------
