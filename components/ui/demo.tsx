@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { cn } from "@/lib/utils";
 import { DotPattern } from "@/components/ui/dot-pattern";
 
@@ -17,3 +18,5 @@ export function DotPatternDemo() {
     </div>
   );
 }
+
+export default DotPatternDemo;

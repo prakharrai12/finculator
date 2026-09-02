@@ -1,20 +1,20 @@
-import { useId } from "react";
+import React, { useId } from "react";
 
 import { cn } from "@/lib/utils";
 
-interface DotPatternProps {
-  width?: any;
-  height?: any;
-  x?: any;
-  y?: any;
-  cx?: any;
-  cy?: any;
-  cr?: any;
+export interface DotPatternProps {
+  width?: number | string;
+  height?: number | string;
+  x?: number | string;
+  y?: number | string;
+  cx?: number | string;
+  cy?: number | string;
+  cr?: number | string;
   className?: string;
   [key: string]: any;
 }
 
-function DotPattern({
+export function DotPattern({
   width = 16,
   height = 16,
   x = 0,
@@ -54,4 +54,4 @@ function DotPattern({
   );
 }
 
-export { DotPattern };
+export default DotPattern;
