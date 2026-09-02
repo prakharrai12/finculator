@@ -13,18 +13,18 @@
 ## Interface Preview
 
 <div align="center">
+  <img src="docs/images/finculator-landing-gate.png" alt="Finculator Institutional Landing Gate" width="100%" />
+  <p><em>Institutional Gateway & Hero Experience: Conversion gate, banknote growth artwork, and secure guest access.</em></p>
+
+  <br />
+
   <img src="docs/images/finculator-portfolio-builder.png" alt="Finculator Personal Finance Portfolio Builder" width="100%" />
-  <p><em>Personal Finance Portfolio & Statement: Full balance sheet, real-time asset allocation, and emergency solvency metrics.</em></p>
+  <p><em>Personal Finance Portfolio & Statement: Consolidated net worth ledger, dual-tone balance sheet bar, and 60/40 benchmark allocation.</em></p>
 
   <br />
 
-  <img src="docs/images/finculator-emi-repayment.png" alt="Finculator EMI & Repayment Calculator" width="100%" />
-  <p><em>EMI & Loan Repayment Engine: Precision amortization calculation, principal/interest breakdown, and live sliders.</em></p>
-
-  <br />
-
-  <img src="docs/images/finculator-prepayment-analyzer.png" alt="Finculator Loan Prepayment Analyzer" width="100%" />
-  <p><em>Loan Prepayment Acceleration: Side-by-side trajectory comparison with monthly & annual prepayment models.</em></p>
+  <img src="docs/images/finculator-compound-interest.png" alt="Finculator Compound Interest & Wealth Suite" width="100%" />
+  <p><em>Wealth Accumulation & Yield Engines: Interactive maturity metrics, asset donut visualizer, and year-by-year trajectory curves.</em></p>
 </div>
 
 ---
