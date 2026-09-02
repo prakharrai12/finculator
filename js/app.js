@@ -34,7 +34,6 @@ import { FinBot } from './components/chatbot.js';
 import { PortfolioModal } from './components/portfolioModal.js';
 import { AuthModal } from './components/authModal.js';
 import { HeroLandingGate } from './components/heroLandingGate.js';
-import { FooterComponent } from './components/footer.js';
 import { GuestConfirmModal } from './components/guestConfirmModal.js';
 import { hasGuestSessionData, clearGuestSession } from './utils/storage.js';
 import { auth } from './utils/auth.js';
@@ -55,7 +54,6 @@ class FinculatorApp {
     this.landingGate = new HeroLandingGate(this);
     this.finbot = new FinBot(this);
     this.portfolio = new PortfolioModal(this);
-    this.footer = new FooterComponent(document.getElementById('site-footer'), this, { isLanding: false });
     this.guestConfirmModal = new GuestConfirmModal(this);
 
     this.init();

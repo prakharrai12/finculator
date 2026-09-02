@@ -230,10 +230,14 @@ export class FinBot {
     this.isOpen = show;
     if (show) {
       this.window.classList.remove('hidden');
+      this.window.classList.add('active');
       this.launcher.classList.add('hidden');
-      this.userInput.focus();
-      this.scrollToBottom();
+      setTimeout(() => {
+        if (this.userInput) this.userInput.focus();
+        this.scrollToBottom();
+      }, 100);
     } else {
+      this.window.classList.remove('active');
       this.window.classList.add('hidden');
       this.launcher.classList.remove('hidden');
     }
