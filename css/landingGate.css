@@ -1,77 +1,213 @@
-/**
- * Finculator Fullscreen Hero Landing Gate Styles
- * Ultra-Clean Institutional White Theme (#FFFFFF / #F8FAFC)
- * Natural Top-to-Bottom Flow:
- * Navbar -> Hero -> Advisory Services -> Institutional Pillars -> CTA -> Sitewide Footer
- */
-
 /* ==========================================================================
-   1. OVERLAY CONTAINER & SCROLL LOCK
+   FINCULATOR LANDING GATE — INSTITUTIONAL REDESIGN
+   Compliant with Landing Page Redesign Specification
    ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS & SYSTEM PROPERTIES
+   -------------------------------------------------------------------------- */
+:root {
+  /* Base Backgrounds */
+  --color-bg-primary: #0a0e1a;       /* Main dark background, matches navbar & footer */
+  --color-bg-surface: #0f1420;        /* Card & section background, one step up from primary */
+  --color-bg-elevated: #151b2b;       /* Modals, elevated cards, hover states */
+
+  /* Typography Colors */
+  --color-text-primary: #f5f6f8;      /* Headlines */
+  --color-text-secondary: #a3aab8;    /* Body copy, subtext */
+  --color-text-tertiary: #6b7280;     /* Muted labels, captions */
+
+  /* Accent System (Restrained & Muted) */
+  --color-accent: #3b6fd4;            /* Muted, deeper institutional blue */
+  --color-accent-hover: #4a7fe0;      /* Hover state */
+  --color-accent-muted: rgba(59, 111, 212, 0.12); /* Tinted icon & badge backgrounds */
+
+  /* Primary Button (Premium Dark, subtle border) */
+  --btn-primary-bg: #12151f;
+  --btn-primary-bg-hover: #1a1e2c;
+  --btn-primary-border: rgba(255, 255, 255, 0.08);
+  --btn-primary-text: #ffffff;
+
+  /* Secondary / Outline Button */
+  --btn-secondary-bg: transparent;
+  --btn-secondary-bg-hover: rgba(255, 255, 255, 0.04);
+  --btn-secondary-border: rgba(255, 255, 255, 0.14);
+  --btn-secondary-text: #e5e7eb;
+
+  /* Borders & Dividers */
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-border-medium: rgba(255, 255, 255, 0.14);
+
+  /* Status Tokens */
+  --color-success: #34d399;
+  --color-success-muted: rgba(52, 211, 153, 0.1);
+
+  /* Section Spacing System */
+  --space-section-y: 96px;
+  --space-section-y-mobile: 56px;
+  --space-element-gap: 24px;
+
+  /* Typography Scale Tokens */
+  --text-hero: 56px;
+  --text-h1: 40px;
+  --text-h2: 24px;
+  --text-eyebrow: 13px;
+  --text-body-lg: 18px;
+  --text-body: 15px;
+  --text-caption: 13px;
+}
+
+/* --------------------------------------------------------------------------
+   2. OVERLAY & SCROLLING DOCUMENT ARCHITECTURE
+   -------------------------------------------------------------------------- */
+body.gate-locked {
+  overflow: hidden !important;
+}
+
 .landing-gate-overlay {
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
-  background-color: #FFFFFF;
-  background: radial-gradient(circle at 85% 15%, rgba(219, 234, 254, 0.45) 0%, transparent 45%),
-              radial-gradient(circle at 10% 80%, rgba(241, 245, 249, 0.8) 0%, transparent 45%),
-              #FFFFFF;
-  color: #0F172A;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   z-index: 99999;
-  display: flex;
-  flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              visibility 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .landing-gate-overlay.unlocked {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: scale(0.99) translateY(-10px);
 }
 
-/* Background scroll locking on inner workspace while landing gate is active */
-body.gate-locked {
-  overflow: hidden !important;
-}
-
-body.gate-locked .app-container {
-  overflow: hidden !important;
-  max-height: 100vh !important;
-  pointer-events: none !important;
-  user-select: none !important;
-}
-
-body.gate-locked .app-sidebar,
-body.gate-locked .app-content,
-body.gate-locked .main-wrapper {
-  overflow: hidden !important;
-}
-
-/* ==========================================================================
-   2. TOP NAVIGATION BAR (Sticky at Top)
-   ========================================================================== */
-.landing-nav-bar {
-  width: 100%;
-  padding: 1.15rem 3rem;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid #E2E8F0;
-  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
-  display: flex;
+/* --------------------------------------------------------------------------
+   3. UNIFIED BUTTON SYSTEM
+   -------------------------------------------------------------------------- */
+.landing-gate-overlay .btn {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  text-decoration: none;
+  border-radius: 8px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 14px 28px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+/* 3.1 Primary Button */
+.landing-gate-overlay .btn-primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: 1px solid var(--btn-primary-border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.landing-gate-overlay .btn-primary:hover {
+  background: var(--btn-primary-bg-hover);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  transform: translateY(-1px);
+}
+
+/* 3.2 Secondary / Outline Button */
+.landing-gate-overlay .btn-secondary {
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  border: 1px solid var(--btn-secondary-border);
+  transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.landing-gate-overlay .btn-secondary:hover {
+  background: var(--btn-secondary-bg-hover);
+  border-color: var(--color-border-medium);
+}
+
+.landing-gate-overlay .btn-arrow {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 16px;
+  line-height: 1;
+  transition: transform 180ms ease;
+}
+
+.landing-gate-overlay .btn-secondary:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* Compact Nav Button Variants */
+.landing-gate-overlay .btn-sm {
+  padding: 8px 18px !important;
+  font-size: 13px !important;
+  border-radius: 6px !important;
+}
+
+/* 3.3 Text / Link Buttons (Card Links & Secondary Conversion Actions) */
+.landing-service-link,
+.landing-cta-link-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--color-accent);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  transition: color 180ms ease;
+  text-decoration: none;
+}
+
+.link-arrow {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 16px;
+  line-height: 1;
+  transition: transform 180ms ease;
+}
+
+.landing-service-link:hover,
+.landing-service-card:hover .landing-service-link,
+.landing-cta-link-btn:hover {
+  color: var(--color-accent-hover);
+}
+
+.landing-service-link:hover .link-arrow,
+.landing-service-card:hover .link-arrow,
+.landing-cta-link-btn:hover .link-arrow {
+  transform: translateX(4px);
+}
+
+/* --------------------------------------------------------------------------
+   4. TOP NAVIGATION BAR
+   -------------------------------------------------------------------------- */
+.landing-nav-bar {
   position: sticky;
   top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 2.5rem;
+  background: rgba(10, 14, 26, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--color-border-subtle);
   z-index: 100;
   flex-shrink: 0;
 }
@@ -80,22 +216,24 @@ body.gate-locked .main-wrapper {
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  text-decoration: none;
 }
 
 .landing-brand-title {
+  display: block;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 800;
-  letter-spacing: -0.03em;
-  color: #0F172A;
+  letter-spacing: 0.05em;
+  color: var(--color-text-primary);
+  line-height: 1.2;
 }
 
 .landing-brand-tagline {
-  font-size: 0.72rem;
-  font-weight: 500;
-  color: #64748B;
   display: block;
+  font-size: 0.72rem;
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
 .landing-nav-actions {
@@ -108,479 +246,202 @@ body.gate-locked .main-wrapper {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
-  padding: 0.4rem 0.85rem;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  padding: 0.35rem 0.85rem;
   border-radius: 20px;
   font-size: 0.75rem;
-  font-weight: 600;
-  color: #475569;
+  font-weight: 500;
+  color: var(--color-text-secondary);
 }
 
 .landing-security-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #10B981;
-  box-shadow: 0 0 6px #10B981;
+  background: var(--color-success);
+  box-shadow: 0 0 8px var(--color-success);
 }
 
-.landing-nav-guest-btn {
-  border: 1.5px solid #2563EB !important;
-  color: #2563EB !important;
-  background: #EFF6FF !important;
-  font-weight: 700 !important;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-.landing-nav-guest-btn:hover {
-  background: #2563EB !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
-  transform: translateY(-1px) !important;
-}
-
-#gate-nav-login-btn {
-  background: #2563EB !important;
-  color: #FFFFFF !important;
-  border: none !important;
-  font-weight: 600 !important;
-  transition: all 0.2s ease !important;
-}
-
-#gate-nav-login-btn:hover {
-  background: #1D4ED8 !important;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3) !important;
-  transform: translateY(-1px) !important;
-}
-
-/* ==========================================================================
-   3. HERO SECTION (Full Background Artwork, Blurred from Bottom)
-   ========================================================================== */
+/* --------------------------------------------------------------------------
+   5. HERO SECTION (Strictly 5 Elements: Eyebrow, Title, Subtext, 2 Buttons, Image)
+   -------------------------------------------------------------------------- */
 .hero-section {
   position: relative;
-  background-color: #FFFFFF;
-  color: #0F172A;
-  padding: 5rem 2rem 5.5rem 2rem;
-  width: 100%;
-  min-height: 700px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-/* Background Artwork Wrapper - Positioned across Full Hero Background */
-.hero-bg-art-wrapper,
-.visual-card {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-  overflow: hidden;
-  background: #FFFFFF;
-}
-
-/* Proper crisp image spanning background */
-.hero-bg-art-img,
-.hero-img {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 70%;
-  max-width: 1250px;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  opacity: 0.96;
-  filter: contrast(1.02);
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Left copy readability overlay gradient so text is crystal clear on white */
-.hero-bg-overlay-left,
-.card-overlay-edge {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 58%;
-  background: linear-gradient(to right, 
-    #FFFFFF 50%, 
-    rgba(255, 255, 255, 0.94) 72%, 
-    rgba(255, 255, 255, 0.45) 88%, 
-    rgba(255, 255, 255, 0) 100%
-  );
-  z-index: 2;
-  pointer-events: none;
-}
-
-/* Bottom Blur Layer - "a bit blurred from the bottom" */
-.hero-bg-blur-bottom {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 190px;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
-  z-index: 3;
-  pointer-events: none;
-}
-
-/* Bottom Fade Layer - Smooth transition into the Services section below */
-.hero-bg-fade-bottom {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 160px;
-  background: linear-gradient(to bottom,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.45) 35%,
-    rgba(248, 250, 252, 0.88) 75%,
-    #F8FAFC 100%
-  );
-  z-index: 4;
-  pointer-events: none;
-}
-
-/* Foreground Container */
-.hero-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 5;
+  background-color: var(--color-bg-primary);
+  padding: 80px 1.5rem 56px 1.5rem;
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  flex-shrink: 0;
 }
 
-/* Copy Section */
-.hero-content {
-  max-width: 620px;
+.hero-container {
+  max-width: 1040px;
+  margin: 0 auto;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
+/* 5.1 Eyebrow Badge */
 .landing-eyebrow-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  background: #EFF6FF;
-  border: 1px solid #BFDBFE;
-  padding: 0.45rem 1rem;
-  border-radius: 30px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #1D4ED8;
-  letter-spacing: 0.06em;
+  gap: 6px;
+  background: var(--color-accent-muted);
+  border: 1px solid rgba(59, 111, 212, 0.25);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  color: var(--color-accent);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-bottom: 1.25rem;
+  margin-bottom: 22px;
 }
 
+/* 5.2 Headline */
 .hero-title {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: clamp(2.35rem, 4vw, 3.5rem);
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.025em;
-  margin: 0 0 1.25rem 0;
-  color: #0F172A;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: var(--text-hero);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 20px 0;
+  color: var(--color-text-primary);
+  max-width: 860px;
 }
 
-.landing-title-gradient {
-  background: linear-gradient(135deg, #2563EB 0%, #0284C7 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.landing-title-accent {
+  color: var(--color-accent);
 }
 
+/* 5.3 Subtext */
 .hero-subtitle {
-  font-size: 1.125rem;
+  font-size: var(--text-body-lg);
+  font-weight: 400;
   line-height: 1.6;
-  color: #475569;
-  margin: 0 0 1.75rem 0;
+  color: var(--color-text-secondary);
+  max-width: 680px;
+  margin: 0 0 34px 0;
 }
 
-/* Hero Actions */
+/* 5.4 Exactly Two Buttons, Side by Side */
 .hero-actions {
   display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 1.75rem;
-}
-
-.landing-gate-overlay .btn {
-  display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.85rem 1.75rem;
-  font-weight: 600;
-  border-radius: 8px;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  font-size: 0.95rem;
-  cursor: pointer;
+  gap: 16px;
+  margin-bottom: 56px;
+  flex-wrap: wrap;
 }
 
-.landing-gate-overlay .btn-primary {
-  background-color: #2563eb;
-  color: #ffffff;
-  border: none;
-}
-
-.landing-gate-overlay .btn-primary:hover {
-  background-color: #1d4ed8;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
-}
-
-.landing-gate-overlay .btn-secondary {
-  background-color: #ffffff;
-  color: #0F172A;
-  border: 1.5px solid #CBD5E1;
-}
-
-.landing-gate-overlay .btn-secondary:hover {
-  background-color: #F8FAFC;
-  border-color: #94A3B8;
-  transform: translateY(-1px);
-}
-
-/* Two Primary Auth Buttons */
-.landing-btn-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-}
-
-.landing-btn-primary {
-  background: #FFFFFF;
-  color: #0F172A;
-  border: 1.5px solid #CBD5E1;
-  border-radius: 12px;
-  padding: 0.9rem 1.25rem;
-  font-size: 0.92rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.25rem;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  text-align: left;
-}
-
-.landing-btn-primary:hover {
-  background: #F8FAFC;
-  border-color: #2563EB;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
-}
-
-.landing-btn-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #0F172A;
-}
-
-.landing-btn-sub {
-  font-size: 0.72rem;
-  color: #64748B;
-  font-weight: 500;
-}
-
-.landing-btn-secondary {
-  background: #EFF6FF;
-  color: #1D4ED8;
-  border: 1.5px solid #93C5FD;
-  border-radius: 12px;
-  padding: 0.9rem 1.25rem;
-  font-size: 0.92rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.25rem;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  text-align: left;
-}
-
-.landing-btn-secondary:hover {
-  background: #DBEAFE;
-  border-color: #2563EB;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.2);
-}
-
-.landing-btn-secondary .landing-btn-title {
-  color: #1D4ED8;
-}
-
-.landing-btn-secondary .landing-btn-sub {
-  color: #3B82F6;
-}
-
-/* Guest Action */
-.landing-guest-action-wrap {
-  width: 100%;
-}
-
-.landing-btn-guest {
-  width: 100%;
-  background: #F0FDF4;
-  border: 1.5px dashed #86EFAC;
-  border-radius: 14px;
-  padding: 1rem 1.25rem;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  text-align: left;
+/* 5.5 Hero Reference Image */
+.hero-visual.visual-card {
   position: relative;
+  width: 100%;
+  max-width: 980px;
+  border-radius: 16px;
   overflow: hidden;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-surface);
+  box-shadow: 0 24px 60px -16px rgba(0, 0, 0, 0.7);
 }
 
-.landing-btn-guest:hover {
-  background: #DCFCE7;
-  border-color: #10B981;
-  border-style: solid;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
-}
-
-.landing-guest-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  color: #047857;
-  background: #DCFCE7;
-  border: 1px solid #BBF7D0;
-  padding: 0.2rem 0.55rem;
-  border-radius: 6px;
-  text-transform: uppercase;
-}
-
-.landing-guest-content {
+.hero-img {
+  display: block;
   width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center top;
 }
 
-.landing-guest-title-row {
+.card-overlay-edge {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 24px 4px rgba(10, 14, 26, 0.5);
+  border-radius: 16px;
+}
+
+/* Bottom Blur / Fade Layer */
+.hero-image-blur-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 90px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+  background: linear-gradient(to bottom, transparent 0%, rgba(10, 14, 26, 0.85) 100%);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   6. SLIM TRUST BAR SECTION
+   -------------------------------------------------------------------------- */
+.landing-trust-bar {
+  width: 100%;
+  min-height: 56px;
+  height: 60px;
+  background: var(--color-bg-surface);
+  border-top: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.25rem;
+  flex-shrink: 0;
 }
 
-.landing-guest-title {
-  font-size: 0.98rem;
-  font-weight: 800;
-  color: #065F46;
+.trust-bar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 1.5rem;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-}
-
-.landing-btn-guest:hover .landing-guest-title {
-  color: #047857;
-}
-
-.landing-guest-arrow-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #047857;
-  background: #DCFCE7;
-  border: 1px solid #86EFAC;
-  padding: 0.25rem 0.65rem;
-  border-radius: 20px;
-  transition: all 0.2s ease;
-}
-
-.landing-btn-guest:hover .landing-guest-arrow-chip {
-  background: #10B981;
-  border-color: #10B981;
-  color: #FFFFFF;
-}
-
-.landing-guest-note {
-  font-size: 0.8rem;
-  color: #475569;
-  line-height: 1.45;
-  margin: 0;
-}
-
-.landing-guest-note em {
-  font-style: normal;
-  color: #1E293B;
-  font-weight: 600;
-}
-
-/* Trust Badges Row */
-.hero-trust-chips-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  justify-content: space-around;
   flex-wrap: wrap;
-  margin-top: 1.5rem;
+  gap: 1.5rem;
 }
 
-.hero-trust-chip {
+.trust-bar-item {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid #E2E8F0;
-  border-radius: 20px;
-  padding: 0.38rem 0.85rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #334155;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  gap: 10px;
+  color: var(--color-text-secondary);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  line-height: 1.4;
 }
 
-.hero-chip-icon {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.trust-bar-item svg {
+  width: 20px;
+  height: 20px;
+  color: var(--color-accent);
   flex-shrink: 0;
 }
 
-/* ==========================================================================
-   5. ADVISORY SERVICES SECTION (Interactive Sibling in Flow)
-   ========================================================================== */
-.landing-services-section {
+/* --------------------------------------------------------------------------
+   7. CARD SECTIONS ("Core Advisory Capabilities" & "Why Finculator")
+   -------------------------------------------------------------------------- */
+.landing-services-section,
+.landing-benefits-section {
   width: 100%;
-  padding: 4.5rem 1.5rem 4.5rem 1.5rem;
-  background: #F8FAFC;
-  border-top: 1px solid #E2E8F0;
-  border-bottom: 1px solid #E2E8F0;
+  padding: var(--space-section-y) 1.5rem;
+  background: var(--color-bg-primary);
   flex-shrink: 0;
+}
+
+.landing-benefits-section {
+  border-top: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-surface);
 }
 
 .landing-section-container {
@@ -590,345 +451,347 @@ body.gate-locked .main-wrapper {
 }
 
 .landing-services-header {
-  text-align: center;
-  margin-bottom: 2.75rem;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-bottom: 48px;
+  text-align: left;
 }
 
 .landing-services-tag {
   display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #2563EB;
-  margin-bottom: 0.6rem;
+  color: var(--color-accent);
+  margin-bottom: 12px;
 }
 
 .landing-services-heading {
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  font-weight: 800;
-  color: #0F172A;
-  letter-spacing: -0.025em;
-  margin: 0 0 0.75rem 0;
-  line-height: 1.25;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: var(--text-h1);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  margin: 0 0 12px 0;
+  max-width: 800px;
 }
 
 .landing-services-sub {
-  font-size: 1rem;
-  color: #64748B;
-  line-height: 1.55;
+  font-size: var(--text-body-lg);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
   margin: 0;
+  max-width: 660px;
 }
 
-.landing-services-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.75rem;
-}
-
-.landing-service-card {
-  background: #FFFFFF;
-  border: 1px solid #E2E8F0;
-  border-radius: 18px;
-  padding: 2rem 1.75rem;
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
-  position: relative;
-}
-
-.landing-service-card:hover {
-  transform: translateY(-4px);
-  border-color: #93C5FD;
-  box-shadow: 0 18px 35px -8px rgba(37, 99, 235, 0.12);
-}
-
-.landing-service-icon-wrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.landing-service-title {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #0F172A;
-  margin: 0;
-  letter-spacing: -0.015em;
-}
-
-.landing-service-desc {
-  font-size: 0.9rem;
-  color: #475569;
-  line-height: 1.55;
-  margin: 0;
-  flex-grow: 1;
-}
-
-.landing-service-link {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #2563EB;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  transition: color 0.2s ease;
-}
-
-.landing-service-card:hover .landing-service-link {
-  color: #1D4ED8;
-}
-
-/* ==========================================================================
-   6. INSTITUTIONAL PILLARS & TRUST (Sibling in Flow)
-   ========================================================================== */
-.landing-benefits-section {
-  width: 100%;
-  padding: 4.5rem 1.5rem;
-  background: #FFFFFF;
-  border-bottom: 1px solid #E2E8F0;
-  flex-shrink: 0;
-}
-
+/* Unified Grid */
+.landing-services-grid,
 .landing-benefits-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+  gap: 24px;
 }
 
+/* Standardized Card Container */
+.landing-service-card,
 .landing-benefit-item {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 12px;
+  padding: 32px;
   display: flex;
-  gap: 1.25rem;
-  align-items: flex-start;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 200ms ease, transform 200ms ease;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
+.landing-benefits-section .landing-benefit-item {
+  background: var(--color-bg-primary);
+  cursor: default;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+.landing-service-card:hover {
+  border-color: var(--color-border-medium);
+  transform: translateY(-2px);
+}
+
+/* Unified Icon Container Across All Cards */
+.landing-service-icon-wrap,
 .landing-benefit-icon {
   width: 44px;
   height: 44px;
-  border-radius: 12px;
-  background: #F1F5F9;
-  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  background: var(--color-accent-muted) !important;
+  color: var(--color-accent) !important;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 24px;
   flex-shrink: 0;
 }
 
-.landing-benefit-title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #0F172A;
-  margin: 0 0 0.4rem 0;
-  letter-spacing: -0.01em;
+.landing-service-icon-wrap svg,
+.landing-benefit-icon svg {
+  width: 22px;
+  height: 22px;
+  stroke: var(--color-accent);
 }
 
+.landing-service-content {
+  margin-bottom: 24px;
+}
+
+.landing-service-title,
+.landing-benefit-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: var(--text-h2);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text-primary);
+  margin: 0 0 12px 0;
+}
+
+.landing-service-desc,
 .landing-benefit-text {
-  font-size: 0.88rem;
-  color: #475569;
-  line-height: 1.5;
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
-/* ==========================================================================
-   7. FINAL CALL TO ACTION (Sibling in Flow)
-   ========================================================================== */
+/* --------------------------------------------------------------------------
+   8. FINAL CALL TO ACTION SECTION
+   -------------------------------------------------------------------------- */
 .landing-cta-section {
   width: 100%;
-  padding: 5rem 1.5rem 6rem 1.5rem;
-  background: #F8FAFC;
+  padding: var(--space-section-y) 1.5rem;
+  background: var(--color-bg-primary);
+  border-top: 1px solid var(--color-border-subtle);
   flex-shrink: 0;
 }
 
 .landing-cta-card {
   max-width: 960px;
   margin: 0 auto;
-  background: linear-gradient(135deg, #EFF6FF 0%, #FFFFFF 100%);
-  border: 1.5px solid #BFDBFE;
-  border-radius: 24px;
-  padding: 3.75rem 2.5rem;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 16px;
+  padding: 64px 32px;
   text-align: center;
-  box-shadow: 0 20px 50px -10px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.4);
 }
 
 .landing-cta-title {
-  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
-  font-weight: 800;
-  color: #0F172A;
-  letter-spacing: -0.025em;
-  margin: 0 0 1rem 0;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: var(--text-h1);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  margin: 0 0 16px 0;
 }
 
 .landing-cta-sub {
-  font-size: 1.08rem;
-  color: #475569;
-  max-width: 620px;
-  margin: 0 auto 2.25rem auto;
+  font-size: var(--text-body-lg);
+  font-weight: 400;
   line-height: 1.6;
+  color: var(--color-text-secondary);
+  max-width: 640px;
+  margin: 0 auto 36px auto;
 }
 
 .landing-cta-actions {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.25rem;
+  gap: 24px;
   flex-wrap: wrap;
 }
 
-.btn-lg {
-  padding: 0.95rem 2.25rem !important;
-  font-size: 1rem !important;
-  font-weight: 700 !important;
-}
-
-/* ==========================================================================
-   8. SITEWIDE FOOTER (Clean Light Institutional Surface)
-   ========================================================================== */
+/* --------------------------------------------------------------------------
+   9. SITEWIDE FOOTER INTEGRATION
+   -------------------------------------------------------------------------- */
 .landing-gate-overlay .app-footer {
   width: 100%;
   margin-top: auto;
   position: relative;
   z-index: 10;
   flex-shrink: 0;
-  background: #FFFFFF;
-  border-top: 1px solid #E2E8F0;
-  color: #0F172A;
+  background: var(--color-bg-primary);
+  border-top: 1px solid var(--color-border-subtle);
+  color: var(--color-text-primary);
 }
 
 .landing-gate-overlay .footer-brand-title {
-  color: #0F172A !important;
+  color: var(--color-text-primary) !important;
 }
 
 .landing-gate-overlay .footer-brand-desc,
 .landing-gate-overlay .footer-brand-tagline {
-  color: #64748B !important;
+  color: var(--color-text-secondary) !important;
 }
 
 .landing-gate-overlay .footer-col-title,
 .landing-gate-overlay .footer-newsletter-title {
-  color: #0F172A !important;
+  color: var(--color-text-primary) !important;
 }
 
 .landing-gate-overlay .footer-links a {
-  color: #475569 !important;
+  color: var(--color-text-secondary) !important;
 }
 
 .landing-gate-overlay .footer-links a:hover {
-  color: #2563EB !important;
+  color: var(--color-accent-hover) !important;
 }
 
 .landing-gate-overlay .footer-newsletter-sub {
-  color: #64748B !important;
+  color: var(--color-text-secondary) !important;
 }
 
 .landing-gate-overlay .footer-github-btn,
 .landing-gate-overlay .app-footer a.footer-github-btn {
-  background: #F1F5F9 !important;
-  border-color: #E2E8F0 !important;
-  color: #0F172A !important;
+  background: var(--color-bg-surface) !important;
+  border-color: var(--color-border-subtle) !important;
+  color: var(--color-text-primary) !important;
 }
 
 .landing-gate-overlay .footer-github-btn:hover {
-  background: #EFF6FF !important;
-  border-color: #93C5FD !important;
-  color: #2563EB !important;
+  background: var(--color-bg-elevated) !important;
+  border-color: var(--color-border-medium) !important;
+  color: var(--color-accent-hover) !important;
 }
 
 .landing-gate-overlay .footer-email-input {
-  background: #F8FAFC !important;
-  border-color: #CBD5E1 !important;
-  color: #0F172A !important;
+  background: var(--color-bg-surface) !important;
+  border-color: var(--color-border-subtle) !important;
+  color: var(--color-text-primary) !important;
 }
 
 .landing-gate-overlay .footer-email-input::placeholder {
-  color: #94A3B8 !important;
+  color: var(--color-text-tertiary) !important;
+}
+
+.landing-gate-overlay .footer-email-submit {
+  background: var(--btn-primary-bg) !important;
+  border-color: var(--btn-primary-border) !important;
+  color: var(--btn-primary-text) !important;
+}
+
+.landing-gate-overlay .footer-email-submit:hover {
+  background: var(--btn-primary-bg-hover) !important;
 }
 
 .landing-gate-overlay .footer-bottom {
-  border-top: 1px solid #E2E8F0 !important;
+  border-top: 1px solid var(--color-border-subtle) !important;
 }
 
 .landing-gate-overlay .footer-copyright,
 .landing-gate-overlay .footer-bottom-links a,
 .landing-gate-overlay .footer-back-to-top {
-  color: #64748B !important;
+  color: var(--color-text-tertiary) !important;
 }
 
 .landing-gate-overlay .footer-bottom-links a:hover,
 .landing-gate-overlay .footer-back-to-top:hover {
-  color: #2563EB !important;
+  color: var(--color-accent-hover) !important;
 }
 
-/* ==========================================================================
-   9. RESPONSIVE BREAKPOINTS
-   ========================================================================== */
+/* --------------------------------------------------------------------------
+   10. RESPONSIVE SCALE & BREAKPOINTS
+   -------------------------------------------------------------------------- */
 @media (max-width: 1024px) {
+  :root {
+    --space-section-y: 72px;
+  }
+
   .landing-nav-bar {
     padding: 1rem 1.5rem;
   }
-  
+
   .hero-section {
-    padding: 3.5rem 1.5rem 3rem 1.5rem;
-    min-height: 640px;
-  }
-
-  .hero-bg-art-img,
-  .hero-img {
-    width: 60%;
-    opacity: 0.85;
-  }
-
-  .hero-bg-overlay-left,
-  .card-overlay-edge {
-    width: 65%;
+    padding: 64px 1.5rem 48px 1.5rem;
   }
 
   .landing-services-grid,
   .landing-benefits-grid {
     grid-template-columns: 1fr;
-    gap: 1.25rem;
+    gap: 20px;
+  }
+
+  .trust-bar-container {
+    gap: 1rem;
+    justify-content: center;
   }
 
   .landing-cta-card {
-    padding: 2.5rem 1.5rem;
+    padding: 48px 24px;
   }
 }
 
 @media (max-width: 768px) {
+  :root {
+    --space-section-y: var(--space-section-y-mobile);
+    --text-hero: 36px;
+    --text-h1: 28px;
+  }
+
+  .landing-nav-bar {
+    padding: 0.85rem 1rem;
+  }
+
+  .landing-brand-tagline,
+  .landing-security-pill {
+    display: none;
+  }
+
   .hero-section {
-    padding: 3rem 1.25rem 3.5rem 1.25rem;
-    min-height: auto;
+    padding: 48px 1rem 36px 1rem;
   }
 
-  .hero-bg-art-img,
-  .hero-img {
+  .hero-actions {
+    flex-direction: column;
     width: 100%;
-    opacity: 0.22;
-    object-position: center right;
+    gap: 12px;
+    margin-bottom: 40px;
   }
 
-  .hero-bg-overlay-left,
-  .card-overlay-edge {
+  .landing-gate-overlay .btn {
     width: 100%;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.96) 100%);
   }
 
-  .hero-title {
-    font-size: 2.25rem;
+  .trust-bar-container {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    gap: 0.75rem;
   }
 
-  .landing-btn-group {
-    grid-template-columns: 1fr;
-    gap: 0.85rem;
+  .landing-trust-bar {
+    height: auto;
+    padding: 0.75rem 0;
+  }
+
+  .landing-cta-actions {
+    flex-direction: column;
+    gap: 16px;
   }
 }
 
+@media (max-width: 375px) {
+  .landing-nav-actions .btn {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+  }
+
+  .hero-title {
+    font-size: 32px;
+  }
+
+  .landing-cta-card {
+    padding: 36px 16px;
+  }
+}

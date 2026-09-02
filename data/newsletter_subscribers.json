@@ -1,5 +1,11 @@
 [
   {
+    "id": "ee8a1403-d466-4712-a8fa-35e3ab8c275a",
+    "email": "subscriber_1788332204@institutional.com",
+    "subscribedAt": "2026-09-02 06:56:47 UTC",
+    "source": "site_footer"
+  },
+  {
     "id": "664ceb86-4c7b-435a-ab9f-fcb0a61c5614",
     "email": "subscriber_1788331265@institutional.com",
     "subscribedAt": "2026-09-02 06:41:07 UTC",
