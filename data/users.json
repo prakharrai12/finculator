@@ -86,5 +86,53 @@
     "passwordHash": "d8ca74bfb52821536a592d9063ba03223c2a669720f4ea4514b4dfbcf9e23a37",
     "createdAt": "2026-09-02 04:51:12 UTC",
     "lastLogin": "2026-09-02 04:51:14 UTC"
+  },
+  {
+    "id": "83b44df7-a033-4871-bf26-c6f5821570db",
+    "name": "Investor Test",
+    "email": "tester_1788325675@example.com",
+    "passwordHash": "7c76f99804b5c8da53a5e7127079986080c3da798a5c0c9196b293d0b946c043",
+    "createdAt": "2026-09-02 05:07:57 UTC",
+    "lastLogin": "2026-09-02 05:07:59 UTC"
+  },
+  {
+    "id": "b1740e19-8b55-483b-a078-f4ce4548d98c",
+    "name": "Investor Test",
+    "email": "tester_1788326212@example.com",
+    "passwordHash": "cb37703fbce1326a1a40bffbdd2c587b4c2d01e9fe7503e63b5df6ae8423933b",
+    "createdAt": "2026-09-02 05:16:54 UTC",
+    "lastLogin": "2026-09-02 05:16:56 UTC"
+  },
+  {
+    "id": "287b5ea9-33a6-49f3-8771-e432a9f508b0",
+    "name": "Investor Test",
+    "email": "tester_1788327047@example.com",
+    "passwordHash": "c7e1b5fda3df82e258c7cf88e8366f6d7f9c2907f184b248d311031407d959fe",
+    "createdAt": "2026-09-02 05:30:49 UTC",
+    "lastLogin": "2026-09-02 05:30:51 UTC"
+  },
+  {
+    "id": "97bc3443-c8f5-4dea-944f-3bab9f914efa",
+    "name": "Investor Test",
+    "email": "tester_1788328369@example.com",
+    "passwordHash": "b331eaa1099cc8e7426e4fb8716bdda56b3bb62c2d712f7d011c28c28ee7d023",
+    "createdAt": "2026-09-02 05:52:51 UTC",
+    "lastLogin": "2026-09-02 05:52:53 UTC"
+  },
+  {
+    "id": "df8046e7-7cd6-4119-b8c2-d7ef2b382c29",
+    "name": "Investor Test",
+    "email": "tester_1788329278@example.com",
+    "passwordHash": "bbac380ef4a4b76cca6623d9ae820108d360b96848042e65497b34599956aaab",
+    "createdAt": "2026-09-02 06:08:00 UTC",
+    "lastLogin": "2026-09-02 06:08:03 UTC"
+  },
+  {
+    "id": "a6d2c1fb-d0db-4cd3-af37-79a04cbf69fb",
+    "name": "Investor Test",
+    "email": "tester_1788330449@example.com",
+    "passwordHash": "c6d20ea97dfc80b91ef7f888141195573123e8a0e8b69d7d9832fa441c1e9078",
+    "createdAt": "2026-09-02 06:27:31 UTC",
+    "lastLogin": "2026-09-02 06:27:33 UTC"
   }
 ]

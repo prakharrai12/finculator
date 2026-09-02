@@ -1,5 +1,29 @@
 [
   {
+    "id": "9d9e6203-8201-44c5-bdd7-4521e00c2e82",
+    "email": "subscriber_1788330459@institutional.com",
+    "subscribedAt": "2026-09-02 06:27:41 UTC",
+    "source": "site_footer"
+  },
+  {
+    "id": "0a861de7-bb80-43ef-a9dc-1754da8786a7",
+    "email": "subscriber_1788329289@institutional.com",
+    "subscribedAt": "2026-09-02 06:08:11 UTC",
+    "source": "site_footer"
+  },
+  {
+    "id": "76a9c739-7a14-4008-a160-d52d3d482982",
+    "email": "subscriber_1788328379@institutional.com",
+    "subscribedAt": "2026-09-02 05:53:01 UTC",
+    "source": "site_footer"
+  },
+  {
+    "id": "9d0ff490-03dc-44b3-b4b6-aed8be529a3f",
+    "email": "subscriber_1788327058@institutional.com",
+    "subscribedAt": "2026-09-02 05:31:00 UTC",
+    "source": "site_footer"
+  },
+  {
     "id": "1abd417b-95ff-47fc-a6b8-c1620badbf39",
     "email": "subscriber_1788326222@institutional.com",
     "subscribedAt": "2026-09-02 05:17:04 UTC",

@@ -1,37 +1,34 @@
 /**
  * Finculator Fullscreen Hero Landing Gate Styles
- * Dark Institutional Theme (#0b0f19) matching user's visual framing specification:
- * Maximizing Growth, Minimizing Risk with contrast-contained visual card,
- * responsive picture element, and institutional advisory services section.
+ * Dark Institutional Theme (#0b0f19)
+ * Natural Top-to-Bottom Flow:
+ * Navbar -> Hero -> Advisory Services -> Institutional Pillars -> CTA -> Sitewide Footer
  */
 
-/* Base Theme & Container */
+/* ==========================================================================
+   1. OVERLAY CONTAINER & SCROLL LOCK
+   ========================================================================== */
 .landing-gate-overlay {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background-color: #0b0f19; /* Finculator dark background */
-  background: radial-gradient(circle at 80% 15%, rgba(6, 182, 212, 0.12) 0%, transparent 50%),
-              radial-gradient(circle at 15% 85%, rgba(37, 99, 235, 0.1) 0%, transparent 55%),
+  background: radial-gradient(circle at 80% 10%, rgba(6, 182, 212, 0.08) 0%, transparent 45%),
+              radial-gradient(circle at 15% 70%, rgba(37, 99, 235, 0.07) 0%, transparent 50%),
               #0b0f19;
   color: #f8fafc;
   z-index: 99999;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   opacity: 1;
   visibility: visible;
   transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               visibility 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.landing-gate-overlay .app-footer {
-  flex-shrink: 0;
-  width: 100%;
-  margin-top: auto;
 }
 
 .landing-gate-overlay.unlocked {
@@ -41,10 +38,9 @@
   transform: scale(0.99) translateY(-10px);
 }
 
-/* Complete background scroll locking while on landing / login gate */
+/* Background scroll locking on inner workspace while landing gate is active */
 body.gate-locked {
   overflow: hidden !important;
-  height: 100vh !important;
 }
 
 body.gate-locked .app-container {
@@ -60,11 +56,13 @@ body.gate-locked .main-wrapper {
   overflow: hidden !important;
 }
 
-/* 1. Top Navigation Bar */
+/* ==========================================================================
+   2. TOP NAVIGATION BAR (Sticky at Top)
+   ========================================================================== */
 .landing-nav-bar {
   width: 100%;
   padding: 1.15rem 3rem;
-  background: rgba(11, 15, 25, 0.85);
+  background: rgba(11, 15, 25, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -74,6 +72,7 @@ body.gate-locked .main-wrapper {
   position: sticky;
   top: 0;
   z-index: 100;
+  flex-shrink: 0;
 }
 
 .landing-brand-mark {
@@ -125,7 +124,6 @@ body.gate-locked .main-wrapper {
   box-shadow: 0 0 6px #10B981;
 }
 
-/* Nav Action Buttons */
 .landing-nav-guest-btn {
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
   color: #F8FAFC !important;
@@ -155,31 +153,30 @@ body.gate-locked .main-wrapper {
   transform: translateY(-1px) !important;
 }
 
-/* 2. Hero Section & Main Layout */
-.hero-section,
-.landing-hero-body {
+/* ==========================================================================
+   3. HERO SECTION (Natural Flow, Uncapped Height)
+   ========================================================================== */
+.hero-section {
   position: relative;
-  background-color: #0b0f19; /* Finculator dark background */
+  background-color: transparent;
   color: #f8fafc;
-  padding: 3.5rem 1.5rem 1.5rem 1.5rem;
-  overflow: hidden;
+  padding: 4.5rem 1.5rem 3.5rem 1.5rem;
   width: 100%;
+  flex-shrink: 0;
 }
 
-.hero-container,
-.landing-grid {
+.hero-container {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3rem;
+  gap: 3.5rem;
   width: 100%;
 }
 
 @media (min-width: 992px) {
-  .hero-container,
-  .landing-grid {
+  .hero-container {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -187,15 +184,10 @@ body.gate-locked .main-wrapper {
 }
 
 /* Copy Section */
-.hero-content,
-.landing-left-col {
+.hero-content {
   flex: 1;
   max-width: 580px;
   width: 100%;
-}
-
-.landing-upper-space {
-  margin-bottom: 1rem;
 }
 
 .landing-eyebrow-badge {
@@ -203,47 +195,23 @@ body.gate-locked .main-wrapper {
   align-items: center;
   gap: 0.5rem;
   background: rgba(37, 99, 235, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  border: 1px solid rgba(56, 189, 248, 0.28);
   padding: 0.45rem 1rem;
   border-radius: 30px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: #38BDF8;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  margin-bottom: 1.25rem;
 }
 
-/* Title Card */
-.landing-title-card {
-  background: rgba(17, 24, 39, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 2.25rem;
-  box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
-  position: relative;
-  overflow: hidden;
-}
-
-.landing-title-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: linear-gradient(180deg, #2563EB 0%, #06B6D4 100%);
-  border-radius: 20px 0 0 20px;
-}
-
-.hero-title,
-.landing-main-title {
+.hero-title {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  font-size: clamp(2.35rem, 4vw, 3.5rem);
   font-weight: 800;
   line-height: 1.15;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   margin: 0 0 1.25rem 0;
   color: #FFFFFF;
 }
@@ -254,12 +222,11 @@ body.gate-locked .main-wrapper {
   -webkit-text-fill-color: transparent;
 }
 
-.hero-subtitle,
-.landing-description {
+.hero-subtitle {
   font-size: 1.125rem;
   line-height: 1.6;
   color: #94a3b8;
-  margin-bottom: 2rem;
+  margin: 0 0 1.75rem 0;
 }
 
 /* Hero Actions */
@@ -267,7 +234,7 @@ body.gate-locked .main-wrapper {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
 .landing-gate-overlay .btn {
@@ -292,7 +259,7 @@ body.gate-locked .main-wrapper {
 .landing-gate-overlay .btn-primary:hover {
   background-color: #1d4ed8;
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4);
 }
 
 .landing-gate-overlay .btn-secondary {
@@ -311,11 +278,11 @@ body.gate-locked .main-wrapper {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
+  margin-bottom: 1.25rem;
 }
 
-/* Button 1: Login — Existing User */
 .landing-btn-primary {
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.95);
   color: #FFFFFF;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
@@ -354,7 +321,6 @@ body.gate-locked .main-wrapper {
   font-weight: 500;
 }
 
-/* Button 2: Sign In / Create Account — New User */
 .landing-btn-secondary {
   background: rgba(37, 99, 235, 0.12);
   color: #60A5FA;
@@ -385,9 +351,9 @@ body.gate-locked .main-wrapper {
   color: #93C5FD;
 }
 
-/* Prominent Continue Without Login Option */
+/* Guest Action */
 .landing-guest-action-wrap {
-  margin-top: 1.15rem;
+  width: 100%;
 }
 
 .landing-btn-guest {
@@ -488,9 +454,10 @@ body.gate-locked .main-wrapper {
   font-weight: 600;
 }
 
-/* Visual Framing & Dark Theme Integration */
-.hero-visual,
-.landing-right-col {
+/* ==========================================================================
+   4. VISUAL FRAMING & CONTRAST CONTAINMENT
+   ========================================================================== */
+.hero-visual {
   flex: 1;
   width: 100%;
   max-width: 580px;
@@ -499,31 +466,28 @@ body.gate-locked .main-wrapper {
   position: relative;
 }
 
-.visual-card,
-.landing-image-card {
+.visual-card {
   position: relative;
   width: 100%;
   border-radius: 20px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6), 
-              0 0 30px 2px rgba(37, 99, 235, 0.15); /* Subtle blue halo */
-  background: #eae8e1; /* Matches the graphic's light backdrop */
+              0 0 30px 2px rgba(37, 99, 235, 0.18); /* Subtle blue halo */
+  background: #eae8e1; /* Matches graphic's light backdrop */
 }
 
-.hero-img,
-.landing-visual-img {
+.hero-img {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
   object-position: center;
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.visual-card:hover .hero-img,
-.landing-image-card:hover .landing-visual-img {
+.visual-card:hover .hero-img {
   transform: scale(1.025);
 }
 
@@ -532,7 +496,7 @@ body.gate-locked .main-wrapper {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  box-shadow: inset 0 0 16px 2px rgba(11, 15, 25, 0.25);
+  box-shadow: inset 0 0 20px 3px rgba(11, 15, 25, 0.35);
   border-radius: 20px;
   z-index: 2;
 }
@@ -588,17 +552,28 @@ body.gate-locked .main-wrapper {
   font-weight: 600;
 }
 
-/* 3. Services Highlights Section (Portfolio Management, Financial Planning, Risk Analysis) */
+/* ==========================================================================
+   5. ADVISORY SERVICES SECTION (Interactive Sibling in Flow)
+   ========================================================================== */
 .landing-services-section {
   width: 100%;
+  padding: 4rem 1.5rem 4rem 1.5rem;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.landing-section-container {
   max-width: 1200px;
-  margin: 3.5rem auto 1.5rem auto;
-  padding: 0;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .landing-services-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.75rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .landing-services-tag {
@@ -608,21 +583,29 @@ body.gate-locked .main-wrapper {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #38BDF8;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
 }
 
 .landing-services-heading {
-  font-size: 1.55rem;
-  font-weight: 700;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 800;
   color: #FFFFFF;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.25;
+}
+
+.landing-services-sub {
+  font-size: 1rem;
+  color: #94A3B8;
+  line-height: 1.55;
   margin: 0;
 }
 
 .landing-services-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
 .landing-service-card {
@@ -631,17 +614,18 @@ body.gate-locked .main-wrapper {
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 18px;
-  padding: 1.75rem;
+  padding: 2rem 1.75rem;
   box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.4);
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.1rem;
+  position: relative;
 }
 
 .landing-service-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
   border-color: rgba(56, 189, 248, 0.5);
   box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), 0 0 25px rgba(6, 182, 212, 0.2);
 }
@@ -657,7 +641,7 @@ body.gate-locked .main-wrapper {
 }
 
 .landing-service-title {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #FFFFFF;
   margin: 0;
@@ -665,41 +649,171 @@ body.gate-locked .main-wrapper {
 }
 
 .landing-service-desc {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: #94A3B8;
   line-height: 1.55;
   margin: 0;
+  flex-grow: 1;
 }
 
-/* Responsive Breakpoints */
+.landing-service-link {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #38BDF8;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: color 0.2s ease;
+}
+
+.landing-service-card:hover .landing-service-link {
+  color: #60A5FA;
+}
+
+/* ==========================================================================
+   6. INSTITUTIONAL PILLARS & TRUST (Sibling in Flow)
+   ========================================================================== */
+.landing-benefits-section {
+  width: 100%;
+  padding: 4rem 1.5rem;
+  background: rgba(13, 21, 38, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.landing-benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.landing-benefit-item {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.landing-benefit-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.landing-benefit-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0 0 0.4rem 0;
+  letter-spacing: -0.01em;
+}
+
+.landing-benefit-text {
+  font-size: 0.85rem;
+  color: #94A3B8;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ==========================================================================
+   7. FINAL CALL TO ACTION (Sibling in Flow)
+   ========================================================================== */
+.landing-cta-section {
+  width: 100%;
+  padding: 4.5rem 1.5rem 5.5rem 1.5rem;
+  flex-shrink: 0;
+}
+
+.landing-cta-card {
+  max-width: 960px;
+  margin: 0 auto;
+  background: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.22) 0%, rgba(13, 21, 38, 0.95) 75%);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 24px;
+  padding: 3.5rem 2.5rem;
+  text-align: center;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(37, 99, 235, 0.15);
+}
+
+.landing-cta-title {
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.025em;
+  margin: 0 0 1rem 0;
+}
+
+.landing-cta-sub {
+  font-size: 1.08rem;
+  color: #CBD5E1;
+  max-width: 620px;
+  margin: 0 auto 2rem auto;
+  line-height: 1.6;
+}
+
+.landing-cta-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.btn-lg {
+  padding: 0.95rem 2.25rem !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+}
+
+/* ==========================================================================
+   8. SITEWIDE FOOTER (Natural Document Flow at Bottom)
+   ========================================================================== */
+.landing-gate-overlay .app-footer {
+  width: 100%;
+  margin-top: auto;
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+  background: #0B1120;
+  border-top: 1px solid #1E293B;
+}
+
+/* ==========================================================================
+   9. RESPONSIVE BREAKPOINTS
+   ========================================================================== */
 @media (max-width: 1024px) {
   .landing-nav-bar {
     padding: 1rem 1.5rem;
   }
   
-  .hero-section,
-  .landing-hero-body {
-    padding: 2.5rem 1.5rem 1rem 1.5rem;
+  .hero-section {
+    padding: 3rem 1.5rem 2rem 1.5rem;
   }
 
-  .landing-services-grid {
+  .landing-services-grid,
+  .landing-benefits-grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
+  }
+
+  .landing-cta-card {
+    padding: 2.5rem 1.5rem;
   }
 }
 
 @media (max-width: 768px) {
-  .hero-title,
-  .landing-main-title {
-    font-size: 2.2rem;
+  .hero-title {
+    font-size: 2.25rem;
   }
 
   .landing-btn-group {
     grid-template-columns: 1fr;
     gap: 0.85rem;
-  }
-
-  .landing-title-card {
-    padding: 1.5rem;
   }
 }
