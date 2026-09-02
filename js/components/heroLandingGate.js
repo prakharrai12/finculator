@@ -146,6 +146,15 @@ export class HeroLandingGate {
 
         <!-- 4. Core Advisory Capabilities Section (Sibling in flow) -->
         <section class="landing-services-section" id="landing-services-section">
+          <!-- Background Section Artwork: Hand holding coin stacks with rising growth chart -->
+          <div class="section-bg-art-wrapper" aria-hidden="true">
+            <picture>
+              <source srcset="art_coins_growth.webp" type="image/webp">
+              <img src="art_coins_growth.png" alt="" class="section-bg-art-img art-coins" loading="lazy" width="440" height="360">
+            </picture>
+            <div class="section-bg-art-mask"></div>
+          </div>
+
           <div class="landing-section-container">
             <div class="landing-services-header">
               <span class="landing-services-tag">CORE ADVISORY CAPABILITIES</span>
@@ -156,11 +165,14 @@ export class HeroLandingGate {
               
               <!-- Card 1: Portfolio Management -->
               <div class="landing-service-card" role="button" tabindex="0" data-route="portfolio">
-                <div class="landing-service-icon-wrap">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
-                    <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
-                  </svg>
+                <div class="service-card-top">
+                  <div class="landing-service-icon-wrap">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                      <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                    </svg>
+                  </div>
+                  <span class="service-pill-badge">NET WORTH &amp; ASSETS</span>
                 </div>
                 <div class="landing-service-content">
                   <h3 class="landing-service-title">Portfolio Management</h3>
@@ -171,14 +183,17 @@ export class HeroLandingGate {
 
               <!-- Card 2: Financial Planning -->
               <div class="landing-service-card" role="button" tabindex="0" data-route="fire">
-                <div class="landing-service-icon-wrap">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                    <polyline points="10 9 9 9 8 9"></polyline>
-                  </svg>
+                <div class="service-card-top">
+                  <div class="landing-service-icon-wrap">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                  </div>
+                  <span class="service-pill-badge">TAX &amp; FIRE ROADMAP</span>
                 </div>
                 <div class="landing-service-content">
                   <h3 class="landing-service-title">Financial Planning</h3>
@@ -189,10 +204,13 @@ export class HeroLandingGate {
 
               <!-- Card 3: Risk Analysis -->
               <div class="landing-service-card" role="button" tabindex="0" data-route="emi">
-                <div class="landing-service-icon-wrap">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                  </svg>
+                <div class="service-card-top">
+                  <div class="landing-service-icon-wrap">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                  </div>
+                  <span class="service-pill-badge">DEBT &amp; AMORTIZATION</span>
                 </div>
                 <div class="landing-service-content">
                   <h3 class="landing-service-title">Risk Analysis</h3>
@@ -206,7 +224,16 @@ export class HeroLandingGate {
         </section>
 
         <!-- 5. Institutional Pillars & Trust Section ("Why Finculator") -->
-        <section class="landing-benefits-section">
+        <section class="landing-benefits-section" id="landing-benefits-section">
+          <!-- Background Section Artwork: Hand with magnifying glass inspecting bar chart -->
+          <div class="section-bg-art-wrapper" aria-hidden="true">
+            <picture>
+              <source srcset="art_magnifying_bars.webp" type="image/webp">
+              <img src="art_magnifying_bars.png" alt="" class="section-bg-art-img art-magnifying" loading="lazy" width="420" height="350">
+            </picture>
+            <div class="section-bg-art-mask"></div>
+          </div>
+
           <div class="landing-section-container">
             <div class="landing-services-header">
               <span class="landing-services-tag">ENGINEERED FOR PRECISION</span>
@@ -214,8 +241,11 @@ export class HeroLandingGate {
             </div>
             <div class="landing-benefits-grid">
               <div class="landing-benefit-item">
-                <div class="landing-benefit-icon">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                <div class="benefit-card-top">
+                  <div class="landing-benefit-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                  </div>
+                  <span class="benefit-pill-badge">DETERMINISTIC</span>
                 </div>
                 <div>
                   <h4 class="landing-benefit-title">Verified Mathematical Accuracy</h4>
@@ -223,8 +253,11 @@ export class HeroLandingGate {
                 </div>
               </div>
               <div class="landing-benefit-item">
-                <div class="landing-benefit-icon">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <div class="benefit-card-top">
+                  <div class="landing-benefit-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  </div>
+                  <span class="benefit-pill-badge">CLIENT-SIDE ONLY</span>
                 </div>
                 <div>
                   <h4 class="landing-benefit-title">Client-Side Data Privacy</h4>
@@ -232,8 +265,11 @@ export class HeroLandingGate {
                 </div>
               </div>
               <div class="landing-benefit-item">
-                <div class="landing-benefit-icon">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                <div class="benefit-card-top">
+                  <div class="landing-benefit-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                  </div>
+                  <span class="benefit-pill-badge">PRINT-READY</span>
                 </div>
                 <div>
                   <h4 class="landing-benefit-title">Advisory-Grade Export Statements</h4>
@@ -245,15 +281,24 @@ export class HeroLandingGate {
         </section>
 
         <!-- 6. Final Call to Action Section (Sibling in flow) -->
-        <section class="landing-cta-section">
+        <section class="landing-cta-section" id="landing-cta-section">
           <div class="landing-cta-card">
-            <h2 class="landing-cta-title">Ready to Master Your Capital Trajectory?</h2>
-            <p class="landing-cta-sub">Join institutional investors, independent advisers, and forward-looking individuals who trust Finculator for uncompromising calculation accuracy.</p>
-            <div class="landing-cta-actions">
-              <button type="button" class="btn btn-primary" id="landing-cta-signup-btn">Get Started Free</button>
-              <button type="button" class="landing-cta-link-btn" id="landing-cta-guest-btn">
-                Launch Guest Calculators <span class="link-arrow">&rarr;</span>
-              </button>
+            <!-- Background Section Artwork: Hand pointing at target bullseye with arrow -->
+            <div class="cta-bg-art-wrapper" aria-hidden="true">
+              <picture>
+                <source srcset="art_target_bullseye.webp" type="image/webp">
+                <img src="art_target_bullseye.png" alt="" class="cta-bg-art-img art-target" loading="lazy" width="340" height="275">
+              </picture>
+            </div>
+            <div class="cta-content-wrapper">
+              <h2 class="landing-cta-title">Ready to Master Your Capital Trajectory?</h2>
+              <p class="landing-cta-sub">Join institutional investors, independent advisers, and forward-looking individuals who trust Finculator for uncompromising calculation accuracy.</p>
+              <div class="landing-cta-actions">
+                <button type="button" class="btn btn-primary" id="landing-cta-signup-btn">Get Started Free</button>
+                <button type="button" class="landing-cta-link-btn" id="landing-cta-guest-btn">
+                  Launch Guest Calculators <span class="link-arrow">&rarr;</span>
+                </button>
+              </div>
             </div>
           </div>
         </section>

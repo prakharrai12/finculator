@@ -166,5 +166,13 @@
     "passwordHash": "90618cd708cb5de87037e6e1fb7fc5491441e0a3e0fe9d410f9bbb7187d6218f",
     "createdAt": "2026-09-02 07:01:33 UTC",
     "lastLogin": "2026-09-02 07:01:35 UTC"
+  },
+  {
+    "id": "c7413ae7-6b19-44b4-a85d-861af4d3becf",
+    "name": "Investor Test",
+    "email": "tester_1788333142@example.com",
+    "passwordHash": "5cb49859434a913d24d7aaaa9c1e2801b94e0d1658fc0fbfa0a93b7613977f4d",
+    "createdAt": "2026-09-02 07:12:24 UTC",
+    "lastLogin": "2026-09-02 07:12:26 UTC"
   }
 ]
