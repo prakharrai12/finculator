@@ -42,10 +42,10 @@ export class HeroLandingGate {
                   <stop offset="100%" stop-color="#4A7FE0" />
                 </linearGradient>
               </defs>
-              <path d="M 48 10 A 38 38 0 1 0 86 48" fill="none" stroke="#F5F6F8" stroke-width="10" stroke-linecap="round" />
-              <rect x="34" y="52" width="7.5" height="20" rx="3.75" fill="#3B6FD4" />
-              <rect x="46" y="40" width="7.5" height="32" rx="3.75" fill="#4A7FE0" />
-              <rect x="58" y="28" width="7.5" height="44" rx="3.75" fill="#60A5FA" />
+              <path d="M 48 10 A 38 38 0 1 0 86 48" fill="none" stroke="#0F172A" stroke-width="10" stroke-linecap="round" />
+              <rect x="34" y="52" width="7.5" height="20" rx="3.75" fill="#2563EB" />
+              <rect x="46" y="40" width="7.5" height="32" rx="3.75" fill="#3B82F6" />
+              <rect x="58" y="28" width="7.5" height="44" rx="3.75" fill="#06B6D4" />
               <path d="M 32 68 L 76 24" fill="none" stroke="url(#gate-logo-grad)" stroke-width="9" stroke-linecap="round" />
               <path d="M 56 20 L 82 20 L 82 46 Z" fill="url(#gate-logo-grad)" stroke-linejoin="round" />
             </svg>
@@ -69,10 +69,32 @@ export class HeroLandingGate {
           </div>
         </header>
 
-        <!-- 2. Hero Section (Strictly 5 elements: Eyebrow, Headline, Subtext, 2 Buttons, Reference Image) -->
+        <!-- 2. Hero Section (Image Fully Covers Background Behind Content) -->
         <section class="hero-section" id="landing-hero-section">
+          <!-- Background Artwork Layer: Strictly in background (z-index: 1), fully covering background -->
+          <div class="hero-bg-art-wrapper visual-card" aria-hidden="true">
+            <picture>
+              <source 
+                srcset="hero-illustration-mobile.webp 540w, hero-illustration.webp 1200w" 
+                sizes="(max-width: 768px) 100vw, 100vw" 
+                type="image/webp"
+              >
+              <img 
+                src="image_435406.jpg" 
+                alt="" 
+                class="hero-bg-art-img hero-img"
+                loading="eager" 
+                fetchpriority="high" 
+                width="1376" 
+                height="768"
+              >
+            </picture>
+            <div class="hero-bg-overlay-left card-overlay-edge"></div>
+            <div class="hero-bg-blur-bottom"></div>
+            <div class="hero-bg-fade-bottom"></div>
+          </div>
+
           <div class="hero-container">
-            
             <!-- 1. Eyebrow badge -->
             <div class="landing-eyebrow-badge">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
@@ -97,29 +119,6 @@ export class HeroLandingGate {
                 Continue as Guest <span class="btn-arrow">&rarr;</span>
               </button>
             </div>
-
-            <!-- 5. Hero Reference Image (Hands, Cash, Calculator, Upward Blue Arrows on Dark Canvas) -->
-            <div class="hero-visual visual-card">
-              <picture>
-                <source 
-                  srcset="hero-illustration-mobile.webp 540w, hero-illustration.webp 1200w" 
-                  sizes="(max-width: 768px) 100vw, 1000px" 
-                  type="image/webp"
-                >
-                <img 
-                  src="image_435406.jpg" 
-                  alt="Finculator Institutional Wealth Growth Illustration" 
-                  class="hero-img"
-                  loading="eager" 
-                  fetchpriority="high" 
-                  width="1376" 
-                  height="768"
-                >
-              </picture>
-              <div class="card-overlay-edge"></div>
-              <div class="hero-image-blur-bottom"></div>
-            </div>
-
           </div>
         </section>
 
