@@ -1,4 +1,4 @@
-// Type declarations for React, JSX, and styling utilities
+// Type declarations for React, JSX, and module imports
 
 declare module "react" {
   export function useId(): string;
@@ -46,4 +46,26 @@ declare module "clsx" {
 
 declare module "tailwind-merge" {
   export function twMerge(...classLists: any[]): string;
+}
+
+declare module "@/lib/utils" {
+  export type ClassValue = string | number | boolean | undefined | null | { [key: string]: any } | ClassValue[];
+  export function cn(...inputs: ClassValue[]): string;
+  export default cn;
+}
+
+declare module "@/components/ui/dot-pattern" {
+  export interface DotPatternProps {
+    width?: any;
+    height?: any;
+    x?: any;
+    y?: any;
+    cx?: any;
+    cy?: any;
+    cr?: any;
+    className?: string;
+    [key: string]: any;
+  }
+  export function DotPattern(props: DotPatternProps): any;
+  export default DotPattern;
 }
