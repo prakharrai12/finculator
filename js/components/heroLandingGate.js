@@ -30,7 +30,7 @@ export class HeroLandingGate {
     this.container.innerHTML = `
       <div class="landing-gate-overlay" id="auth-landing-gate-overlay">
         
-        <!-- 1. Top Navigation Bar (matching "Navigation" in schematic) -->
+        <!-- 1. Top Navigation Bar -->
         <header class="landing-nav-bar">
           <div class="landing-brand-mark">
             <svg width="34" height="34" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -56,19 +56,22 @@ export class HeroLandingGate {
           <div class="landing-nav-actions">
             <div class="landing-security-pill">
               <span class="landing-security-dot"></span>
-              256-Bit TLS Institutional Security
+              256-Bit TLS Security
             </div>
+            <button type="button" class="btn btn-outline btn-sm landing-nav-guest-btn" id="gate-nav-guest-btn">
+              Continue as Guest &rarr;
+            </button>
             <button type="button" class="btn btn-secondary btn-sm" id="gate-nav-login-btn" style="border-color:#CBD5E1; color:#0F172A; font-weight:600;">
               Member Login
             </button>
           </div>
         </header>
 
-        <!-- 2. Main 2-Column Hero Body (strictly matching wireframe schematic) -->
+        <!-- 2. Main 2-Column Hero Body -->
         <main class="landing-hero-body">
           <div class="landing-grid">
             
-            <!-- Left Column: Open space above with Title card at bottom -->
+            <!-- Left Column -->
             <div class="landing-left-col">
               <div class="landing-upper-space">
                 <div class="landing-eyebrow-badge">
@@ -77,7 +80,7 @@ export class HeroLandingGate {
                 </div>
               </div>
 
-              <!-- Lower Title Card with Two Premium Buttons (matching blue "Title" in schematic) -->
+              <!-- Lower Title Card -->
               <div class="landing-title-card">
                 <h1 class="landing-main-title">
                   Institutional Intelligence. <br/>
@@ -85,10 +88,10 @@ export class HeroLandingGate {
                 </h1>
                 
                 <p class="landing-description">
-                  Simulate complex loan amortization, compound wealth accumulation, multi-regime tax schedules, and export advisory-grade portfolio statements with verified mathematical precision.
+                  Simulate complex loan amortization, compound wealth accumulation, multi-regime tax schedules, and calculate financial milestones with verified mathematical precision.
                 </p>
 
-                <!-- Two Premium Buttons -->
+                <!-- Two Primary Auth Buttons -->
                 <div class="landing-btn-group">
                   <!-- Button 1: Login — Existing User -->
                   <button type="button" class="landing-btn-primary" id="gate-btn-existing-user">
@@ -96,7 +99,7 @@ export class HeroLandingGate {
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
                       Login Account
                     </span>
-                    <span class="landing-btn-sub">Existing User • Access Dashboard</span>
+                    <span class="landing-btn-sub">Existing User • Access Saved Portfolio</span>
                   </button>
 
                   <!-- Button 2: Sign In / Create Account — New User -->
@@ -105,18 +108,38 @@ export class HeroLandingGate {
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
                       Create Account
                     </span>
-                    <span class="landing-btn-sub">New User • Free Credentials</span>
+                    <span class="landing-btn-sub">New User • Free Credentials Dispatch</span>
                   </button>
                 </div>
+
+                <!-- Prominent Continue Without Login Option -->
+                <div class="landing-guest-action-wrap">
+                  <button type="button" class="landing-btn-guest" id="gate-btn-guest">
+                    <div class="landing-guest-badge">FREE GUEST ACCESS</div>
+                    <div class="landing-guest-content">
+                      <div class="landing-guest-title-row">
+                        <span class="landing-guest-title">Continue Without Login</span>
+                        <span class="landing-guest-arrow-chip">
+                          Open Calculators
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </span>
+                      </div>
+                      <p class="landing-guest-note">
+                        Instant access to all 27+ loans, taxes, investments & FIRE models. No login required to compute numbers. <em>(Account only needed to save a Portfolio & Statement).</em>
+                      </p>
+                    </div>
+                  </button>
+                </div>
+
               </div>
             </div>
 
-            <!-- Right Column: Large Image Block (matching pink "Image" in schematic) -->
+            <!-- Right Column: Hero Visual Image -->
             <div class="landing-right-col">
               <div class="landing-image-card">
                 <img 
-                  src="docs/images/finculator-hero-visual.jpg" 
-                  alt="Finculator 3D Isometric Financial Engine" 
+                  src="docs/images/finculator-hero-visual.jpg?v=3" 
+                  alt="Finculator Global Currency Collage & Financial Engines" 
                   class="landing-visual-img" 
                 />
 
@@ -126,8 +149,8 @@ export class HeroLandingGate {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
                   </div>
                   <div>
-                    <div class="badge-text-title">13 Specialized Engines</div>
-                    <div class="badge-text-sub">Zero-Reset Default State</div>
+                    <div class="badge-text-title">27+ Financial Engines</div>
+                    <div class="badge-text-sub">Instant Unlocked Access</div>
                   </div>
                 </div>
 
@@ -137,8 +160,8 @@ export class HeroLandingGate {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                   </div>
                   <div>
-                    <div class="badge-text-title">Advisory PDF Export</div>
-                    <div class="badge-text-sub">Institutional Formats</div>
+                    <div class="badge-text-title">Personal Portfolio</div>
+                    <div class="badge-text-sub">Member Account Sync</div>
                   </div>
                 </div>
               </div>
@@ -174,14 +197,39 @@ export class HeroLandingGate {
         if (this.app.authModal) this.app.authModal.open('signin');
       });
     }
+
+    // Continue as Guest Button (Main Title Card)
+    const guestBtn = this.container.querySelector('#gate-btn-guest');
+    if (guestBtn) {
+      guestBtn.addEventListener('click', () => {
+        this.dismissGuest();
+      });
+    }
+
+    // Continue as Guest Button (Top Navigation)
+    const navGuestBtn = this.container.querySelector('#gate-nav-guest-btn');
+    if (navGuestBtn) {
+      navGuestBtn.addEventListener('click', () => {
+        this.dismissGuest();
+      });
+    }
+  }
+
+  dismissGuest() {
+    sessionStorage.setItem('finculator_guest_access', 'true');
+    this.unlock();
+    if (this.app && this.app.showToast) {
+      this.app.showToast('✨ Guest mode active: Calculate freely across all engines! Log in anytime to save your portfolio.');
+    }
   }
 
   syncAuthState() {
     const isAuth = auth.isAuthenticated();
+    const guestAccess = sessionStorage.getItem('finculator_guest_access') === 'true';
     const overlay = this.container.querySelector('#auth-landing-gate-overlay');
     if (!overlay) return;
 
-    if (isAuth) {
+    if (isAuth || guestAccess) {
       overlay.classList.add('unlocked');
       document.body.classList.remove('gate-locked');
     } else {
@@ -197,6 +245,7 @@ export class HeroLandingGate {
   }
 
   lock() {
+    sessionStorage.removeItem('finculator_guest_access');
     const overlay = this.container.querySelector('#auth-landing-gate-overlay');
     if (overlay) overlay.classList.remove('unlocked');
     document.body.classList.add('gate-locked');

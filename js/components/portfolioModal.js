@@ -8,6 +8,7 @@ import { getStoredState, setStoredState } from '../utils/storage.js';
 import { renderDonutChart } from './charts.js';
 import { DEFAULT_PORTFOLIO_STATE, calculatePortfolioMetrics } from '../math/portfolioMath.js';
 import { generatePortfolioPDF } from './portfolioPDF.js';
+import { auth } from '../utils/auth.js';
 
 export class PortfolioModal {
   constructor(app) {
@@ -38,6 +39,12 @@ export class PortfolioModal {
   }
 
   render() {
+    const user = auth.getCurrentUser();
+    if (user && this.state && this.state.profile) {
+      if (!this.state.profile.fullName && user.name) this.state.profile.fullName = user.name;
+      if (!this.state.profile.email && user.email) this.state.profile.email = user.email;
+    }
+
     const metrics = calculatePortfolioMetrics(this.state);
     const profile = this.state.profile || {};
     const assets = this.state.assets || {};
@@ -67,6 +74,7 @@ export class PortfolioModal {
         </div>
 
         <div class="portfolio-header-actions">
+          ${user ? `<span class="portfolio-user-badge" style="background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.25); color: #38BDF8; font-size: 0.72rem; font-weight: 700; padding: 4px 8px; border-radius: 6px;">👤 ${user.name || user.email.split('@')[0]}</span>` : ''}
           <span class="portfolio-save-status" id="pf-save-badge">✓ Saved</span>
           <button class="btn btn-secondary btn-sm" id="pf-btn-reset" title="Clear all and reset to blank">Clear All</button>
           <button class="btn btn-primary btn-sm" id="pf-btn-download-pdf">
@@ -1010,12 +1018,21 @@ export class PortfolioModal {
   }
 
   toggle(open) {
-    this.isOpen = open !== undefined ? open : !this.isOpen;
-    if (this.isOpen) {
+    const willOpen = open !== undefined ? open : !this.isOpen;
+    if (willOpen) {
+      if (!auth.isAuthenticated()) {
+        if (this.app && this.app.authModal) {
+          this.app.authModal.openWithPortfolioGate();
+        }
+        return;
+      }
+      this.isOpen = true;
+      this.render();
       this.backdrop.classList.add('active');
       this.drawer.classList.add('active');
       document.body.style.overflow = 'hidden';
     } else {
+      this.isOpen = false;
       this.backdrop.classList.remove('active');
       this.drawer.classList.remove('active');
       document.body.style.overflow = '';

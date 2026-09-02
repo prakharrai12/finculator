@@ -22,5 +22,45 @@
     "passwordHash": "cb664f6a8184d5a15a8090f262b3da7fb13230f02738d0c1976c020f44940a60",
     "createdAt": "2026-09-01 09:29:15 UTC",
     "lastLogin": "2026-09-01 09:29:15 UTC"
+  },
+  {
+    "id": "ebaedb37-2709-412f-b748-97b93cfa37ab",
+    "name": "Investor Test",
+    "email": "tester_1788270056@example.com",
+    "passwordHash": "d8ca74bfb52821536a592d9063ba03223c2a669720f4ea4514b4dfbcf9e23a37",
+    "createdAt": "2026-09-01 13:40:58 UTC",
+    "lastLogin": "2026-09-01 13:40:58 UTC"
+  },
+  {
+    "id": "3bc6674b-9a45-4fa3-861d-2c6ad45a4506",
+    "name": "Test",
+    "email": "test1@test.com",
+    "passwordHash": "d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1",
+    "createdAt": "2026-09-01 13:42:05 UTC",
+    "lastLogin": "2026-09-01 13:42:05 UTC"
+  },
+  {
+    "id": "263af26c-899c-4cf7-a0c0-5fc5165d35e8",
+    "name": "Investor Test",
+    "email": "tester_1788270199@example.com",
+    "passwordHash": "c44afb5537bf0afb1baf4c2e2304a136bd5c0e610803d666c2314ab7039f3d5d",
+    "createdAt": "2026-09-01 13:43:21 UTC",
+    "lastLogin": "2026-09-01 13:43:23 UTC"
+  },
+  {
+    "id": "01f73660-5136-47a4-a6b9-f53cdaf0fec3",
+    "name": "Test User",
+    "email": "testuser_probe@test.com",
+    "passwordHash": "484174e05cc70829d9da4d77dad0d27a6b4c3bfb0c6d53b8b4c85e7f6cf6dbb5",
+    "createdAt": "2026-09-02 04:24:37 UTC",
+    "lastLogin": "2026-09-02 04:24:39 UTC"
+  },
+  {
+    "id": "77075258-b06f-4993-9406-5bf7ffca9bb6",
+    "name": "Investor Test",
+    "email": "tester_1788323097@example.com",
+    "passwordHash": "d8ca74bfb52821536a592d9063ba03223c2a669720f4ea4514b4dfbcf9e23a37",
+    "createdAt": "2026-09-02 04:24:59 UTC",
+    "lastLogin": "2026-09-02 04:25:01 UTC"
   }
 ]

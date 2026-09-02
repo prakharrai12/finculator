@@ -286,6 +286,125 @@ body.gate-locked .main-wrapper {
   color: #64748B;
 }
 
+/* Nav Guest Action Button */
+.landing-nav-guest-btn {
+  border: 1.5px solid #2563EB !important;
+  color: #2563EB !important;
+  background: #EFF6FF !important;
+  font-weight: 700 !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.landing-nav-guest-btn:hover {
+  background: #2563EB !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Prominent Continue Without Login Option */
+.landing-guest-action-wrap {
+  margin-top: 1.25rem;
+}
+
+.landing-btn-guest {
+  width: 100%;
+  background: #F8FAFC;
+  border: 1.5px dashed #94A3B8;
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-btn-guest:hover {
+  background: #F0FDF4;
+  border-color: #10B981;
+  border-style: solid;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
+}
+
+.landing-guest-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #059669;
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.landing-guest-content {
+  width: 100%;
+}
+
+.landing-guest-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.landing-guest-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0F172A;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.landing-btn-guest:hover .landing-guest-title {
+  color: #047857;
+}
+
+.landing-guest-arrow-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #2563EB;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  transition: all 0.2s ease;
+}
+
+.landing-btn-guest:hover .landing-guest-arrow-chip {
+  background: #10B981;
+  border-color: #10B981;
+  color: #FFFFFF;
+}
+
+.landing-guest-note {
+  font-size: 0.8rem;
+  color: #64748B;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.landing-guest-note em {
+  font-style: normal;
+  color: #475569;
+  font-weight: 600;
+}
+
 /* Right Column: Large Image Card (matching pink "Image" in schematic) */
 .landing-right-col {
   display: flex;
