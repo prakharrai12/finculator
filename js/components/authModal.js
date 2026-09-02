@@ -409,6 +409,10 @@ export class AuthModal {
         this.open('signin');
       });
     }
+
+    if (this.app && typeof this.app.updateHomeButtonVisibility === 'function') {
+      this.app.updateHomeButtonVisibility();
+    }
   }
 
   showToast(msg) {

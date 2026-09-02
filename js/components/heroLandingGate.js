@@ -240,6 +240,9 @@ export class HeroLandingGate {
   dismissGuest() {
     sessionStorage.setItem('finculator_guest_access', 'true');
     this.unlock();
+    if (this.app && typeof this.app.updateHomeButtonVisibility === 'function') {
+      this.app.updateHomeButtonVisibility();
+    }
     if (this.app && this.app.showToast) {
       this.app.showToast('✨ Guest mode active: Calculate freely across all engines! Log in anytime to save your portfolio.');
     }
@@ -260,6 +263,10 @@ export class HeroLandingGate {
       overlay.classList.remove('unlocked');
       document.body.classList.add('gate-locked');
     }
+
+    if (this.app && typeof this.app.updateHomeButtonVisibility === 'function') {
+      this.app.updateHomeButtonVisibility();
+    }
   }
 
   showLanding() {
@@ -268,6 +275,9 @@ export class HeroLandingGate {
     document.body.classList.add('gate-locked');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.syncLandingButtons();
+    if (this.app && typeof this.app.updateHomeButtonVisibility === 'function') {
+      this.app.updateHomeButtonVisibility();
+    }
   }
 
   syncLandingButtons() {
@@ -301,6 +311,9 @@ export class HeroLandingGate {
     const overlay = this.container.querySelector('#auth-landing-gate-overlay');
     if (overlay) overlay.classList.add('unlocked');
     document.body.classList.remove('gate-locked');
+    if (this.app && typeof this.app.updateHomeButtonVisibility === 'function') {
+      this.app.updateHomeButtonVisibility();
+    }
   }
 
   lock() {
@@ -309,5 +322,8 @@ export class HeroLandingGate {
     if (overlay) overlay.classList.remove('unlocked');
     document.body.classList.add('gate-locked');
     this.syncLandingButtons();
+    if (this.app && typeof this.app.updateHomeButtonVisibility === 'function') {
+      this.app.updateHomeButtonVisibility();
+    }
   }
 }

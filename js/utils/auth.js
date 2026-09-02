@@ -4,6 +4,8 @@
  * session management, and credential dispatch handling.
  */
 
+import { migrateGuestSessionToAccount } from './storage.js';
+
 const AUTH_STORAGE_KEY = 'finculator_auth_session';
 const USERS_STORAGE_KEY = 'finculator_local_users';
 const SENT_EMAILS_STORAGE_KEY = 'finculator_local_sent_emails';
@@ -26,6 +28,14 @@ class AuthService {
   saveSession(user, token) {
     this.currentUser = { ...user, token };
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(this.currentUser));
+    
+    // Migrate any guest session data into permanent account
+    try {
+      migrateGuestSessionToAccount();
+    } catch (e) {
+      console.warn('Guest session data migration error:', e);
+    }
+
     this.broadcast();
   }
 
