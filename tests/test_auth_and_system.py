@@ -105,8 +105,46 @@ def run_tests():
         assert res_data.get('success') is True, "Forgot password success missing"
         print(f"[PASS 200] Credentials reset and sent to {test_email}")
 
+    # 6. Full-Width Footer Verification & Newsletter API
+    print("\n--- 6. Testing Full-Width Footer & Newsletter Subscription API ---")
+    req = urllib.request.Request(f"{BASE_URL}/index.html")
+    with urllib.request.urlopen(req, timeout=5) as resp:
+        html = resp.read().decode('utf-8')
+        assert 'id="site-footer"' in html, "Site footer element missing"
+        assert 'class="app-footer"' in html, "app-footer class missing"
+        assert 'footer-github-btn' in html, "Icon-only GitHub button missing"
+        assert 'Quick Jumps' not in html, "Redundant Quick Jumps was not removed"
+        assert 'footer-copy-email-btn' not in html, "Personal email button was not removed"
+        print("[PASS 200] Footer DOM Verified: Full-width placement, no Quick Jumps, no email pill, icon GitHub")
+
+    # Test Newsletter Subscribe
+    sub_email = f"subscriber_{int(time.time())}@institutional.com"
+    sub_payload = json.dumps({"email": sub_email}).encode('utf-8')
+    req = urllib.request.Request(
+        f"{BASE_URL}/api/newsletter/subscribe",
+        data=sub_payload,
+        headers={'Content-Type': 'application/json'}
+    )
+    with urllib.request.urlopen(req, timeout=5) as resp:
+        res_data = json.loads(resp.read().decode('utf-8'))
+        assert resp.status == 201, f"Expected 201, got {resp.status}"
+        assert res_data.get('success') is True
+        print(f"[PASS 201] Newsletter Subscribed: {sub_email}")
+
+    # Test Duplicate Subscribe
+    req = urllib.request.Request(
+        f"{BASE_URL}/api/newsletter/subscribe",
+        data=sub_payload,
+        headers={'Content-Type': 'application/json'}
+    )
+    with urllib.request.urlopen(req, timeout=5) as resp:
+        res_data = json.loads(resp.read().decode('utf-8'))
+        assert resp.status == 200
+        assert res_data.get('alreadySubscribed') is True
+        print(f"[PASS 200] Duplicate Newsletter Subscribe Handled: {res_data.get('message')}")
+
     print("\n" + "=" * 60)
-    print("ALL TESTS PASSED: HERO IMAGE, GUEST GATE, AUTH & EMAIL SYSTEM 100% OPERATIONAL")
+    print("ALL TESTS PASSED: FULL-WIDTH FOOTER, GUEST GATE, AUTH & NEWSLETTER 100% OPERATIONAL")
     print("=" * 60)
 
 if __name__ == '__main__':

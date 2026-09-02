@@ -437,252 +437,305 @@ p, span, label, input, select, button {
   min-width: 0;
 }
 
-/* Clean Institutional App Footer */
+/* ==========================================================================
+   OFFICIAL INSTITUTIONAL FULL-BLEED APP FOOTER
+   Obsidian Slate Surface | Symmetrical 4-Column Flow | Responsive
+   ========================================================================== */
 .app-footer {
-  background-color: #0D1526;
+  width: 100%;
+  background: #0B1120;
+  background: radial-gradient(circle at 50% 0%, #111A2E 0%, #0B1120 100%);
   color: #FFFFFF;
   border-top: 1px solid #1E293B;
-  padding: 2.25rem 2rem 1.5rem 2rem;
   margin-top: auto;
-  width: 100%;
+  position: relative;
+  z-index: 10;
 }
 
 .footer-container {
   max-width: var(--max-content-width);
+  width: 100%;
   margin: 0 auto;
+  padding: 3.75rem 2.5rem 2.25rem 2.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
 }
 
+/* 4-Column Layout */
 .footer-top {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
-  gap: 2.5rem;
+  grid-template-columns: 1.5fr 1fr 1fr 1.3fr;
+  gap: 3.5rem;
+  align-items: start;
 }
 
+/* Column 1: Brand & Developer Profile */
 .footer-brand-col {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  align-items: flex-start;
 }
 
 .footer-brand-desc {
-  font-size: 0.8rem;
+  font-size: 0.84rem;
   color: #94A3B8;
-  line-height: 1.5;
-  max-width: 320px;
+  line-height: 1.6;
+  max-width: 330px;
+  margin: 0.85rem 0 1.25rem 0;
 }
 
-/* Bulletproof Developer Contact Buttons */
-.footer-contact-row {
+.footer-social-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.35rem;
-  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
-.footer-contact-btn,
-.app-footer a.footer-contact-btn,
-.app-footer a.footer-contact-btn:visited,
-.app-footer a.footer-contact-btn:active,
-.app-footer button.footer-contact-btn {
+.footer-github-btn,
+.app-footer a.footer-github-btn {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 0.45rem !important;
-  background: rgba(255, 255, 255, 0.06) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  color: #F8FAFC !important;
-  padding: 0.38rem 0.75rem !important;
-  border-radius: 6px !important;
-  font-size: 0.78rem !important;
-  font-weight: 500 !important;
-  font-family: inherit !important;
-  cursor: pointer !important;
+  justify-content: center !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #CBD5E1 !important;
   text-decoration: none !important;
-  transition: all 120ms ease !important;
+  cursor: pointer !important;
+  transition: all 160ms cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-.footer-contact-btn:hover,
-.app-footer a.footer-contact-btn:hover,
-.app-footer button.footer-contact-btn:hover {
-  background: rgba(6, 182, 212, 0.15) !important;
-  border-color: #06B6D4 !important;
-  color: #06B6D4 !important;
+.footer-github-btn:hover,
+.app-footer a.footer-github-btn:hover {
+  background: rgba(37, 99, 235, 0.18) !important;
+  border-color: #38BDF8 !important;
+  color: #38BDF8 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 18px rgba(56, 189, 248, 0.18) !important;
 }
 
-.footer-contact-btn svg {
-  color: #06B6D4;
+.footer-github-btn svg {
+  stroke: currentColor;
   flex-shrink: 0;
 }
 
+/* Columns 2 & 3: Navigation Columns */
+.footer-nav-col {
+  display: flex;
+  flex-direction: column;
+}
+
 .footer-col-title {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #FFFFFF;
-  margin-bottom: 0.75rem;
+  letter-spacing: 0.1em;
+  color: #F8FAFC;
+  margin-bottom: 1.15rem;
+  line-height: 1.2;
 }
 
 .footer-links {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.65rem;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin: 0;
+  padding: 0;
 }
 
 .footer-links a,
 .app-footer .footer-links a,
 .app-footer .footer-links a:visited {
   color: #94A3B8 !important;
-  font-size: 0.8rem;
+  font-size: 0.83rem;
+  font-weight: 450;
   text-decoration: none !important;
-  transition: color 120ms ease;
+  display: inline-flex;
+  align-items: center;
+  transition: all 130ms ease;
 }
 
 .footer-links a:hover,
 .app-footer .footer-links a:hover {
-  color: #06B6D4 !important;
-  text-decoration: none !important;
+  color: #38BDF8 !important;
+  transform: translateX(3px);
 }
 
-.newsletter-box {
+/* Column 4: Newsletter Subscription */
+.footer-newsletter-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-newsletter-desc {
+  font-size: 0.83rem;
+  color: #94A3B8;
+  line-height: 1.55;
+  margin-bottom: 1rem;
+}
+
+.newsletter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.newsletter-input-group {
   display: flex;
   align-items: center;
-  background: #1E293B;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 6px;
+  background: #111A2E;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
   overflow: hidden;
-  margin-top: 0.4rem;
+  transition: all 160ms ease;
+  width: 100%;
+}
+
+.newsletter-input-group:focus-within {
+  border-color: #38BDF8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+.newsletter-input-group.input-error {
+  border-color: #EF4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
 }
 
 .newsletter-input {
   background: transparent;
   border: none;
-  padding: 0.5rem 0.75rem;
+  padding: 0.62rem 0.85rem;
   color: #FFFFFF;
-  font-size: 0.8rem;
+  font-size: 0.84rem;
   outline: none;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
+  font-family: inherit;
 }
 
 .newsletter-input::placeholder {
   color: #64748B;
 }
 
-.newsletter-btn {
+.newsletter-submit-btn {
   background: #2563EB;
   color: #FFFFFF;
   border: none;
-  padding: 0.5rem 0.85rem;
+  padding: 0.62rem 0.95rem;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background 120ms ease;
+  transition: background 150ms ease, opacity 150ms ease;
+  flex-shrink: 0;
 }
 
-.newsletter-btn:hover {
+.newsletter-submit-btn:hover {
   background: #1D4ED8;
 }
 
-/* Bulletproof Quick Jumps Bar */
-.footer-quick-suites {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  flex-wrap: wrap;
-  padding: 0.85rem 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+.newsletter-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.footer-quick-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  font-weight: 700;
-  color: #06B6D4;
-  letter-spacing: 0.06em;
-  margin-right: 0.35rem;
+.newsletter-feedback {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  min-height: 1.2rem;
+  transition: all 150ms ease;
 }
 
-.footer-suite-chip,
-.app-footer a.footer-suite-chip,
-.app-footer a.footer-suite-chip:visited {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.35rem !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  color: #CBD5E1 !important;
-  padding: 0.25rem 0.65rem !important;
-  border-radius: 9999px !important;
-  font-size: 0.73rem !important;
-  font-weight: 500 !important;
-  cursor: pointer !important;
-  transition: all 120ms ease !important;
-  text-decoration: none !important;
+.newsletter-feedback.success {
+  color: #34D399;
+  font-weight: 500;
 }
 
-.footer-suite-chip:hover,
-.app-footer a.footer-suite-chip:hover {
-  background: rgba(6, 182, 212, 0.15) !important;
-  border-color: #06B6D4 !important;
-  color: #06B6D4 !important;
-  transform: translateY(-1px);
+.newsletter-feedback.error {
+  color: #F87171;
+  font-weight: 500;
 }
 
+/* Footer Bottom Bar */
 .footer-bottom {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 0.75rem;
-  font-size: 0.75rem;
+  padding-top: 1.75rem;
+  margin-top: 3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.8rem;
   color: #94A3B8;
   flex-wrap: wrap;
-  gap: 0.85rem;
+  gap: 1.25rem;
+}
+
+.footer-copyright {
+  display: flex;
+  align-items: center;
+}
+
+.footer-author-link {
+  color: #FFFFFF;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+
+.footer-author-link:hover {
+  color: #38BDF8;
+  text-decoration: underline;
 }
 
 .footer-legal-links {
   display: flex;
   align-items: center;
-  gap: 1.1rem;
+  gap: 1.35rem;
+  flex-wrap: wrap;
 }
 
-.footer-legal-links a,
-.app-footer .footer-legal-links a,
-.app-footer .footer-legal-links a:visited {
+.footer-legal-link,
+.app-footer .footer-legal-link,
+.app-footer .footer-legal-link:visited {
   color: #94A3B8 !important;
   text-decoration: none !important;
+  font-size: 0.78rem;
   transition: color 120ms ease;
 }
 
-.footer-legal-links a:hover,
-.app-footer .footer-legal-links a:hover {
+.footer-legal-link:hover,
+.app-footer .footer-legal-link:hover {
   color: #FFFFFF !important;
 }
 
 .app-footer .back-to-top-btn {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 0.35rem !important;
+  gap: 0.4rem !important;
   background: rgba(255, 255, 255, 0.06) !important;
   border: 1px solid rgba(255, 255, 255, 0.16) !important;
   color: #CBD5E1 !important;
-  font-size: 0.73rem !important;
+  font-size: 0.76rem !important;
   font-weight: 600 !important;
-  padding: 0.28rem 0.65rem !important;
-  border-radius: 4px !important;
+  padding: 0.35rem 0.75rem !important;
+  border-radius: 6px !important;
   cursor: pointer !important;
-  transition: all 120ms ease !important;
+  transition: all 130ms ease !important;
 }
 
 .app-footer .back-to-top-btn:hover {
   color: #FFFFFF !important;
-  border-color: #06B6D4 !important;
-  background: rgba(6, 182, 212, 0.12) !important;
+  border-color: #38BDF8 !important;
+  background: rgba(37, 99, 235, 0.2) !important;
+  transform: translateY(-1px);
 }
 
 /* Responsive Fluid Breakpoints */
