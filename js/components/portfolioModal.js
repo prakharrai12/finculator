@@ -74,8 +74,8 @@ export class PortfolioModal {
         </div>
 
         <div class="portfolio-header-actions">
-          ${user ? `<span class="portfolio-user-badge" style="background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.25); color: #38BDF8; font-size: 0.72rem; font-weight: 700; padding: 4px 8px; border-radius: 6px;">👤 ${user.name || user.email.split('@')[0]}</span>` : `<button type="button" class="btn btn-secondary btn-sm" id="pf-btn-guest-login" style="border-color: #2563EB; color: #2563EB;">🔒 Log in to Save</button>`}
-          <span class="portfolio-save-status" id="pf-save-badge">${user ? '✓ Saved to Account' : '⚡ Guest Session'}</span>
+          ${user ? `<span class="portfolio-user-badge" style="background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.25); color: #38BDF8; font-size: 0.72rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> ${user.name || user.email.split('@')[0]}</span>` : `<button type="button" class="btn btn-secondary btn-sm" id="pf-btn-guest-login" style="border-color: #2563EB; color: #2563EB; display: inline-flex; align-items: center; gap: 5px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Log in to Save</button>`}
+          <span class="portfolio-save-status" id="pf-save-badge">${user ? 'Saved to Account' : 'Guest Session'}</span>
           <button class="btn btn-secondary btn-sm" id="pf-btn-reset" title="Clear all and reset to blank">Clear All</button>
           <button class="btn btn-primary btn-sm" id="pf-btn-download-pdf">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -111,7 +111,7 @@ export class PortfolioModal {
             <div class="portfolio-hero-nw-row">
               <span class="portfolio-hero-value" id="pf-hero-nw">${formatCurrency(metrics.netWorth)}</span>
               <span class="portfolio-solvency-pill ${metrics.netWorth >= 0 ? 'solvency-positive' : 'solvency-negative'}" id="pf-solvency-badge">
-                ${metrics.netWorth >= 0 ? '● Positive Equity' : '● Negative Equity'}
+                ${metrics.netWorth >= 0 ? 'Positive Equity' : 'Negative Equity'}
               </span>
             </div>
 
@@ -143,7 +143,7 @@ export class PortfolioModal {
             <div class="portfolio-stat-box">
               <span class="portfolio-stat-lbl">Debt-to-Asset (DTA)</span>
               <span class="portfolio-stat-val" id="pf-stat-dti">${metrics.debtToAssetRatio}%</span>
-              <span class="portfolio-stat-desc" id="pf-stat-dti-desc">${metrics.debtToAssetRatio < 30 ? '✓ Healthy leverage' : metrics.debtToAssetRatio < 50 ? 'Moderate leverage' : 'High leverage'}</span>
+              <span class="portfolio-stat-desc" id="pf-stat-dti-desc">${metrics.debtToAssetRatio < 30 ? 'Healthy leverage (< 30%)' : metrics.debtToAssetRatio < 50 ? 'Moderate leverage' : 'High leverage'}</span>
             </div>
             <div class="portfolio-stat-box">
               <span class="portfolio-stat-lbl">Emergency Runway</span>
@@ -736,7 +736,7 @@ export class PortfolioModal {
       if (!existingNote) {
         const note = document.createElement('div');
         note.className = 'portfolio-benchmark-note';
-        note.innerHTML = `<span>★ Balanced Target Benchmark (60/40 Equities & Debt) — Add your assets in Section 2 to build your real portfolio</span>`;
+        note.innerHTML = `<span>Balanced Target Benchmark (60/40 Equities & Debt) — Add your assets in Section 2 to build your real portfolio</span>`;
         donutBox.parentNode.insertBefore(note, donutBox.nextSibling);
       }
       return;
@@ -771,7 +771,7 @@ export class PortfolioModal {
 
     const solvencyBadge = this.drawer.querySelector('#pf-solvency-badge');
     if (solvencyBadge) {
-      solvencyBadge.textContent = metrics.netWorth >= 0 ? '● Positive Equity' : '● Negative Equity';
+      solvencyBadge.textContent = metrics.netWorth >= 0 ? 'Positive Equity' : 'Negative Equity';
       solvencyBadge.className = `portfolio-solvency-pill ${metrics.netWorth >= 0 ? 'solvency-positive' : 'solvency-negative'}`;
     }
 
@@ -809,7 +809,7 @@ export class PortfolioModal {
 
     const statDtiDesc = this.drawer.querySelector('#pf-stat-dti-desc');
     if (statDtiDesc) {
-      statDtiDesc.textContent = metrics.debtToAssetRatio < 30 ? '✓ Healthy leverage' : metrics.debtToAssetRatio < 50 ? 'Moderate leverage' : 'High leverage';
+      statDtiDesc.textContent = metrics.debtToAssetRatio < 30 ? 'Healthy leverage (< 30%)' : metrics.debtToAssetRatio < 50 ? 'Moderate leverage' : 'High leverage';
     }
 
     const statRunway = this.drawer.querySelector('#pf-stat-runway');
@@ -864,7 +864,7 @@ export class PortfolioModal {
       setStoredState('personal_portfolio', this.state);
       if (badge) {
         const user = auth.getCurrentUser();
-        badge.textContent = user ? '✓ Saved to Account' : '⚡ Guest Session';
+        badge.textContent = user ? 'Saved to Account' : 'Guest Session';
       }
     }, 400);
   }

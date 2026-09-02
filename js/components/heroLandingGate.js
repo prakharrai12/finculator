@@ -647,7 +647,7 @@ export class HeroLandingGate {
       this.app.updateHomeButtonVisibility();
     }
     if (this.app && this.app.showToast) {
-      this.app.showToast('✨ Guest mode active: Calculate freely across all engines! Log in anytime to save your portfolio.');
+      this.app.showToast('Guest mode active: Calculate freely across all engines! Log in anytime to save your portfolio.');
     }
   }
 

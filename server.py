@@ -78,7 +78,7 @@ def generate_welcome_email_html(name, email, password, token, user_id):
         <!-- Main Content -->
         <tr>
           <td style="padding: 36px 32px 24px 32px;">
-            <h1 style="color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 12px 0;">Thanks for Joining Finculator, {name}! 🎉</h1>
+            <h1 style="color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 12px 0;">Thanks for Joining Finculator, {name}!</h1>
             <p style="color: #94A3B8; font-size: 15px; line-height: 1.6; margin: 0 0 24px 0;">
               We are delighted to welcome you. Finculator is your institutional financial computation and wealth optimization platform — engineered to help you simulate loans, compound investments, navigate taxes, and build advisory-grade portfolios with 100% mathematical precision.
             </p>
@@ -86,7 +86,7 @@ def generate_welcome_email_html(name, email, password, token, user_id):
             <!-- Credentials Box -->
             <div style="background-color: #131E36; border: 1px solid #2563EB; border-radius: 12px; padding: 24px; margin-bottom: 28px;">
               <div style="font-size: 13px; font-weight: 700; color: #38BDF8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">
-                🔐 Your Account Credentials
+                Your Account Credentials
               </div>
               <table width="100%" cellpadding="6" cellspacing="0">
                 <tr>
@@ -99,7 +99,7 @@ def generate_welcome_email_html(name, email, password, token, user_id):
                 </tr>
                 <tr>
                   <td style="color: #94A3B8; font-size: 14px; font-weight: 600;">Security Status:</td>
-                  <td style="color: #38BDF8; font-size: 14px;">✓ Verified Active</td>
+                  <td style="color: #38BDF8; font-size: 14px;">Verified Active</td>
                 </tr>
                 <tr>
                   <td style="color: #94A3B8; font-size: 14px; font-weight: 600;">Security User ID:</td>
