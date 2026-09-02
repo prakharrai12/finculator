@@ -1,3 +1,4 @@
+/// <reference path="../../types/react.d.ts" />
 "use client";
 
 import React from "react";
