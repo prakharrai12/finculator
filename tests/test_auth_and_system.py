@@ -110,11 +110,10 @@ def run_tests():
     req = urllib.request.Request(f"{BASE_URL}/index.html")
     with urllib.request.urlopen(req, timeout=5) as resp:
         html = resp.read().decode('utf-8')
-        assert 'id="site-footer"' in html, "Site footer element missing"
-        assert 'class="app-footer"' in html, "app-footer class missing"
+        assert 'id="site-footer"' not in html, "Site footer was not removed from post-login workspace"
         assert 'id="btn-header-home"' in html, "Home icon button missing in navbar"
         assert 'id="header-auth-wrapper"' in html, "Header auth wrapper missing in navbar"
-        print("[PASS 200] Header & Footer DOM Verified: Home icon button and Profile wrapper placed correctly")
+        print("[PASS 200] Post-Login Workspace Cleaned: Footer removed from workspace, Home & Profile buttons active")
 
     # Verify shared Footer component
     with open("js/components/footer.js", "r", encoding="utf-8") as f:
@@ -144,7 +143,9 @@ def run_tests():
         chat_css = f.read()
         assert '.finbot-launcher-label' in chat_css, "finbot-launcher-label style missing"
         assert 'border-radius: 50%' in chat_css, "circular FAB style missing"
-        print("[PASS 200] chatbot.css Verified: Compact circular FAB and hover/tap expansion active")
+        assert '.finbot-window.active' in chat_css, "finbot-window.active style missing"
+        assert 'transform-origin: bottom right' in chat_css, "transform-origin missing in chatbot.css"
+        print("[PASS 200] chatbot.css Verified: Smooth GPU-accelerated cubic-bezier open/close animation active")
 
     # Test Newsletter Subscribe
     sub_email = f"subscriber_{int(time.time())}@institutional.com"
