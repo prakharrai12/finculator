@@ -22,17 +22,20 @@ export class FinBot {
   }
 
   initDOM() {
-    // Launcher capsule
+    // Launcher circular FAB (expands on hover / tap)
     this.launcher = document.createElement('div');
     this.launcher.className = 'finbot-launcher';
     this.launcher.id = 'finbot-launcher-capsule';
+    this.launcher.setAttribute('role', 'button');
+    this.launcher.setAttribute('tabindex', '0');
+    this.launcher.setAttribute('aria-label', 'Open FinBot Financial AI Copilot');
     this.launcher.innerHTML = `
       <div class="finbot-launcher-icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
         </svg>
       </div>
-      <span>Ask FinBot AI</span>
+      <span class="finbot-launcher-label">Ask FinBot AI</span>
       <span class="finbot-online-indicator" title="AI Agent Active"></span>
     `;
 
@@ -124,7 +127,44 @@ export class FinBot {
   }
 
   attachEvents() {
-    this.launcher.addEventListener('click', () => this.toggleWindow(true));
+    let touchExpandTimeout = null;
+
+    // Mobile tap-to-expand vs click-to-open
+    this.launcher.addEventListener('click', (e) => {
+      const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+      if (isTouchDevice && !this.launcher.classList.contains('expanded')) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.launcher.classList.add('expanded');
+
+        clearTimeout(touchExpandTimeout);
+        touchExpandTimeout = setTimeout(() => {
+          this.launcher.classList.remove('expanded');
+        }, 4000);
+        return;
+      }
+
+      // If already expanded on mobile or clicked on desktop
+      this.launcher.classList.remove('expanded');
+      this.toggleWindow(true);
+    });
+
+    // Close expanded state on tap outside
+    document.addEventListener('click', (e) => {
+      if (!this.launcher.contains(e.target)) {
+        this.launcher.classList.remove('expanded');
+      }
+    });
+
+    // Keyboard navigation (Enter / Space)
+    this.launcher.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.toggleWindow(true);
+      }
+    });
+
     this.window.querySelector('#finbot-btn-close').addEventListener('click', () => this.toggleWindow(false));
     this.window.querySelector('#finbot-btn-minimize').addEventListener('click', () => this.toggleMinimize());
 

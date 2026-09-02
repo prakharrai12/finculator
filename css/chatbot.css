@@ -3,35 +3,50 @@
    Modern Glassmorphism, Floating Capsule, & Responsive Chat Window
    ========================================================================== */
 
-/* Launcher Floating Capsule */
+/* Launcher Floating Action Button (Compact Circular FAB, Expanding on Hover/Tap) */
 .finbot-launcher {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 1000;
-  display: flex;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 95;
+  display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.75rem 1.25rem;
-  border-radius: 9999px;
-  background: rgba(13, 17, 23, 0.88);
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(13, 21, 38, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 16px rgba(6, 182, 212, 0.2);
   color: #FFFFFF;
   cursor: pointer;
   font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Inter', sans-serif);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s ease,
+              border-color 0.2s ease,
+              box-shadow 0.2s ease;
   user-select: none;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.finbot-launcher:hover {
-  transform: translateY(-3px) scale(1.02);
-  border-color: rgba(6, 182, 212, 0.5);
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.5), 0 0 25px rgba(6, 182, 212, 0.35);
+.finbot-launcher:hover,
+.finbot-launcher.expanded,
+.finbot-launcher:focus-visible {
+  width: auto;
+  padding: 0 1rem 0 0.45rem;
+  border-radius: 9999px;
+  gap: 0.55rem;
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.6);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), 0 0 24px rgba(6, 182, 212, 0.35);
 }
 
 .finbot-launcher.hidden {
@@ -42,20 +57,67 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: linear-gradient(135deg, #2563EB, #06B6D4);
   color: #FFFFFF;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
 }
 
+.finbot-launcher:hover .finbot-launcher-icon,
+.finbot-launcher.expanded .finbot-launcher-icon {
+  transform: rotate(45deg);
+}
+
+/* Label Hidden by default in Circular FAB */
+.finbot-launcher-label {
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0;
+  display: inline-block;
+  color: #F8FAFC;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.2s ease,
+              margin 0.3s ease;
+}
+
+.finbot-launcher:hover .finbot-launcher-label,
+.finbot-launcher.expanded .finbot-launcher-label,
+.finbot-launcher:focus-visible .finbot-launcher-label {
+  max-width: 130px;
+  opacity: 1;
+  margin-left: 0.15rem;
+}
+
+/* Green online status badge positioned at corner in circular mode */
 .finbot-online-indicator {
-  width: 8px;
-  height: 8px;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #10B981;
+  border: 2px solid #0D1526;
   box-shadow: 0 0 8px #10B981;
   animation: pulse-online 2s infinite ease-in-out;
+  pointer-events: none;
+  transition: all 0.25s ease;
+}
+
+.finbot-launcher:hover .finbot-online-indicator,
+.finbot-launcher.expanded .finbot-online-indicator {
+  position: static;
+  width: 7px;
+  height: 7px;
+  border: none;
+  margin-left: 0.1rem;
 }
 
 @keyframes pulse-online {

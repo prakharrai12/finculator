@@ -54,12 +54,27 @@ class FinculatorApp {
 
     this.init();
     this.initPortfolioButton();
+    this.initHomeButton();
   }
 
   initPortfolioButton() {
     if (this.portfolioBtn) {
       this.portfolioBtn.addEventListener('click', () => {
         if (this.portfolio) this.portfolio.toggle(true);
+      });
+    }
+  }
+
+  initHomeButton() {
+    const homeBtn = document.getElementById('btn-header-home');
+    if (homeBtn) {
+      homeBtn.addEventListener('click', () => {
+        if (this.portfolio && this.portfolio.isOpen) {
+          this.portfolio.toggle(false);
+        }
+        if (this.landingGate) {
+          this.landingGate.showLanding();
+        }
       });
     }
   }
