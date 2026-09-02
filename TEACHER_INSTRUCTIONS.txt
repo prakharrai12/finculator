@@ -1,0 +1,43 @@
+========================================================================
+  FINCULATOR — High-Utility Financial Engineering & Computation Suite
+  Author: Prakhar Rai
+========================================================================
+
+HOW TO RUN ON YOUR PC:
+------------------------------------------------------------------------
+
+OPTION 1: One-Click Launcher (Recommended for Windows)
+1. Double-click "START_FINCULATOR.bat".
+2. It will automatically start the local server and open http://localhost:3000 in your browser.
+
+OPTION 2: Manual Terminal / Command Line Launch
+1. Open Terminal / PowerShell / Command Prompt in this folder.
+2. Run:
+      python server.py
+3. Open your web browser and navigate to:
+      http://localhost:3000
+
+OPTION 3: Direct Browser Open (Offline / Static Mode)
+1. Double-click "index.html" or open it in Google Chrome / Edge / Firefox / Safari.
+
+------------------------------------------------------------------------
+KEY FEATURES INCLUDED:
+------------------------------------------------------------------------
+1. 27+ Specialized Financial Computation Engines:
+   - Loans & Mortgages (EMI Amortization, Prepayment Analyzer, Comparator, FOIR Eligibility, Credit Card Payoff)
+   - Savings & Deposits (Compound Interest, Simple Interest, FD, RD, PPF, Goal-Based Savings)
+   - Wealth & Investing (SIP, Lump Sum, Step-Up SIP, CAGR, Stock & Mutual Fund Returns)
+   - Tax & Business (Income Tax Old vs New Regime, GST Calculator, Take-Home Salary, Margin & Markup, Break-Even)
+   - Long-Term Planning (Retirement & FIRE Corpus, Inflation Adjuster, Net Worth Ledger, 50/30/20 Budget, Buy vs Rent)
+2. Personal Finance Portfolio Builder & Statement:
+   - Full consolidated balance sheet, asset allocation, and emergency solvency metrics.
+   - One-click institutional PDF report generation.
+3. Guest & Member Dual Mode:
+   - "Continue as Guest" allows full calculation across all 27 engines without requiring login.
+   - "Create Account / Login" enables personal portfolio storage and profile syncing.
+4. AI Copilot (FinBot):
+   - Integrated on-device financial formula and computation assistant.
+5. Multi-Currency Support:
+   - Instant switching between USD ($), EUR (€), GBP (£), INR (₹), JPY (¥), CAD (C$), AUD (A$), CHF (₣).
+
+========================================================================

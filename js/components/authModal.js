@@ -11,6 +11,7 @@ export class AuthModal {
     this.app = app;
     this.activeTab = 'signin'; // 'signin' | 'signup'
     this.isOpen = false;
+    this.isPortfolioGate = false;
     this.initDOM();
     this.attachEvents();
     this.updateHeaderProfile();
@@ -111,6 +112,11 @@ export class AuthModal {
     this.isOpen = true;
   }
 
+  openWithPortfolioGate() {
+    this.isPortfolioGate = true;
+    this.open('signup');
+  }
+
   close() {
     this.backdrop.classList.remove('active');
     this.isOpen = false;
@@ -120,8 +126,19 @@ export class AuthModal {
     const container = this.backdrop.querySelector('#auth-body-container');
     if (!container) return;
 
+    const portfolioBanner = this.isPortfolioGate ? `
+      <div style="background: rgba(37, 99, 235, 0.12); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 10px; padding: 12px 14px; margin-bottom: 1.25rem; display: flex; align-items: flex-start; gap: 10px;">
+        <div style="color: #38BDF8; font-size: 1.15rem; line-height: 1;">🔒</div>
+        <div style="font-size: 0.8rem; color: #E2E8F0; line-height: 1.45;">
+          <strong style="color: #38BDF8; display: block; margin-bottom: 2px;">Account Required for Portfolio Builder</strong>
+          Please log in or create a free account to build your asset & liability balance sheet, save your investor profile, and export PDF statements.
+        </div>
+      </div>
+    ` : '';
+
     if (this.activeTab === 'signin') {
       container.innerHTML = `
+        ${portfolioBanner}
         <form id="form-auth-signin">
           <div class="auth-form-group">
             <label class="auth-label" for="auth-signin-email">Email Address</label>
@@ -160,6 +177,7 @@ export class AuthModal {
       this.bindSignInEvents(container);
     } else {
       container.innerHTML = `
+        ${portfolioBanner}
         <form id="form-auth-signup">
           <div class="auth-form-group">
             <label class="auth-label" for="auth-signup-name">Full Name</label>
@@ -250,6 +268,13 @@ export class AuthModal {
           const res = await auth.login({ email, password });
           this.showToast(`Welcome back, ${res.user.name || res.user.email}!`);
           this.close();
+
+          if (this.isPortfolioGate) {
+            this.isPortfolioGate = false;
+            setTimeout(() => {
+              if (this.app && this.app.portfolio) this.app.portfolio.toggle(true);
+            }, 300);
+          }
         } catch (err) {
           alert(err.message || 'Login failed.');
         } finally {
@@ -282,6 +307,13 @@ export class AuthModal {
           const res = await auth.register({ name, email, password });
           this.showToast(`🎉 Account created! Credentials sent directly to ${email}`);
           this.close();
+
+          if (this.isPortfolioGate) {
+            this.isPortfolioGate = false;
+            setTimeout(() => {
+              if (this.app && this.app.portfolio) this.app.portfolio.toggle(true);
+            }, 300);
+          }
         } catch (err) {
           alert(err.message || 'Registration failed.');
         } finally {
@@ -346,13 +378,16 @@ export class AuthModal {
 
       authWrap.querySelector('#btn-hdr-open-portfolio').addEventListener('click', () => {
         dropdown.classList.remove('active');
-        const portBtn = document.querySelector('#btn-open-portfolio');
-        if (portBtn) portBtn.click();
+        if (this.app && this.app.portfolio) this.app.portfolio.toggle(true);
       });
 
       authWrap.querySelector('#btn-hdr-logout').addEventListener('click', () => {
         dropdown.classList.remove('active');
+        sessionStorage.removeItem('finculator_guest_access');
         auth.logout();
+        if (this.app && this.app.landingGate) {
+          this.app.landingGate.lock();
+        }
         this.showToast('Signed out. Website locked.');
       });
     } else {
@@ -364,6 +399,7 @@ export class AuthModal {
       `;
 
       authWrap.querySelector('#btn-header-signin').addEventListener('click', () => {
+        this.isPortfolioGate = false;
         this.open('signin');
       });
     }
