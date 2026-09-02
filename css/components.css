@@ -22,6 +22,21 @@
   box-shadow: 0 8px 28px -4px rgba(13, 21, 38, 0.08);
 }
 
+/* shadcn / Magic UI Dot Pattern Component Utility */
+.dot-pattern-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(148, 163, 184, 0.28) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
+  background-position: 0 0;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 50%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 50%, transparent 100%);
+  z-index: 0;
+}
+
 /* Crisp Distinct Panel Header with Frosted Surface Fill */
 .panel-header {
   display: flex;

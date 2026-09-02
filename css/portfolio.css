@@ -41,6 +41,25 @@
   color: #0F172A;
   font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Inter', sans-serif);
   overflow: hidden;
+  position: relative;
+}
+
+/* shadcn / Magic UI Dot Pattern Texture on Portfolio Drawer */
+.portfolio-drawer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(148, 163, 184, 0.25) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+  mask-image: radial-gradient(ellipse 95% 85% at 50% 20%, #000 60%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 95% 85% at 50% 20%, #000 60%, transparent 100%);
+  z-index: 0;
+}
+
+.portfolio-drawer > * {
+  position: relative;
+  z-index: 1;
 }
 
 .portfolio-drawer.active {

@@ -91,6 +91,15 @@ export class HeroLandingGate {
               >
             </picture>
             <div class="hero-bg-overlay-left card-overlay-edge"></div>
+            <!-- Magic UI / shadcn Dot Pattern Background Grid -->
+            <svg aria-hidden="true" class="dot-pattern-svg hero-dot-pattern" width="100%" height="100%">
+              <defs>
+                <pattern id="dot-pattern-hero" width="20" height="20" patternUnits="userSpaceOnUse" patternContentUnits="userSpaceOnUse" x="0" y="0">
+                  <circle cx="1" cy="1" r="1" fill="#94A3B8" opacity="0.55" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" stroke-width="0" fill="url(#dot-pattern-hero)" />
+            </svg>
             <div class="hero-bg-blur-bottom"></div>
             <div class="hero-bg-fade-bottom"></div>
           </div>
@@ -149,6 +158,15 @@ export class HeroLandingGate {
         <section class="landing-services-section" id="landing-services-section">
           <!-- Background Section Artwork: Hand holding coin stacks with rising growth chart -->
           <div class="section-bg-art-wrapper" aria-hidden="true">
+            <!-- Magic UI / shadcn Dot Pattern Background Grid -->
+            <svg aria-hidden="true" class="dot-pattern-svg services-dot-pattern" width="100%" height="100%">
+              <defs>
+                <pattern id="dot-pattern-services" width="22" height="22" patternUnits="userSpaceOnUse" patternContentUnits="userSpaceOnUse" x="0" y="0">
+                  <circle cx="1.2" cy="1.2" r="1" fill="#94A3B8" opacity="0.45" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" stroke-width="0" fill="url(#dot-pattern-services)" />
+            </svg>
             <picture>
               <source srcset="art_coins_growth.webp" type="image/webp">
               <img src="art_coins_growth.png" alt="" class="section-bg-art-img art-coins" loading="lazy" width="440" height="360">
@@ -237,6 +255,15 @@ export class HeroLandingGate {
         <section class="landing-benefits-section" id="landing-benefits-section">
           <!-- Background Section Artwork: Hand with magnifying glass inspecting bar chart -->
           <div class="section-bg-art-wrapper" aria-hidden="true">
+            <!-- Magic UI / shadcn Dot Pattern Background Grid -->
+            <svg aria-hidden="true" class="dot-pattern-svg benefits-dot-pattern" width="100%" height="100%">
+              <defs>
+                <pattern id="dot-pattern-benefits" width="22" height="22" patternUnits="userSpaceOnUse" patternContentUnits="userSpaceOnUse" x="0" y="0">
+                  <circle cx="1.2" cy="1.2" r="1" fill="#94A3B8" opacity="0.45" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" stroke-width="0" fill="url(#dot-pattern-benefits)" />
+            </svg>
             <picture>
               <source srcset="art_magnifying_bars.webp" type="image/webp">
               <img src="art_magnifying_bars.png" alt="" class="section-bg-art-img art-magnifying" loading="lazy" width="420" height="350">
@@ -295,6 +322,15 @@ export class HeroLandingGate {
           <div class="landing-cta-card reveal-on-scroll">
             <!-- Background Section Artwork: Hand pointing at target bullseye with arrow -->
             <div class="cta-bg-art-wrapper" aria-hidden="true">
+              <!-- Magic UI / shadcn Dot Pattern Background Grid -->
+              <svg aria-hidden="true" class="dot-pattern-svg cta-dot-pattern" width="100%" height="100%">
+                <defs>
+                  <pattern id="dot-pattern-cta" width="18" height="18" patternUnits="userSpaceOnUse" patternContentUnits="userSpaceOnUse" x="0" y="0">
+                    <circle cx="1" cy="1" r="1" fill="#2563EB" opacity="0.35" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" stroke-width="0" fill="url(#dot-pattern-cta)" />
+              </svg>
               <picture>
                 <source srcset="art_target_bullseye.webp" type="image/webp">
                 <img src="art_target_bullseye.png" alt="" class="cta-bg-art-img art-target" loading="lazy" width="340" height="275">
