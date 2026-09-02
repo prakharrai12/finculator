@@ -5,7 +5,7 @@ declare module "react" {
   export function useState<T>(initialState: T | (() => T)): [T, (newState: T | ((prevState: T) => T)) => void];
   export function useEffect(effect: () => void | (() => void), deps?: readonly any[]): void;
   export type ReactNode = any;
-  export type ReactElement = any;
+  export type ReactElement<P = any, T = any> = any;
   export type FC<P = {}> = (props: P) => any;
   export type SVGProps<T> = any;
   export type HTMLAttributes<T> = any;
@@ -49,7 +49,7 @@ declare module "tailwind-merge" {
 }
 
 declare module "@/lib/utils" {
-  export type ClassValue = string | number | boolean | undefined | null | { [key: string]: any } | ClassValue[];
+  export type ClassValue = any;
   export function cn(...inputs: ClassValue[]): string;
   export default cn;
 }
