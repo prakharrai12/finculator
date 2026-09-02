@@ -155,39 +155,118 @@ body.gate-locked .main-wrapper {
 }
 
 /* ==========================================================================
-   3. HERO SECTION (Natural Flow, Uncapped Height)
+   3. HERO SECTION (Full Background Artwork, Blurred from Bottom)
    ========================================================================== */
 .hero-section {
   position: relative;
-  background-color: transparent;
+  background-color: #FFFFFF;
   color: #0F172A;
-  padding: 4.5rem 1.5rem 3.5rem 1.5rem;
+  padding: 5rem 2rem 5.5rem 2rem;
   width: 100%;
+  min-height: 700px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
   flex-shrink: 0;
 }
 
+/* Background Artwork Wrapper - Positioned across Full Hero Background */
+.hero-bg-art-wrapper,
+.visual-card {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+/* Proper crisp image spanning background */
+.hero-bg-art-img,
+.hero-img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 70%;
+  max-width: 1250px;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  opacity: 0.96;
+  filter: contrast(1.02);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Left copy readability overlay gradient so text is crystal clear on white */
+.hero-bg-overlay-left,
+.card-overlay-edge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 58%;
+  background: linear-gradient(to right, 
+    #FFFFFF 50%, 
+    rgba(255, 255, 255, 0.94) 72%, 
+    rgba(255, 255, 255, 0.45) 88%, 
+    rgba(255, 255, 255, 0) 100%
+  );
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Bottom Blur Layer - "a bit blurred from the bottom" */
+.hero-bg-blur-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 190px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Bottom Fade Layer - Smooth transition into the Services section below */
+.hero-bg-fade-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 160px;
+  background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.45) 35%,
+    rgba(248, 250, 252, 0.88) 75%,
+    #F8FAFC 100%
+  );
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* Foreground Container */
 .hero-container {
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  z-index: 5;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 3.5rem;
-  width: 100%;
-}
-
-@media (min-width: 992px) {
-  .hero-container {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
+  align-items: flex-start;
 }
 
 /* Copy Section */
 .hero-content {
-  flex: 1;
-  max-width: 580px;
+  max-width: 620px;
   width: 100%;
 }
 
@@ -459,102 +538,37 @@ body.gate-locked .main-wrapper {
   font-weight: 600;
 }
 
-/* ==========================================================================
-   4. VISUAL FRAMING & CONTRAST CONTAINMENT
-   ========================================================================== */
-.hero-visual {
-  flex: 1;
-  width: 100%;
-  max-width: 580px;
-  display: flex;
-  justify-content: center;
-  position: relative;
-}
-
-.visual-card {
-  position: relative;
-  width: 100%;
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid #E2E8F0;
-  box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.1), 
-              0 0 25px rgba(37, 99, 235, 0.06);
-  background: #FFFFFF;
-}
-
-.hero-img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  object-position: center;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.visual-card:hover .hero-img {
-  transform: scale(1.02);
-}
-
-/* Vignette border blend to soften image edges against canvas */
-.card-overlay-edge {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  box-shadow: inset 0 0 16px 2px rgba(15, 23, 42, 0.04);
-  border-radius: 20px;
-  z-index: 2;
-}
-
-/* Floating Badges on Image */
-.landing-floating-badge {
-  position: absolute;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid #E2E8F0;
-  border-radius: 14px;
-  padding: 0.75rem 1.1rem;
+/* Trust Badges Row */
+.hero-trust-chips-row {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
-  z-index: 10;
-  pointer-events: none;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
 }
 
-.badge-top-left {
-  top: 20px;
-  left: 20px;
+.hero-trust-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #E2E8F0;
+  border-radius: 20px;
+  padding: 0.38rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #334155;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
 }
 
-.badge-bottom-right {
-  bottom: 20px;
-  right: 20px;
-}
-
-.badge-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #2563EB, #06B6D4);
+.hero-chip-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #FFFFFF;
   flex-shrink: 0;
-}
-
-.badge-text-title {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #0F172A;
-}
-
-.badge-text-sub {
-  font-size: 0.7rem;
-  color: #059669;
-  font-weight: 600;
 }
 
 /* ==========================================================================
@@ -863,7 +877,19 @@ body.gate-locked .main-wrapper {
   }
   
   .hero-section {
-    padding: 3rem 1.5rem 2rem 1.5rem;
+    padding: 3.5rem 1.5rem 3rem 1.5rem;
+    min-height: 640px;
+  }
+
+  .hero-bg-art-img,
+  .hero-img {
+    width: 60%;
+    opacity: 0.85;
+  }
+
+  .hero-bg-overlay-left,
+  .card-overlay-edge {
+    width: 65%;
   }
 
   .landing-services-grid,
@@ -878,6 +904,24 @@ body.gate-locked .main-wrapper {
 }
 
 @media (max-width: 768px) {
+  .hero-section {
+    padding: 3rem 1.25rem 3.5rem 1.25rem;
+    min-height: auto;
+  }
+
+  .hero-bg-art-img,
+  .hero-img {
+    width: 100%;
+    opacity: 0.22;
+    object-position: center right;
+  }
+
+  .hero-bg-overlay-left,
+  .card-overlay-edge {
+    width: 100%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.96) 100%);
+  }
+
   .hero-title {
     font-size: 2.25rem;
   }
@@ -887,3 +931,4 @@ body.gate-locked .main-wrapper {
     gap: 0.85rem;
   }
 }
+

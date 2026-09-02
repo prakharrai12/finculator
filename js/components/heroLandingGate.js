@@ -69,10 +69,32 @@ export class HeroLandingGate {
           </div>
         </header>
 
-        <!-- 2. Hero Section (Natural Document Flow) -->
+        <!-- 2. Hero Section (Full Background Artwork, Blurred from Bottom) -->
         <section class="hero-section" id="landing-hero-section">
+          <!-- Background Artwork Layer (Spans full hero with bottom blur & fade) -->
+          <div class="hero-bg-art-wrapper visual-card" aria-hidden="true">
+            <picture>
+              <source 
+                srcset="hero-illustration-mobile.webp 540w, hero-illustration.webp 1200w" 
+                sizes="(max-width: 768px) 100vw, 100vw" 
+                type="image/webp"
+              >
+              <img 
+                src="image_435406.jpg" 
+                alt="Finculator Institutional Wealth Growth Illustration" 
+                class="hero-bg-art-img hero-img"
+                loading="eager" 
+                fetchpriority="high" 
+                width="1376" 
+                height="768"
+              >
+            </picture>
+            <div class="hero-bg-overlay-left card-overlay-edge"></div>
+            <div class="hero-bg-blur-bottom"></div>
+            <div class="hero-bg-fade-bottom"></div>
+          </div>
+
           <div class="hero-container">
-            
             <!-- Left Column: Copy & Actions -->
             <div class="hero-content">
               <div class="landing-eyebrow-badge">
@@ -134,53 +156,30 @@ export class HeroLandingGate {
                   </div>
                 </button>
               </div>
-            </div>
 
-            <!-- Right Column: Hero Visual Illustration Card -->
-            <div class="hero-visual">
-              <div class="visual-card">
-                <picture>
-                  <source 
-                    srcset="hero-illustration-mobile.webp 540w, hero-illustration.webp 1200w" 
-                    sizes="(max-width: 768px) 100vw, 580px" 
-                    type="image/webp"
-                  >
-                  <img 
-                    src="image_435406.jpg" 
-                    alt="Hands holding cash and calculator with upward growth arrows" 
-                    class="hero-img"
-                    loading="eager" 
-                    fetchpriority="high" 
-                    width="600" 
-                    height="335"
-                  >
-                </picture>
-                <div class="card-overlay-edge"></div>
-
-                <!-- Top Left Floating Badge -->
-                <div class="landing-floating-badge badge-top-left">
-                  <div class="badge-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+              <!-- Trust Badges Row -->
+              <div class="hero-trust-chips-row">
+                <div class="hero-trust-chip">
+                  <div class="hero-chip-icon" style="background: linear-gradient(135deg, #2563EB, #06B6D4);">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
                   </div>
-                  <div>
-                    <div class="badge-text-title">27+ Financial Engines</div>
-                    <div class="badge-text-sub">Instant Unlocked Access</div>
-                  </div>
+                  <span>27+ Financial Engines</span>
                 </div>
-
-                <!-- Bottom Right Floating Badge -->
-                <div class="landing-floating-badge badge-bottom-right">
-                  <div class="badge-icon" style="background: linear-gradient(135deg, #10B981, #059669);">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <div class="hero-trust-chip">
+                  <div class="hero-chip-icon" style="background: linear-gradient(135deg, #10B981, #059669);">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                   </div>
-                  <div>
-                    <div class="badge-text-title">Personal Portfolio</div>
-                    <div class="badge-text-sub">Member Account Sync</div>
+                  <span>Client-Side Privacy</span>
+                </div>
+                <div class="hero-trust-chip">
+                  <div class="hero-chip-icon" style="background: linear-gradient(135deg, #6366F1, #8B5CF6);">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                   </div>
+                  <span>Institutional Accuracy</span>
                 </div>
               </div>
-            </div>
 
+            </div>
           </div>
         </section>
 
