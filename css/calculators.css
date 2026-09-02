@@ -142,30 +142,144 @@
   gap: 0.35rem;
 }
 
-/* Side-by-Side Comparison Cards */
-.comparison-cards-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
+/* Prepayment & Savings Highlight Banner */
+.savings-highlight-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: linear-gradient(135deg, #0D1526 0%, #1E293B 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-lg, 14px);
+  padding: 1.5rem 1.85rem;
+  color: #FFFFFF;
+  box-shadow: 0 10px 30px -5px rgba(13, 21, 38, 0.18), 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
 }
 
-@media (max-width: 768px) {
-  .comparison-cards-grid {
-    grid-template-columns: 1fr;
-  }
+.savings-highlight-card::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.savings-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  position: relative;
+  z-index: 1;
+}
+
+.savings-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #38BDF8;
+}
+
+.savings-value {
+  font-family: var(--font-serif, 'Fraunces', serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+}
+
+.savings-subtext {
+  font-size: 0.84rem;
+  color: #94A3B8;
+}
+
+.savings-grid {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.savings-subitem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.75rem 1.15rem;
+  border-radius: 10px;
+  min-width: 150px;
+}
+
+.savings-subitem .sub-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94A3B8;
+}
+
+.savings-subitem .sub-val {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #38BDF8;
+  font-family: var(--font-mono, monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Side-by-Side Comparison Cards: Spacious Fluid Grid */
+.comparison-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
 }
 
 .comparison-card {
   background: var(--bg-surface);
-  border: 1px solid var(--border-primary);
+  border: 1.5px solid var(--border-primary);
   border-radius: var(--radius-md);
-  padding: 1.35rem;
+  padding: 1.15rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-fast);
+  min-width: 0;
+}
+
+.comparison-card:hover {
+  border-color: #94A3B8;
+  box-shadow: var(--shadow-subtle);
 }
 
 .comparison-card.highlight-card {
-  border-color: var(--brand-navy-dark);
-  background: var(--bg-muted);
-  box-shadow: var(--shadow-subtle);
+  border-color: #2563EB;
+  background: #F8FAFC;
+  box-shadow: 0 4px 16px -2px rgba(37, 99, 235, 0.1);
+}
+
+.comparison-card .metric-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+}
+
+.comparison-card .metric-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
 }
 
 .card-tag {
@@ -174,18 +288,19 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  padding: 0.18rem 0.55rem;
+  padding: 0.2rem 0.6rem;
   border-radius: var(--radius-sm);
   background: var(--bg-subtle);
   color: var(--text-secondary);
   margin-bottom: 0.75rem;
   border: 1px solid var(--border-primary);
+  align-self: flex-start;
 }
 
 .comparison-card.highlight-card .card-tag {
-  background: var(--brand-navy-dark);
-  color: #FFFFFF;
-  border-color: var(--brand-navy-dark);
+  background: #0D1526;
+  color: #38BDF8;
+  border-color: #1E293B;
 }
 
 /* FIRE Milestone Cards */
