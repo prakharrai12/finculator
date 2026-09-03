@@ -35,7 +35,7 @@ print("Testing Finculator HTTP Endpoints at http://localhost:3000 ...")
 all_ok = True
 for f in files:
     try:
-        url = 'http://localhost:3000' + f
+        url = 'http://127.0.0.1:3000' + f
         req = urllib.request.Request(url, headers={'User-Agent': 'FinculatorTest/1.0'})
         with urllib.request.urlopen(req, timeout=3) as resp:
             data = resp.read()

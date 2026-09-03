@@ -35,7 +35,7 @@ export class HeroLandingGate {
         <!-- 1. Top Navigation Bar (Sticky at Top with Scroll Progress) -->
         <header class="landing-nav-bar" id="landing-nav-bar">
           <div class="landing-scroll-progress" id="landing-scroll-progress"></div>
-          <div class="landing-brand-mark">
+          <div class="landing-brand-mark" id="about-nav-logo" style="cursor: pointer;" title="Explore Calculators">
             <svg width="34" height="34" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="gate-logo-grad" x1="30" y1="70" x2="85" y2="15" gradientUnits="userSpaceOnUse">
@@ -61,11 +61,8 @@ export class HeroLandingGate {
               <span class="landing-security-dot"></span>
               256-Bit TLS Security
             </div>
-            <button type="button" class="btn btn-secondary btn-sm landing-nav-guest-btn" id="gate-nav-guest-btn">
-              Continue as Guest &rarr;
-            </button>
-            <button type="button" class="btn btn-primary btn-sm" id="gate-nav-login-btn">
-              Member Login
+            <button type="button" class="btn btn-primary btn-sm landing-nav-calc-btn" id="about-nav-calc-btn">
+              Explore Calculators &rarr;
             </button>
           </div>
         </header>
@@ -108,7 +105,7 @@ export class HeroLandingGate {
             <!-- 1. Eyebrow badge -->
             <div class="landing-eyebrow-badge reveal-on-scroll">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-              INSTITUTIONAL WEALTH SUITE
+              ABOUT FINCULATOR — INSTITUTIONAL SUITE
             </div>
 
             <!-- 2. Headline -->
@@ -119,14 +116,14 @@ export class HeroLandingGate {
             
             <!-- 3. Subtext -->
             <p class="hero-subtitle reveal-on-scroll">
-              Smarter financial tools designed to plan, project, and optimize your wealth trajectory with verified mathematical precision. Instant calculation with zero forced login.
+              Smarter financial tools designed to plan, project, and optimize your wealth trajectory with verified mathematical precision. 27+ institutional computation engines with instant access.
             </p>
 
-            <!-- 4. Exactly two buttons, side by side -->
+            <!-- 4. Action buttons -->
             <div class="hero-actions reveal-on-scroll">
-              <button type="button" class="btn btn-primary" id="hero-btn-get-started">Get Started Free</button>
-              <button type="button" class="btn btn-secondary" id="gate-btn-guest">
-                Continue as Guest <span class="btn-arrow">&rarr;</span>
+              <button type="button" class="btn btn-primary" id="about-hero-btn-calc">Explore 27+ Calculators &rarr;</button>
+              <button type="button" class="btn btn-secondary" id="about-hero-btn-portfolio">
+                Open Personal Portfolio
               </button>
             </div>
           </div>
@@ -340,9 +337,9 @@ export class HeroLandingGate {
               <h2 class="landing-cta-title">Ready to Master Your Capital Trajectory?</h2>
               <p class="landing-cta-sub">Join institutional investors, independent advisers, and forward-looking individuals who trust Finculator for uncompromising calculation accuracy.</p>
               <div class="landing-cta-actions">
-                <button type="button" class="btn btn-primary" id="landing-cta-signup-btn">Get Started Free</button>
-                <button type="button" class="landing-cta-link-btn" id="landing-cta-guest-btn">
-                  Launch Guest Calculators <span class="link-arrow">&rarr;</span>
+                <button type="button" class="btn btn-primary" id="about-cta-calc-btn">Explore 27+ Calculators &rarr;</button>
+                <button type="button" class="landing-cta-link-btn" id="about-cta-portfolio-btn">
+                  Open Personal Portfolio <span class="link-arrow">&rarr;</span>
                 </button>
               </div>
             </div>
@@ -367,47 +364,41 @@ export class HeroLandingGate {
   }
 
   attachEvents() {
-    // Top Nav: Member Login Button
-    const navLoginBtn = this.container.querySelector('#gate-nav-login-btn');
-    if (navLoginBtn) {
-      navLoginBtn.addEventListener('click', () => {
-        if (this.app && this.app.authModal) this.app.authModal.open('signin');
+    // Top Nav: Logo Click -> Return to Calculators
+    const navLogo = this.container.querySelector('#about-nav-logo');
+    if (navLogo) {
+      navLogo.addEventListener('click', () => {
+        this.hideAbout();
+        window.location.hash = '#/emi';
       });
     }
 
-    // Top Nav: Continue as Guest Button
-    const navGuestBtn = this.container.querySelector('#gate-nav-guest-btn');
-    if (navGuestBtn) {
-      navGuestBtn.addEventListener('click', () => {
-        const isAuth = auth.isAuthenticated();
-        const guestAccess = sessionStorage.getItem('finculator_guest_access') === 'true';
-        if (isAuth || guestAccess) {
-          this.unlock();
-        } else {
-          this.dismissGuest();
-        }
+    // Top Nav: Explore Calculators Button
+    const navCalcBtn = this.container.querySelector('#about-nav-calc-btn');
+    if (navCalcBtn) {
+      navCalcBtn.addEventListener('click', () => {
+        this.hideAbout();
+        window.location.hash = '#/emi';
       });
     }
 
-    // Hero: Get Started Free Button
-    const heroGetStarted = this.container.querySelector('#hero-btn-get-started');
-    if (heroGetStarted) {
-      heroGetStarted.addEventListener('click', () => {
-        if (this.app && this.app.authModal) this.app.authModal.open('signup');
+    // Hero: Explore Calculators Button
+    const heroCalcBtn = this.container.querySelector('#about-hero-btn-calc');
+    if (heroCalcBtn) {
+      heroCalcBtn.addEventListener('click', () => {
+        this.hideAbout();
+        window.location.hash = '#/emi';
       });
     }
 
-    // Hero: Continue as Guest Button
-    const guestBtn = this.container.querySelector('#gate-btn-guest');
-    if (guestBtn) {
-      guestBtn.addEventListener('click', () => {
-        const isAuth = auth.isAuthenticated();
-        const guestAccess = sessionStorage.getItem('finculator_guest_access') === 'true';
-        if (isAuth || guestAccess) {
-          this.unlock();
-        } else {
-          this.dismissGuest();
-        }
+    // Hero: Open Personal Portfolio Button
+    const heroPortfolioBtn = this.container.querySelector('#about-hero-btn-portfolio');
+    if (heroPortfolioBtn) {
+      heroPortfolioBtn.addEventListener('click', () => {
+        this.hideAbout();
+        setTimeout(() => {
+          if (this.app && this.app.portfolio) this.app.portfolio.toggle(true);
+        }, 150);
       });
     }
 
@@ -415,32 +406,34 @@ export class HeroLandingGate {
     const serviceCards = this.container.querySelectorAll('.landing-service-card');
     serviceCards.forEach(card => {
       card.addEventListener('click', () => {
-        const route = card.getAttribute('data-route');
-        this.dismissGuest();
-        if (this.app) {
-          if (route === 'portfolio') {
-            setTimeout(() => {
-              if (this.app.portfolio) this.app.portfolio.toggle(true);
-            }, 150);
-          } else if (this.app.navigateTo) {
-            this.app.navigateTo(route);
-          }
+        const route = card.getAttribute('data-route') || 'emi';
+        this.hideAbout();
+        if (route === 'portfolio') {
+          setTimeout(() => {
+            if (this.app && this.app.portfolio) this.app.portfolio.toggle(true);
+          }, 150);
+        } else {
+          window.location.hash = `#/${route}`;
         }
       });
     });
 
     // Final CTA Actions
-    const ctaSignup = this.container.querySelector('#landing-cta-signup-btn');
-    if (ctaSignup) {
-      ctaSignup.addEventListener('click', () => {
-        if (this.app && this.app.authModal) this.app.authModal.open('signup');
+    const ctaCalcBtn = this.container.querySelector('#about-cta-calc-btn');
+    if (ctaCalcBtn) {
+      ctaCalcBtn.addEventListener('click', () => {
+        this.hideAbout();
+        window.location.hash = '#/emi';
       });
     }
 
-    const ctaGuest = this.container.querySelector('#landing-cta-guest-btn');
-    if (ctaGuest) {
-      ctaGuest.addEventListener('click', () => {
-        this.dismissGuest();
+    const ctaPortfolioBtn = this.container.querySelector('#about-cta-portfolio-btn');
+    if (ctaPortfolioBtn) {
+      ctaPortfolioBtn.addEventListener('click', () => {
+        this.hideAbout();
+        setTimeout(() => {
+          if (this.app && this.app.portfolio) this.app.portfolio.toggle(true);
+        }, 150);
       });
     }
 
@@ -617,7 +610,7 @@ export class HeroLandingGate {
     });
 
     // 6. Interactive Category Filter Switcher
-    const filterBtns = this.container.querySelectorAll('.service-filter-btn');
+    const filterBtns = this.container.querySelectorAll('.service-filter-btn, .filter-pill');
     const serviceCards = this.container.querySelectorAll('.landing-service-card');
 
     filterBtns.forEach(btn => {
@@ -625,7 +618,7 @@ export class HeroLandingGate {
         filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        const filter = btn.getAttribute('data-target');
+        const filter = btn.getAttribute('data-target') || btn.getAttribute('data-filter');
         serviceCards.forEach(card => {
           const category = card.getAttribute('data-category');
           if (filter === 'all' || category === filter) {
@@ -640,49 +633,45 @@ export class HeroLandingGate {
     });
   }
 
-  dismissGuest() {
-    sessionStorage.setItem('finculator_guest_access', 'true');
-    this.unlock();
-    if (this.app && typeof this.app.updateHomeButtonVisibility === 'function') {
-      this.app.updateHomeButtonVisibility();
-    }
-    if (this.app && this.app.showToast) {
-      this.app.showToast('Guest mode active: Calculate freely across all engines! Log in anytime to save your portfolio.');
-    }
-  }
-
-  syncAuthState() {
-    const isAuth = auth.isAuthenticated();
-    const guestAccess = sessionStorage.getItem('finculator_guest_access') === 'true';
-    const overlay = this.container.querySelector('#auth-landing-gate-overlay');
-    if (!overlay) return;
-
-    if (isAuth || guestAccess) {
-      this.unlock();
-    } else {
-      this.lock();
-    }
-  }
-
-  lock() {
+  showAbout() {
     const overlay = this.container.querySelector('#auth-landing-gate-overlay');
     if (overlay) {
       overlay.classList.remove('unlocked');
+      overlay.scrollTop = 0;
     }
     document.body.classList.add('gate-locked');
-    if (this.app && typeof this.app.updateHomeButtonVisibility === 'function') {
-      this.app.updateHomeButtonVisibility();
-    }
   }
 
-  unlock() {
+  hideAbout() {
     const overlay = this.container.querySelector('#auth-landing-gate-overlay');
     if (overlay) {
       overlay.classList.add('unlocked');
     }
     document.body.classList.remove('gate-locked');
-    if (this.app && typeof this.app.updateHomeButtonVisibility === 'function') {
-      this.app.updateHomeButtonVisibility();
+  }
+
+  showLanding() {
+    this.showAbout();
+  }
+
+  dismissGuest() {
+    this.hideAbout();
+  }
+
+  syncAuthState() {
+    const rawHash = window.location.hash.slice(2) || '';
+    if (rawHash === 'about' || rawHash === 'about-us') {
+      this.showAbout();
+    } else {
+      this.hideAbout();
     }
+  }
+
+  lock() {
+    this.showAbout();
+  }
+
+  unlock() {
+    this.hideAbout();
   }
 }

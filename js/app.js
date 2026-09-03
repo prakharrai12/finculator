@@ -58,7 +58,7 @@ class FinculatorApp {
 
     this.init();
     this.initPortfolioButton();
-    this.initHomeButton();
+    this.initAboutButton();
   }
 
   initPortfolioButton() {
@@ -69,44 +69,23 @@ class FinculatorApp {
     }
   }
 
-  initHomeButton() {
-    const homeBtn = document.getElementById('btn-header-home');
-    if (homeBtn) {
-      homeBtn.addEventListener('click', (e) => {
+  initAboutButton() {
+    const aboutBtn = document.getElementById('btn-header-about') || document.getElementById('btn-header-home');
+    if (aboutBtn) {
+      aboutBtn.addEventListener('click', (e) => {
         e.preventDefault();
         if (this.portfolio && this.portfolio.isOpen) {
           this.portfolio.toggle(false);
         }
-
-        const isAuth = auth.isAuthenticated();
-        const isGuest = sessionStorage.getItem('finculator_guest_access') === 'true';
-
-        // Prompt guest users with confirmation modal before leaving workspace
-        if (isGuest && !isAuth) {
-          if (this.guestConfirmModal) {
-            this.guestConfirmModal.open();
-          } else if (this.landingGate) {
-            this.landingGate.showLanding();
-          }
-        } else if (this.landingGate) {
-          this.landingGate.showLanding();
-        }
+        window.location.hash = '#/about';
       });
     }
   }
 
   updateHomeButtonVisibility() {
-    const homeBtn = document.getElementById('btn-header-home');
-    if (!homeBtn) return;
-    const isAuth = auth.isAuthenticated();
-    const isGuest = sessionStorage.getItem('finculator_guest_access') === 'true';
-
-    // Home icon appears ONLY for active guest sessions; hidden for logged-in accounts
-    if (isGuest && !isAuth) {
-      homeBtn.style.display = 'inline-flex';
-    } else {
-      homeBtn.style.display = 'none';
-    }
+    const aboutBtn = document.getElementById('btn-header-about') || document.getElementById('btn-header-home');
+    if (!aboutBtn) return;
+    aboutBtn.style.display = 'inline-flex';
   }
 
   initGuestExitWarning() {
@@ -216,6 +195,25 @@ class FinculatorApp {
   handleRoute() {
     const rawHash = window.location.hash.slice(2) || 'emi';
 
+    if (rawHash === 'about' || rawHash === 'about-us') {
+      if (this.landingGate) {
+        this.landingGate.showAbout();
+      }
+      this.navLinks.forEach((link) => {
+        if (link.getAttribute('data-route') === 'about') {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      return;
+    } else {
+      if (this.landingGate) {
+        this.landingGate.hideAbout();
+      }
+    }
+
     if (rawHash === 'login' || rawHash === 'signin') {
       if (this.authModal) this.authModal.open('signin');
       return;
@@ -260,6 +258,14 @@ class FinculatorApp {
 
     this.renderCurrentCalculator();
     window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  navigateTo(route) {
+    if (route === 'about') {
+      window.location.hash = '#/about';
+    } else {
+      window.location.hash = `#/${route}`;
+    }
   }
 
   renderCurrentCalculator() {

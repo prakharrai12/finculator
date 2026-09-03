@@ -339,7 +339,7 @@ export class AuthModal {
       authWrap.className = 'header-auth-wrapper';
       authWrap.id = 'header-auth-wrapper';
 
-      const homeBtn = headerActions.querySelector('#btn-header-home');
+      const homeBtn = headerActions.querySelector('#btn-header-about') || headerActions.querySelector('#btn-header-home');
       if (homeBtn && homeBtn.nextSibling) {
         headerActions.insertBefore(authWrap, homeBtn.nextSibling);
       } else {
@@ -367,7 +367,7 @@ export class AuthModal {
           </button>
           <button type="button" class="header-dropdown-item logout-item" id="btn-hdr-logout">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            Sign Out & Lock
+            Sign Out
           </button>
         </div>
       `;
@@ -394,10 +394,7 @@ export class AuthModal {
         dropdown.classList.remove('active');
         sessionStorage.removeItem('finculator_guest_access');
         auth.logout();
-        if (this.app && this.app.landingGate) {
-          this.app.landingGate.lock();
-        }
-        this.showToast('Signed out. Website locked.');
+        this.showToast('Signed out successfully.');
       });
     } else {
       authWrap.innerHTML = `

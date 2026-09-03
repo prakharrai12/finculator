@@ -2,7 +2,7 @@ import urllib.request
 import json
 import time
 
-BASE_URL = "http://localhost:3000"
+BASE_URL = "http://127.0.0.1:3000"
 
 def run_tests():
     print("=" * 60)
@@ -111,9 +111,9 @@ def run_tests():
     with urllib.request.urlopen(req, timeout=5) as resp:
         html = resp.read().decode('utf-8')
         assert 'id="site-footer"' not in html, "Site footer was not removed from post-login workspace"
-        assert 'id="btn-header-home"' in html, "Home icon button missing in navbar"
+        assert ('id="btn-header-about"' in html or 'id="btn-header-home"' in html), "About/Home button missing in navbar"
         assert 'id="header-auth-wrapper"' in html, "Header auth wrapper missing in navbar"
-        print("[PASS 200] Post-Login Workspace Cleaned: Footer removed from workspace, Home & Profile buttons active")
+        print("[PASS 200] Post-Login Workspace Cleaned: Footer removed from workspace, About & Profile buttons active")
 
     # Verify shared Footer component
     with open("js/components/footer.js", "r", encoding="utf-8") as f:
@@ -212,8 +212,8 @@ def run_tests():
         main_css = f.read()
         assert '.guest-confirm-backdrop' in main_css, "guest-confirm-backdrop styles missing"
         assert '.guest-confirm-card' in main_css, "guest-confirm-card styles missing"
-        assert 'display: none' in main_css, "header-home-btn hidden by default missing"
-        print("[PASS 200] css/main.css Verified: Dark obsidian modal styles and hidden-by-default home button active")
+        assert ('.header-about-btn' in main_css or '.header-home-btn' in main_css), "header button styles missing"
+        print("[PASS 200] css/main.css Verified: Dark obsidian modal styles and about/home button active")
 
     with open("js/app.js", "r", encoding="utf-8") as f:
         app_js = f.read()

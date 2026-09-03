@@ -243,29 +243,37 @@ p, span, label, input, select, button {
   gap: 0.75rem;
 }
 
-/* Return to Home button - displayed ONLY for active guest sessions */
+/* Top Navbar About Us & Platform Overview button */
+.header-about-btn,
 .header-home-btn {
-  display: none; /* Controlled dynamically by FinculatorApp based on guest session */
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
+  gap: 0.35rem;
   height: 34px;
-  border-radius: 8px;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  background: #FFFFFF;
-  color: #475569;
+  padding: 0 0.75rem;
+  border-radius: var(--radius);
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-medium);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
+.header-about-btn:hover,
 .header-home-btn:hover {
-  color: #0284C7;
-  border-color: #38BDF8;
-  background: #F0F9FF;
+  background: var(--bg-subtle);
+  border-color: var(--brand-navy-dark);
+  color: var(--brand-blue);
   transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(14, 165, 233, 0.15);
 }
 
+.header-about-btn:active,
 .header-home-btn:active {
   transform: translateY(0);
 }
@@ -489,29 +497,6 @@ p, span, label, input, select, button {
   }
 }
 
-/* Top Navbar Home Icon Button */
-.header-home-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  border-radius: var(--radius);
-  background: var(--bg-surface);
-  border: 1.5px solid var(--border-medium);
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  flex-shrink: 0;
-}
-
-.header-home-btn:hover {
-  background: var(--bg-subtle);
-  border-color: var(--brand-navy-dark);
-  color: var(--brand-blue);
-  transform: translateY(-1px);
-}
 
 /* ==========================================================================
    OFFICIAL INSTITUTIONAL FULL-BLEED APP FOOTER
