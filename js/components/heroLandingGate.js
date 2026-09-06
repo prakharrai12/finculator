@@ -57,10 +57,6 @@ export class HeroLandingGate {
           </div>
 
           <div class="landing-nav-actions">
-            <div class="landing-security-pill">
-              <span class="landing-security-dot"></span>
-              256-Bit TLS Security
-            </div>
             <button type="button" class="btn btn-primary btn-sm landing-nav-calc-btn" id="about-nav-calc-btn">
               Explore Calculators &rarr;
             </button>

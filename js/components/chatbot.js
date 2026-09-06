@@ -355,16 +355,49 @@ export class FinBot {
     }
   }
 
+  checkAndIncrementUsage() {
+    const today = new Date().toISOString().split('T')[0];
+    const key = `finbot_usage_${today}`;
+    const limit = 50; // Daily request spend ceiling
+    let count = 0;
+    try {
+      count = parseInt(localStorage.getItem(key) || '0', 10);
+    } catch {}
+
+    if (count >= limit) {
+      return { allowed: false, count, limit };
+    }
+
+    count += 1;
+    try {
+      localStorage.setItem(key, count.toString());
+    } catch {}
+
+    const warning = count >= Math.floor(limit * 0.8);
+    return { allowed: true, count, limit, warning };
+  }
+
   async queryAI(prompt) {
+    if (this.settings.provider === 'local_rag') {
+      return this.generateRAGResponse(prompt);
+    }
+
+    // Enforce daily spend/quota ceiling before calling external AI providers
+    const usage = this.checkAndIncrementUsage();
+    if (!usage.allowed) {
+      throw new Error(`Daily AI usage ceiling reached (${usage.limit} queries/day). Switched to offline Financial RAG to protect API spend.`);
+    }
+
+    if (usage.warning) {
+      console.warn(`[FinBot Guardrail] Warning: ${usage.count}/${usage.limit} daily AI queries consumed.`);
+    }
+
     // Check if custom provider is selected
     if (this.settings.provider === 'gemini' && this.settings.apiKey) {
       return await this.queryGemini(prompt, this.settings.apiKey);
     }
     if (this.settings.provider === 'groq' && this.settings.apiKey) {
       return await this.queryGroq(prompt, this.settings.apiKey);
-    }
-    if (this.settings.provider === 'local_rag') {
-      return this.generateRAGResponse(prompt);
     }
 
     // Default: Query Free Cloud AI Endpoint (Pollinations AI)
@@ -581,10 +614,24 @@ What specific financial goal or calculation would you like to explore?
 [NAVIGATE:emi|Loan EMI] [NAVIGATE:investments|SIP Calculator] [NAVIGATE:taxes|Tax Calculator] [NAVIGATE:fire|FIRE Planner]`;
   }
 
+  escapeRaw(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   formatMarkdown(text) {
     if (!text) return '';
 
-    let html = text
+    // Step 1: Escape raw HTML to neutralize any script tags or event handlers
+    const escaped = this.escapeRaw(text);
+
+    // Step 2: Apply markdown formatting on safe escaped text
+    let html = escaped
       // Replace [NAVIGATE:route|Label] with interactive buttons
       .replace(/\[NAVIGATE:([a-zA-Z0-9_-]+)\|([^\]]+)\]/g, (match, route, label) => {
         return `<button class="finbot-action-btn" data-route="${route}">

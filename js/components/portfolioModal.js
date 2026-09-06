@@ -3,7 +3,7 @@
  * Clean, Unbiased, Real-Time Personal Financial Statement (PFS) & Wealth Portfolio
  */
 
-import { formatCurrency, formatPercent, getGlobalCurrency } from '../utils/formatters.js';
+import { formatCurrency, formatPercent, getGlobalCurrency, escapeHTML } from '../utils/formatters.js';
 import { getStoredState, setStoredState } from '../utils/storage.js';
 import { renderDonutChart } from './charts.js';
 import { DEFAULT_PORTFOLIO_STATE, calculatePortfolioMetrics } from '../math/portfolioMath.js';
@@ -592,7 +592,7 @@ export class PortfolioModal {
   renderHoldingsRows(holdings) {
     return holdings.map((h, i) => `
       <tr data-index="${i}">
-        <td><input type="text" class="portfolio-table-input pf-h-name" value="${h.name || ''}" placeholder="e.g. Nifty 50 Index" /></td>
+        <td><input type="text" class="portfolio-table-input pf-h-name" value="${escapeHTML(h.name || '')}" placeholder="e.g. Nifty 50 Index" /></td>
         <td>
           <select class="portfolio-table-input pf-h-type">
             <option value="Mutual Fund" ${h.type === 'Mutual Fund' ? 'selected' : ''}>Mutual Fund</option>
@@ -650,7 +650,7 @@ export class PortfolioModal {
       const pct = g.targetAmount > 0 ? Math.min(100, Math.round(((g.currentAmount || 0) / g.targetAmount) * 100)) : 0;
       return `
         <tr data-index="${i}">
-          <td><input type="text" class="portfolio-table-input pf-g-title" value="${g.title || ''}" placeholder="e.g. Home Down Payment" /></td>
+          <td><input type="text" class="portfolio-table-input pf-g-title" value="${escapeHTML(g.title || '')}" placeholder="e.g. Home Down Payment" /></td>
           <td>
             <select class="portfolio-table-input pf-g-type">
               <option value="Short-Term" ${g.type === 'Short-Term' ? 'selected' : ''}>Short-Term</option>

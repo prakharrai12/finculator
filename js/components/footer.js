@@ -187,7 +187,10 @@ export class FooterComponent {
         try {
           const resp = await fetch('/api/newsletter/subscribe', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Finculator-CSRF': '1'
+            },
             body: JSON.stringify({ email })
           });
 

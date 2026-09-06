@@ -82,7 +82,10 @@ class AuthService {
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Finculator-CSRF': '1'
+        },
         body: JSON.stringify({ name, email, password })
       });
       const data = await res.json();
@@ -108,7 +111,10 @@ class AuthService {
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Finculator-CSRF': '1'
+        },
         body: JSON.stringify({ email, password })
       });
       const data = await res.json();
@@ -133,7 +139,10 @@ class AuthService {
     try {
       const res = await fetch('/api/auth/send-credentials', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Finculator-CSRF': '1'
+        },
         body: JSON.stringify({ email })
       });
       const data = await res.json();
@@ -156,7 +165,10 @@ class AuthService {
     try {
       const res = await fetch('/api/auth/forgot-password', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Finculator-CSRF': '1'
+        },
         body: JSON.stringify({ email })
       });
       const data = await res.json();

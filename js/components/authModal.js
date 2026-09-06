@@ -5,6 +5,7 @@
  */
 
 import { auth } from '../utils/auth.js';
+import { escapeHTML } from '../utils/formatters.js';
 
 export class AuthModal {
   constructor(app) {
@@ -348,18 +349,21 @@ export class AuthModal {
     }
 
     if (user && user.email) {
-      const initials = (user.name || user.email).substring(0, 2).toUpperCase();
+      const rawName = user.name || user.email.split('@')[0];
+      const safeName = escapeHTML(rawName);
+      const safeEmail = escapeHTML(user.email);
+      const initials = escapeHTML((user.name || user.email).substring(0, 2).toUpperCase());
       authWrap.innerHTML = `
         <button type="button" class="header-user-btn" id="header-user-menu-btn" title="Account Menu">
           <div class="header-user-avatar">${initials}</div>
-          <span class="header-user-name">${user.name || user.email.split('@')[0]}</span>
+          <span class="header-user-name">${safeName}</span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0F172A" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
 
         <div class="header-auth-dropdown" id="header-auth-dropdown">
           <div style="padding: 0.5rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 0.35rem;">
-            <div style="font-size:0.85rem; font-weight:700; color:#FFFFFF;">${user.name || 'Investor'}</div>
-            <div style="font-size:0.72rem; color:#94A3B8; overflow:hidden; text-overflow:ellipsis;">${user.email}</div>
+            <div style="font-size:0.85rem; font-weight:700; color:#FFFFFF;">${safeName}</div>
+            <div style="font-size:0.72rem; color:#94A3B8; overflow:hidden; text-overflow:ellipsis;">${safeEmail}</div>
           </div>
           <button type="button" class="header-dropdown-item" id="btn-hdr-open-portfolio">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>

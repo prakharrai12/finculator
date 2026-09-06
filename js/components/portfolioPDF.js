@@ -46,6 +46,12 @@ export function generatePortfolioPDF(portfolioState) {
       margin: 12mm 15mm;
     }
 
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -535,4 +541,10 @@ export function generatePortfolioPDF(portfolioState) {
   printWindow.document.open();
   printWindow.document.write(htmlContent);
   printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => {
+    try {
+      printWindow.print();
+    } catch (_) {}
+  }, 350);
 }
