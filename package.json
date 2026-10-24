@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "test:server": "python tests/test_auth_and_system.py"
+    "test:server": "python tests/test_auth_and_system.py",
+    "test:e2e": "node scripts/verify_ui_e2e.js"
   },
   "keywords": [
     "finance",
