@@ -1,6 +1,12 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/api/ai/query",
+      "destination": "/api/ai"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
