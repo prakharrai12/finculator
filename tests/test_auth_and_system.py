@@ -24,6 +24,22 @@ def run_tests():
     print("FINCULATOR PHASE 1 SECURITY & SYSTEM VERIFICATION TEST SUITE")
     print("=" * 70)
     
+    # 0. Wait for server readiness (up to 10 seconds)
+    print("\n[INIT] Connecting to development server...")
+    server_ready = False
+    for attempt in range(10):
+        try:
+            req = urllib.request.Request(f"{BASE_URL}/", headers={'User-Agent': 'TestRunner'})
+            with urllib.request.urlopen(req, timeout=2) as resp:
+                if resp.status == 200:
+                    server_ready = True
+                    print(f"[INIT] Server is ready on {BASE_URL} (attempt {attempt + 1})")
+                    break
+        except Exception:
+            time.sleep(1)
+    if not server_ready:
+        sys.exit(f"FATAL: Development server at {BASE_URL} is not responding.")
+
     # 1. Static asset tests & Security Headers
     assets = [
         "/",
