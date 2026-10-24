@@ -27,20 +27,21 @@ function isUserAuthenticated() {
  */
 export function getStoredState(calculatorId, defaultState = {}) {
   try {
+    const cloneDefault = JSON.parse(JSON.stringify(defaultState));
     if (isUserAuthenticated()) {
       const raw = localStorage.getItem(AUTH_PREFIX + calculatorId);
-      if (!raw) return defaultState;
+      if (!raw) return cloneDefault;
       const parsed = JSON.parse(raw);
-      return { ...defaultState, ...parsed };
+      return { ...cloneDefault, ...parsed };
     } else {
       const raw = sessionStorage.getItem(GUEST_PREFIX + calculatorId);
-      if (!raw) return defaultState;
+      if (!raw) return cloneDefault;
       const parsed = JSON.parse(raw);
-      return { ...defaultState, ...parsed };
+      return { ...cloneDefault, ...parsed };
     }
   } catch (e) {
     console.warn('Could not load stored state', e);
-    return defaultState;
+    return JSON.parse(JSON.stringify(defaultState));
   }
 }
 

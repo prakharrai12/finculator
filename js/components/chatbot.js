@@ -12,8 +12,7 @@ export class FinBot {
     this.isLoading = false;
 
     this.settings = {
-      provider: localStorage.getItem('finbot_provider') || 'free_ai', // 'free_ai' | 'gemini' | 'groq' | 'local_rag'
-      apiKey: localStorage.getItem('finbot_api_key') || ''
+      provider: localStorage.getItem('finbot_provider') || 'ai_proxy' // 'ai_proxy' | 'local_rag'
     };
 
     this.initDOM();
@@ -78,20 +77,14 @@ export class FinBot {
         </div>
       </div>
 
-      <!-- Optional Settings Drawer -->
+      <!-- Settings Drawer -->
       <div class="finbot-settings-drawer hidden" id="finbot-settings-drawer">
         <div class="finbot-setting-row">
-          <label class="finbot-setting-label">AI Engine Provider</label>
+          <label class="finbot-setting-label">AI Engine Mode</label>
           <select class="finbot-setting-input" id="finbot-select-provider">
-            <option value="free_ai" ${this.settings.provider === 'free_ai' ? 'selected' : ''}>Free Cloud AI Inference (Zero-Key)</option>
-            <option value="gemini" ${this.settings.provider === 'gemini' ? 'selected' : ''}>Google Gemini 1.5 Flash (Custom Key)</option>
-            <option value="groq" ${this.settings.provider === 'groq' ? 'selected' : ''}>Groq Llama 3.3 (Custom Key)</option>
-            <option value="local_rag" ${this.settings.provider === 'local_rag' ? 'selected' : ''}>Instant Financial RAG Knowledge Engine</option>
+            <option value="ai_proxy" ${this.settings.provider === 'ai_proxy' ? 'selected' : ''}>FinBot Cloud AI (Serverless Gemini 1.5)</option>
+            <option value="local_rag" ${this.settings.provider === 'local_rag' ? 'selected' : ''}>Instant Financial RAG Engine (Offline / Zero-Network)</option>
           </select>
-        </div>
-        <div class="finbot-setting-row" id="finbot-apikey-row" style="${this.settings.provider === 'free_ai' || this.settings.provider === 'local_rag' ? 'display:none;' : ''}">
-          <label class="finbot-setting-label">API Key (Stored locally)</label>
-          <input type="password" class="finbot-setting-input" id="finbot-input-apikey" placeholder="Enter API Key..." value="${this.settings.apiKey}" />
         </div>
         <button class="btn btn-secondary btn-sm" id="finbot-btn-save-settings" style="align-self:flex-end;">Save Settings</button>
       </div>
@@ -180,17 +173,9 @@ export class FinBot {
     });
 
     const providerSelect = this.window.querySelector('#finbot-select-provider');
-    const apikeyRow = this.window.querySelector('#finbot-apikey-row');
-    providerSelect.addEventListener('change', (e) => {
-      const val = e.target.value;
-      apikeyRow.style.display = (val === 'free_ai' || val === 'local_rag') ? 'none' : 'flex';
-    });
-
     this.window.querySelector('#finbot-btn-save-settings').addEventListener('click', () => {
       this.settings.provider = providerSelect.value;
-      this.settings.apiKey = this.window.querySelector('#finbot-input-apikey').value.trim();
       localStorage.setItem('finbot_provider', this.settings.provider);
-      localStorage.setItem('finbot_api_key', this.settings.apiKey);
       this.settingsDrawer.classList.add('hidden');
       this.updateModelBadge();
     });
@@ -257,10 +242,8 @@ export class FinBot {
   updateModelBadge() {
     const badge = this.window.querySelector('#finbot-model-badge');
     if (!badge) return;
-    if (this.settings.provider === 'gemini') badge.textContent = 'Gemini 1.5 Flash';
-    else if (this.settings.provider === 'groq') badge.textContent = 'Groq Llama 3';
-    else if (this.settings.provider === 'local_rag') badge.textContent = 'Financial RAG';
-    else badge.textContent = 'Free AI Cloud';
+    if (this.settings.provider === 'local_rag') badge.textContent = 'Offline RAG';
+    else badge.textContent = 'Proxied AI';
   }
 
   initWelcomeMessage() {
@@ -382,110 +365,40 @@ export class FinBot {
       return this.generateRAGResponse(prompt);
     }
 
-    // Enforce daily spend/quota ceiling before calling external AI providers
-    const usage = this.checkAndIncrementUsage();
-    if (!usage.allowed) {
-      throw new Error(`Daily AI usage ceiling reached (${usage.limit} queries/day). Switched to offline Financial RAG to protect API spend.`);
-    }
+    // Default: Query Serverless AI Proxy with fallback to local RAG
+    return await this.queryAIProxy(prompt);
+  }
 
-    if (usage.warning) {
-      console.warn(`[FinBot Guardrail] Warning: ${usage.count}/${usage.limit} daily AI queries consumed.`);
-    }
-
-    // Check if custom provider is selected
-    if (this.settings.provider === 'gemini' && this.settings.apiKey) {
-      return await this.queryGemini(prompt, this.settings.apiKey);
-    }
-    if (this.settings.provider === 'groq' && this.settings.apiKey) {
-      return await this.queryGroq(prompt, this.settings.apiKey);
-    }
-
-    // Default: Query Free Cloud AI Endpoint (Pollinations AI)
-    const systemPrompt = `You are FinBot, an institutional financial advisor on the Finculator app.
-You provide precise, mathematically accurate financial advice for Indian professionals (₹200k/month baseline, tax slabs FY 2024-25/2025-26, SIPs, Home Loans, FIRE).
-Available Finculator Tools to suggest:
-- EMI Calculator (route: 'emi')
-- Loan Prepayment & Amortization (route: 'prepayment')
-- Loan Comparison (route: 'comparator')
-- Loan Eligibility (route: 'eligibility')
-- Credit Card Debt (route: 'credit-card')
-- Wealth & SIP Suite (route: 'investments')
-- Savings & FD/PPF (route: 'savings')
-- Tax & Business Suite (route: 'taxes')
-- FIRE Engine (route: 'fire')
-- Buy vs Rent (route: 'buy-vs-rent')
-- Net Worth (route: 'net-worth')
-- 50/30/20 Budget (route: 'budget')
-- Inflation Adjuster (route: 'inflation')
-
-Whenever relevant, format navigation links as [NAVIGATE:route_name|Button Label]. Keep responses structured, concise, and professional with bullet points.`;
-
+  async queryAIProxy(prompt) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 9000);
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(systemPrompt + "\nUser Query: " + prompt)}`, {
-      method: 'GET',
-      signal: controller.signal
-    });
+    try {
+      const res = await fetch('/api/ai/query', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Finculator-CSRF': '1'
+        },
+        body: JSON.stringify({ prompt: prompt.slice(0, 1000) }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
 
-    clearTimeout(timeoutId);
-
-    if (!res.ok) {
-      throw new Error(`API response status ${res.status}`);
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success && data.response) {
+        return data.response;
+      }
+      if (data.offlineFallback) {
+        console.warn('AI Proxy offline fallback:', data.error);
+        return this.generateRAGResponse(prompt);
+      }
+      throw new Error(data.error || 'Server error');
+    } catch (err) {
+      clearTimeout(timeoutId);
+      console.warn('AI proxy network error, falling back to local financial RAG engine:', err.message);
+      return this.generateRAGResponse(prompt);
     }
-
-    const text = await res.text();
-    if (!text || text.length < 5) {
-      throw new Error('Empty API response');
-    }
-
-    return text;
-  }
-
-  async queryGemini(prompt, apiKey) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: 'user',
-            parts: [
-              {
-                text: `You are FinBot, the financial assistant on Finculator. Answer concisely. Suggest Finculator routes formatted as [NAVIGATE:route|Label]. Query: ${prompt}`
-              }
-            ]
-          }
-        ]
-      })
-    });
-
-    if (!res.ok) throw new Error('Gemini API Error');
-    const data = await res.json();
-    return data.candidates[0].content.parts[0].text;
-  }
-
-  async queryGroq(prompt, apiKey) {
-    const url = 'https://api.groq.com/openai/v1/chat/completions';
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          { role: 'system', content: 'You are FinBot on Finculator. Answer accurately. Include [NAVIGATE:route|Label] for calculator tools.' },
-          { role: 'user', content: prompt }
-        ]
-      })
-    });
-
-    if (!res.ok) throw new Error('Groq API Error');
-    const data = await res.json();
-    return data.choices[0].message.content;
   }
 
   /**
@@ -627,14 +540,28 @@ What specific financial goal or calculation would you like to explore?
   formatMarkdown(text) {
     if (!text) return '';
 
-    // Step 1: Escape raw HTML to neutralize any script tags or event handlers
+    // Step 1: Escape raw HTML to neutralize any script tags, event handlers, or injections
     const escaped = this.escapeRaw(text);
+
+    // Valid navigation route identifiers allowlist
+    const VALID_ROUTES = new Set([
+      'emi', 'prepayment', 'comparator', 'eligibility', 'credit-card',
+      'savings-compound', 'savings-simple', 'savings-fd', 'savings-rd', 'savings-ppf', 'savings-goal',
+      'invest-sip', 'invest-lump', 'invest-combined', 'invest-stepup', 'invest-cagr', 'invest-returns',
+      'tax-income', 'tax-gst', 'tax-salary', 'tax-margin', 'tax-breakeven',
+      'net-worth', 'budget', 'buy-vs-rent', 'inflation', 'fire',
+      'portfolio', 'about', 'login', 'taxes', 'investments', 'savings'
+    ]);
 
     // Step 2: Apply markdown formatting on safe escaped text
     let html = escaped
-      // Replace [NAVIGATE:route|Label] with interactive buttons
+      // Replace [NAVIGATE:route|Label] with interactive buttons strictly if route is in allowlist
       .replace(/\[NAVIGATE:([a-zA-Z0-9_-]+)\|([^\]]+)\]/g, (match, route, label) => {
-        return `<button class="finbot-action-btn" data-route="${route}">
+        const cleanRoute = route.toLowerCase();
+        if (!VALID_ROUTES.has(cleanRoute)) {
+          return label;
+        }
+        return `<button class="finbot-action-btn" data-route="${cleanRoute}">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
           ${label}
         </button>`;

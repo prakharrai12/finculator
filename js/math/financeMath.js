@@ -115,7 +115,7 @@ export function generateAmortizationSchedule(
     const interestForMonth = rAnnual === 0 ? 0 : balance * r;
     let scheduledPrincipal = scheduledEMI - interestForMonth;
 
-    if (scheduledPrincipal > balance) {
+    if (scheduledPrincipal > balance || (month === n && extraMonthly === 0 && extraAnnual === 0)) {
       scheduledPrincipal = balance;
     }
 
@@ -132,7 +132,10 @@ export function generateAmortizationSchedule(
     const totalPrincipalThisMonth = scheduledPrincipal + extraForThisMonth;
     const actualEMI = scheduledPrincipal + interestForMonth;
     const totalPaidThisMonth = actualEMI + extraForThisMonth;
-    const closingBalance = Math.max(0, openingBalance - totalPrincipalThisMonth);
+    let closingBalance = Math.max(0, openingBalance - totalPrincipalThisMonth);
+    if (closingBalance < 0.01) {
+      closingBalance = 0;
+    }
 
     monthlySchedule.push({
       month,
@@ -292,13 +295,14 @@ export function calculateCreditCardPayoff(balance, aprPercent, minDuePercent = 5
 
   if (P === 0) {
     return {
-      minPlan: { months: 0, totalPaid: 0, totalInterest: 0, schedule: [] },
-      fixedPlan: { months: 0, totalPaid: 0, totalInterest: 0, schedule: [] },
-      savings: { interestSaved: 0, monthsSaved: 0 }
+      minPlan: { months: 0, totalPaid: 0, totalInterest: 0, initialMonthly: 0, isPayoffPossible: true, schedule: [] },
+      fixedPlan: { months: 0, totalPaid: 0, totalInterest: 0, monthlyPayment: 0, isPayoffPossible: true, schedule: [] },
+      savings: { interestSaved: 0, monthsSaved: 0, yearsSaved: 0 }
     };
   }
 
   const r = (apr / 100) / 12;
+  const initialMonthlyInterest = P * r;
 
   // Plan A: Minimum payment (e.g. 5% or $25 minimum)
   let balMin = P;
@@ -306,39 +310,55 @@ export function calculateCreditCardPayoff(balance, aprPercent, minDuePercent = 5
   let intMin = 0;
   let paidMin = 0;
   const schedMin = [];
+  let isMinPossible = true;
 
-  while (balMin > 1 && monthsMin < 600) {
-    monthsMin++;
-    const intForMonth = balMin * r;
-    let pmt = Math.max(25, balMin * minPct);
-    if (pmt > balMin + intForMonth) {
-      pmt = balMin + intForMonth;
+  const initialMinDue = Math.max(25, P * minPct);
+  if (apr > 0 && initialMinDue <= initialMonthlyInterest) {
+    isMinPossible = false;
+  }
+
+  if (isMinPossible) {
+    while (balMin > 1 && monthsMin < 600) {
+      monthsMin++;
+      const intForMonth = balMin * r;
+      let pmt = Math.max(25, balMin * minPct);
+      if (pmt <= intForMonth && balMin > 1) {
+        isMinPossible = false;
+        break;
+      }
+      if (pmt > balMin + intForMonth) {
+        pmt = balMin + intForMonth;
+      }
+      const princPaid = pmt - intForMonth;
+      balMin = Math.max(0, balMin - princPaid);
+      intMin += intForMonth;
+      paidMin += pmt;
+
+      if (monthsMin % 12 === 0 || balMin <= 1) {
+        schedMin.push({
+          year: Math.ceil(monthsMin / 12),
+          month: monthsMin,
+          balance: round2(balMin),
+          totalPaid: round2(paidMin),
+          totalInterest: round2(intMin)
+        });
+      }
     }
-    const princPaid = pmt - intForMonth;
-    balMin = Math.max(0, balMin - princPaid);
-    intMin += intForMonth;
-    paidMin += pmt;
-
-    if (monthsMin % 12 === 0 || balMin <= 1) {
-      schedMin.push({
-        year: Math.ceil(monthsMin / 12),
-        month: monthsMin,
-        balance: round2(balMin),
-        totalPaid: round2(paidMin),
-        totalInterest: round2(intMin)
-      });
+    if (balMin > 1) {
+      isMinPossible = false;
     }
   }
 
   // Plan B: Fixed monthly payment (e.g. user specified or 2x initial min due)
-  const targetFixed = fixedPay > 0 ? fixedPay : round2(P * minPct * 2);
+  const targetFixed = fixedPay > 0 ? fixedPay : round2(Math.max(P * minPct * 2, initialMonthlyInterest * 1.5, 50));
   let balFix = P;
   let monthsFix = 0;
   let intFix = 0;
   let paidFix = 0;
   const schedFix = [];
+  let isFixPossible = targetFixed > initialMonthlyInterest;
 
-  if (targetFixed > P * r) {
+  if (isFixPossible) {
     while (balFix > 1 && monthsFix < 600) {
       monthsFix++;
       const intForMonth = balFix * r;
@@ -361,24 +381,29 @@ export function calculateCreditCardPayoff(balance, aprPercent, minDuePercent = 5
         });
       }
     }
+    if (balFix > 1) {
+      isFixPossible = false;
+    }
   }
 
-  const interestSaved = round2(Math.max(0, intMin - intFix));
-  const monthsSaved = Math.max(0, monthsMin - monthsFix);
+  const interestSaved = (isMinPossible && isFixPossible) ? round2(Math.max(0, intMin - intFix)) : 0;
+  const monthsSaved = (isMinPossible && isFixPossible) ? Math.max(0, monthsMin - monthsFix) : 0;
 
   return {
     minPlan: {
-      months: monthsMin,
-      totalPaid: round2(paidMin),
-      totalInterest: round2(intMin),
-      initialMonthly: round2(Math.max(25, P * minPct)),
+      months: isMinPossible ? monthsMin : Infinity,
+      totalPaid: isMinPossible ? round2(paidMin) : Infinity,
+      totalInterest: isMinPossible ? round2(intMin) : Infinity,
+      initialMonthly: round2(initialMinDue),
+      isPayoffPossible: isMinPossible,
       schedule: schedMin
     },
     fixedPlan: {
-      months: monthsFix,
-      totalPaid: round2(paidFix),
-      totalInterest: round2(intFix),
+      months: isFixPossible ? monthsFix : Infinity,
+      totalPaid: isFixPossible ? round2(paidFix) : Infinity,
+      totalInterest: isFixPossible ? round2(intFix) : Infinity,
       monthlyPayment: targetFixed,
+      isPayoffPossible: isFixPossible,
       schedule: schedFix
     },
     savings: {
@@ -510,7 +535,12 @@ export function calculateFixedDeposit(principal, annualRate, tenureMonths, compo
   const t = months / 12;
 
   const freqMap = { monthly: 12, quarterly: 4, semiannually: 2, annually: 1 };
-  const n = freqMap[compoundingFrequency.toLowerCase()] || 4;
+  let n = 4;
+  if (typeof compoundingFrequency === 'number' && compoundingFrequency > 0) {
+    n = Math.min(365, Math.max(1, Math.round(compoundingFrequency)));
+  } else if (typeof compoundingFrequency === 'string') {
+    n = freqMap[compoundingFrequency.toLowerCase()] || 4;
+  }
 
   const maturityAmount = round2(P * Math.pow(1 + r / n, n * t));
   const totalInterest = round2(Math.max(0, maturityAmount - P));
@@ -560,7 +590,7 @@ export function calculateRecurringDeposit(monthlyDeposit, annualRate, tenureMont
 export function calculatePPF(annualDeposit, years = 15, annualRate = 7.1) {
   const P = Math.max(0, Number(annualDeposit) || 0);
   const t = Math.max(1, Number(years) || 15);
-  const r = Math.max(0, Number(annualRate) || 7.1) / 100;
+  const r = Math.max(0, annualRate !== undefined && !isNaN(Number(annualRate)) ? Number(annualRate) : 7.1) / 100;
 
   let balance = 0;
   let totalInvested = 0;
@@ -855,9 +885,21 @@ export function calculateLumpSum(principal, annualRate, years) {
  * Formula: CAGR = (Final Value / Initial Value)^(1 / Years) - 1
  */
 export function calculateCAGR(initialValue, finalValue, years) {
-  const V0 = Math.max(0.01, Number(initialValue) || 1);
-  const V1 = Math.max(0, Number(finalValue) || 0);
-  const t = Math.max(0.0833, Number(years) || 1); // min 1 month
+  const V0 = Number(initialValue);
+  const V1 = Number(finalValue);
+  const t = Number(years);
+
+  if (isNaN(V0) || isNaN(V1) || isNaN(t) || V0 <= 0 || V1 < 0 || t <= 0) {
+    return {
+      initialValue: round2(Math.max(0, V0 || 0)),
+      finalValue: round2(Math.max(0, V1 || 0)),
+      years: Math.max(0, t || 0),
+      cagr: 0,
+      totalReturnPercent: 0,
+      absoluteGain: 0,
+      isValid: false
+    };
+  }
 
   const totalReturnPercent = round2(((V1 - V0) / V0) * 100);
   const cagr = round2((Math.pow(V1 / V0, 1 / t) - 1) * 100);
@@ -866,10 +908,11 @@ export function calculateCAGR(initialValue, finalValue, years) {
   return {
     initialValue: round2(V0),
     finalValue: round2(V1),
-    years: t,
+    years: round2(t),
     cagr,
     totalReturnPercent,
-    absoluteGain
+    absoluteGain,
+    isValid: true
   };
 }
 
@@ -898,56 +941,201 @@ export function calculateInvestmentReturns(initialValue, finalValue, dividendsRe
 }
 
 /**
- * 18. Income Tax Calculator (Old vs New Regime)
+ * 18. Income Tax Configuration & Calculator (Budget 2025 FY 2025-26 & FY 2024-25)
  */
-export function calculateIncomeTax(grossIncome, totalDeductions = 0, regime = 'new') {
+export const TAX_CONFIG = {
+  FY_2025_26: {
+    fy: 'FY_2025_26',
+    yearLabel: 'FY 2025-26',
+    assessmentYear: 'AY 2026-27',
+    budgetLabel: 'Budget 2025 (Latest)',
+    newRegime: {
+      standardDeduction: 75000,
+      rebate87ALimit: 1200000,
+      rebate87AMax: 60000,
+      slabs: [
+        { min: 0, max: 400000, rate: 0.00, label: 'Up to ₹4 Lakhs' },
+        { min: 400000, max: 800000, rate: 0.05, label: '₹4 Lakhs to ₹8 Lakhs' },
+        { min: 800000, max: 1200000, rate: 0.10, label: '₹8 Lakhs to ₹12 Lakhs' },
+        { min: 1200000, max: 1600000, rate: 0.15, label: '₹12 Lakhs to ₹16 Lakhs' },
+        { min: 1600000, max: 2000000, rate: 0.20, label: '₹16 Lakhs to ₹20 Lakhs' },
+        { min: 2000000, max: 2400000, rate: 0.25, label: '₹20 Lakhs to ₹24 Lakhs' },
+        { min: 2400000, max: Infinity, rate: 0.30, label: 'Above ₹24 Lakhs' }
+      ]
+    },
+    oldRegime: {
+      standardDeduction: 50000,
+      rebate87ALimit: 500000,
+      rebate87AMax: 12500,
+      slabs: [
+        { min: 0, max: 250000, rate: 0.00, label: 'Up to ₹2.5 Lakhs' },
+        { min: 250000, max: 500000, rate: 0.05, label: '₹2.5 Lakhs to ₹5 Lakhs' },
+        { min: 500000, max: 1000000, rate: 0.20, label: '₹5 Lakhs to ₹10 Lakhs' },
+        { min: 1000000, max: Infinity, rate: 0.30, label: 'Above ₹10 Lakhs' }
+      ]
+    }
+  },
+  FY_2024_25: {
+    fy: 'FY_2024_25',
+    yearLabel: 'FY 2024-25',
+    assessmentYear: 'AY 2025-26',
+    budgetLabel: 'Finance Act 2024',
+    newRegime: {
+      standardDeduction: 75000,
+      rebate87ALimit: 700000,
+      rebate87AMax: 20000,
+      slabs: [
+        { min: 0, max: 300000, rate: 0.00, label: 'Up to ₹3 Lakhs' },
+        { min: 300000, max: 700000, rate: 0.05, label: '₹3 Lakhs to ₹7 Lakhs' },
+        { min: 700000, max: 1000000, rate: 0.10, label: '₹7 Lakhs to ₹10 Lakhs' },
+        { min: 1000000, max: 1200000, rate: 0.15, label: '₹10 Lakhs to ₹12 Lakhs' },
+        { min: 1200000, max: 1500000, rate: 0.20, label: '₹12 Lakhs to ₹15 Lakhs' },
+        { min: 1500000, max: Infinity, rate: 0.30, label: 'Above ₹15 Lakhs' }
+      ]
+    },
+    oldRegime: {
+      standardDeduction: 50000,
+      rebate87ALimit: 500000,
+      rebate87AMax: 12500,
+      slabs: [
+        { min: 0, max: 250000, rate: 0.00, label: 'Up to ₹2.5 Lakhs' },
+        { min: 250000, max: 500000, rate: 0.05, label: '₹2.5 Lakhs to ₹5 Lakhs' },
+        { min: 500000, max: 1000000, rate: 0.20, label: '₹5 Lakhs to ₹10 Lakhs' },
+        { min: 1000000, max: Infinity, rate: 0.30, label: 'Above ₹10 Lakhs' }
+      ]
+    }
+  }
+};
+
+function calculateRegimeTax(taxableIncome, regimeConfig, isNewRegime) {
+  let slabTax = 0;
+  const slabBreakdown = [];
+
+  for (const slab of regimeConfig.slabs) {
+    if (taxableIncome > slab.min) {
+      const taxableInSlab = Math.min(taxableIncome, slab.max) - slab.min;
+      const taxForSlab = taxableInSlab * slab.rate;
+      slabTax += taxForSlab;
+      slabBreakdown.push({
+        label: slab.label,
+        min: slab.min,
+        max: slab.max,
+        rate: slab.rate,
+        taxableAmount: round2(taxableInSlab),
+        tax: round2(taxForSlab)
+      });
+    } else {
+      slabBreakdown.push({
+        label: slab.label,
+        min: slab.min,
+        max: slab.max,
+        rate: slab.rate,
+        taxableAmount: 0,
+        tax: 0
+      });
+    }
+  }
+
+  slabTax = round2(slabTax);
+
+  // Section 87A Rebate & Marginal Relief
+  let rebate87A = 0;
+  let marginalRelief87A = 0;
+  let taxAfterRebate = slabTax;
+
+  if (taxableIncome <= regimeConfig.rebate87ALimit) {
+    rebate87A = slabTax;
+    taxAfterRebate = 0;
+  } else if (isNewRegime) {
+    // Proviso to Section 87A: Marginal relief in New Tax Regime
+    // Tax payable before cess cannot exceed excess of taxable income over rebate limit
+    const excessIncome = taxableIncome - regimeConfig.rebate87ALimit;
+    if (slabTax > excessIncome) {
+      marginalRelief87A = round2(slabTax - excessIncome);
+      taxAfterRebate = round2(excessIncome);
+    }
+  }
+
+  // Surcharge (Finance Acts 2024 / 2025)
+  // New Regime: 50L-1Cr: 10%, 1Cr-2Cr: 15%, >2Cr: 25% (max 25%)
+  // Old Regime: 50L-1Cr: 10%, 1Cr-2Cr: 15%, 2Cr-5Cr: 25%, >5Cr: 37%
+  let surchargeRate = 0;
+  let surchargeThreshold = 0;
+  if (taxableIncome > 50000000) {
+    surchargeRate = isNewRegime ? 0.25 : 0.37;
+    surchargeThreshold = 50000000;
+  } else if (taxableIncome > 20000000) {
+    surchargeRate = 0.25;
+    surchargeThreshold = 20000000;
+  } else if (taxableIncome > 10000000) {
+    surchargeRate = 0.15;
+    surchargeThreshold = 10000000;
+  } else if (taxableIncome > 5000000) {
+    surchargeRate = 0.10;
+    surchargeThreshold = 5000000;
+  }
+
+  let surcharge = round2(taxAfterRebate * surchargeRate);
+  let marginalReliefSurcharge = 0;
+
+  // Marginal relief on surcharge
+  if (surchargeThreshold > 0 && surcharge > 0) {
+    let taxAtThreshold = 0;
+    for (const slab of regimeConfig.slabs) {
+      if (surchargeThreshold > slab.min) {
+        const amt = Math.min(surchargeThreshold, slab.max) - slab.min;
+        taxAtThreshold += amt * slab.rate;
+      }
+    }
+    let surchargeAtThreshold = 0;
+    if (surchargeThreshold === 10000000) surchargeAtThreshold = taxAtThreshold * 0.10;
+    else if (surchargeThreshold === 20000000) surchargeAtThreshold = taxAtThreshold * 0.15;
+    else if (surchargeThreshold === 50000000) surchargeAtThreshold = taxAtThreshold * 0.25;
+
+    const maxAllowableTaxAndSurcharge = taxAtThreshold + surchargeAtThreshold + (taxableIncome - surchargeThreshold);
+    const currentTaxAndSurcharge = taxAfterRebate + surcharge;
+    if (currentTaxAndSurcharge > maxAllowableTaxAndSurcharge) {
+      marginalReliefSurcharge = round2(currentTaxAndSurcharge - maxAllowableTaxAndSurcharge);
+      surcharge = round2(Math.max(0, surcharge - marginalReliefSurcharge));
+    }
+  }
+
+  // Health and Education Cess: 4% on (Tax + Surcharge)
+  const taxableForCess = taxAfterRebate + surcharge;
+  const cess = round2(taxableForCess * 0.04);
+  const totalTax = round2(taxableForCess + cess);
+
+  return {
+    slabTax,
+    rebate87A,
+    marginalRelief87A,
+    taxAfterRebate,
+    surcharge,
+    marginalReliefSurcharge,
+    cess,
+    totalTax,
+    slabBreakdown
+  };
+}
+
+export function calculateIncomeTax(grossIncome, totalDeductions = 0, regime = 'new', fy = 'FY_2025_26') {
   const gross = Math.max(0, Number(grossIncome) || 0);
   const ded = Math.max(0, Number(totalDeductions) || 0);
+  const activeFY = TAX_CONFIG[fy] ? fy : 'FY_2025_26';
+  const fyConfig = TAX_CONFIG[activeFY];
 
-  // Calculate under New Tax Regime (FY 2024-25 standard)
-  // Standard deduction 75,000 for salaried, slabs: 0-3L 0%, 3-7L 5%, 7-10L 10%, 10-12L 15%, 12-15L 20%, >15L 30%
-  // Rebate under 87A: tax is 0 if taxable <= 7,00,000
-  const stdDedNew = Math.min(75000, gross);
+  // 1. New Regime
+  const stdDedNew = Math.min(fyConfig.newRegime.standardDeduction, gross);
   const taxableNew = Math.max(0, gross - stdDedNew);
-  let taxNew = 0;
+  const newCalc = calculateRegimeTax(taxableNew, fyConfig.newRegime, true);
 
-  if (taxableNew > 1500000) {
-    taxNew = (taxableNew - 1500000) * 0.30 + 300000 * 0.20 + 200000 * 0.15 + 300000 * 0.10 + 400000 * 0.05;
-  } else if (taxableNew > 1200000) {
-    taxNew = (taxableNew - 1200000) * 0.20 + 200000 * 0.15 + 300000 * 0.10 + 400000 * 0.05;
-  } else if (taxableNew > 1000000) {
-    taxNew = (taxableNew - 1000000) * 0.15 + 300000 * 0.10 + 400000 * 0.05;
-  } else if (taxableNew > 700000) {
-    taxNew = (taxableNew - 700000) * 0.10 + 400000 * 0.05;
-  } else if (taxableNew > 300000) {
-    taxNew = (taxableNew - 300000) * 0.05;
-  }
-
-  // Rebate up to 7 Lakhs in new regime
-  if (taxableNew <= 700000) {
-    taxNew = 0;
-  }
-  const cessNew = taxNew * 0.04;
-  const totalTaxNew = round2(taxNew + cessNew);
-
-  // Calculate under Old Tax Regime (Standard deduction 50k, 80C, 80D, HRA etc)
-  const stdDedOld = Math.min(50000, gross);
+  // 2. Old Regime
+  const stdDedOld = Math.min(fyConfig.oldRegime.standardDeduction, gross);
   const taxableOld = Math.max(0, gross - stdDedOld - ded);
-  let taxOld = 0;
+  const oldCalc = calculateRegimeTax(taxableOld, fyConfig.oldRegime, false);
 
-  if (taxableOld > 1000000) {
-    taxOld = (taxableOld - 1000000) * 0.30 + 500000 * 0.20 + 250000 * 0.05;
-  } else if (taxableOld > 500000) {
-    taxOld = (taxableOld - 500000) * 0.20 + 250000 * 0.05;
-  } else if (taxableOld > 250000) {
-    taxOld = (taxableOld - 250000) * 0.05;
-  }
-
-  if (taxableOld <= 500000) {
-    taxOld = 0;
-  }
-  const cessOld = taxOld * 0.04;
-  const totalTaxOld = round2(taxOld + cessOld);
+  const totalTaxNew = newCalc.totalTax;
+  const totalTaxOld = oldCalc.totalTax;
 
   const selectedTax = regime === 'new' ? totalTaxNew : totalTaxOld;
   const effectiveRate = gross > 0 ? round2((selectedTax / gross) * 100) : 0;
@@ -955,17 +1143,38 @@ export function calculateIncomeTax(grossIncome, totalDeductions = 0, regime = 'n
 
   return {
     grossIncome: round2(gross),
+    financialYear: activeFY,
+    financialYearLabel: fyConfig.yearLabel,
+    regime,
     newRegime: {
+      standardDeduction: round2(stdDedNew),
       taxableIncome: round2(taxableNew),
+      slabTax: newCalc.slabTax,
+      rebate87A: newCalc.rebate87A,
+      marginalRelief87A: newCalc.marginalRelief87A,
+      taxAfterRebate: newCalc.taxAfterRebate,
+      surcharge: newCalc.surcharge,
+      marginalReliefSurcharge: newCalc.marginalReliefSurcharge,
+      cess: newCalc.cess,
       totalTax: totalTaxNew,
       effectiveRate: gross > 0 ? round2((totalTaxNew / gross) * 100) : 0,
-      takeHome: round2(gross - totalTaxNew)
+      takeHome: round2(gross - totalTaxNew),
+      slabBreakdown: newCalc.slabBreakdown
     },
     oldRegime: {
+      standardDeduction: round2(stdDedOld),
+      deductions: round2(ded),
       taxableIncome: round2(taxableOld),
+      slabTax: oldCalc.slabTax,
+      rebate87A: oldCalc.rebate87A,
+      taxAfterRebate: oldCalc.taxAfterRebate,
+      surcharge: oldCalc.surcharge,
+      marginalReliefSurcharge: oldCalc.marginalReliefSurcharge,
+      cess: oldCalc.cess,
       totalTax: totalTaxOld,
       effectiveRate: gross > 0 ? round2((totalTaxOld / gross) * 100) : 0,
-      takeHome: round2(gross - totalTaxOld)
+      takeHome: round2(gross - totalTaxOld),
+      slabBreakdown: oldCalc.slabBreakdown
     },
     recommendedRegime: totalTaxNew <= totalTaxOld ? 'New Regime' : 'Old Regime',
     savingsWithRecommended: round2(Math.abs(totalTaxNew - totalTaxOld)),
@@ -1015,18 +1224,19 @@ export function calculateGST(amount, ratePercent = 18, mode = 'add') {
 /**
  * 20. Take-Home / In-Hand Salary Calculator
  */
-export function calculateTakeHomeSalary(annualCTC, basicSalaryPct = 40, hraPct = 20, annualBonus = 0) {
+export function calculateTakeHomeSalary(annualCTC, basicSalaryPct = 40, hraPct = 20, annualBonus = 0, fy = 'FY_2025_26') {
   const ctc = Math.max(0, Number(annualCTC) || 0);
   const basicPct = Math.max(10, Number(basicSalaryPct) || 40) / 100;
   const basic = ctc * basicPct;
 
-  // PF (Employee + Employer 12% of basic each, capped or proportional)
+  // PF (Employee + Employer 12% of basic each, standard statutory limit 1800/mo = 21,600/yr or 12%)
   const employeePFAnnual = Math.min(basic * 0.12, 1800 * 12);
   const employerPFAnnual = employeePFAnnual;
   const professionalTaxAnnual = 2400; // standard approx
 
-  // Standard tax estimation
-  const taxRes = calculateIncomeTax(ctc - employerPFAnnual, employeePFAnnual + 50000, 'new');
+  // Taxable salary = CTC - Employer PF
+  const taxableGross = Math.max(0, ctc - employerPFAnnual);
+  const taxRes = calculateIncomeTax(taxableGross, employeePFAnnual + 50000, 'new', fy);
   const annualTax = taxRes.selectedTax;
 
   const totalDeductions = round2(employeePFAnnual + employerPFAnnual + professionalTaxAnnual + annualTax);
@@ -1039,9 +1249,12 @@ export function calculateTakeHomeSalary(annualCTC, basicSalaryPct = 40, hraPct =
     netAnnualSalary,
     netMonthlySalary,
     employeePFMonthly: round2(employeePFAnnual / 12),
+    employerPFMonthly: round2(employerPFAnnual / 12),
+    professionalTaxMonthly: round2(professionalTaxAnnual / 12),
     taxMonthly: round2(annualTax / 12),
     totalDeductionsMonthly: round2(totalDeductions / 12),
-    annualTax: round2(annualTax)
+    annualTax: round2(annualTax),
+    taxDetails: taxRes
   };
 }
 
@@ -1154,9 +1367,9 @@ export function calculateNetWorth(assets = {}, liabilities = {}) {
  */
 export function calculateBudget50_30_20(monthlyIncome, needsPct = 50, wantsPct = 30, savingsPct = 20) {
   const income = Math.max(0, Number(monthlyIncome) || 0);
-  const nPct = Number(needsPct) || 50;
-  const wPct = Number(wantsPct) || 30;
-  const sPct = Number(savingsPct) || 20;
+  const nPct = needsPct !== undefined && !isNaN(Number(needsPct)) ? Number(needsPct) : 50;
+  const wPct = wantsPct !== undefined && !isNaN(Number(wantsPct)) ? Number(wantsPct) : 30;
+  const sPct = savingsPct !== undefined && !isNaN(Number(savingsPct)) ? Number(savingsPct) : 20;
 
   const needsAmount = round2(income * (nPct / 100));
   const wantsAmount = round2(income * (wPct / 100));
@@ -1176,36 +1389,85 @@ export function calculateBudget50_30_20(monthlyIncome, needsPct = 50, wantsPct =
 
 /**
  * 25. Buy vs. Rent Comparison Calculator
+ * Supports both options object and positional arguments.
+ * Models symmetric opportunity cost for monthly cash flow differential.
  */
-export function calculateBuyVsRent({
-  propertyPrice = 500000,
-  downPaymentPct = 20,
-  loanRate = 6.5,
-  loanTenureYears = 30,
-  propertyAppreciation = 4.0,
-  propertyTaxRate = 1.2,
-  maintenanceRate = 1.0,
-  monthlyRent = 2200,
-  rentInflation = 3.5,
-  investmentReturn = 9.0,
-  horizonYears = 15
-}) {
-  const P = Math.max(0, Number(propertyPrice) || 0);
-  const dpPct = Math.max(0, Number(downPaymentPct) || 20) / 100;
-  const initialDownPayment = P * dpPct;
-  const loanAmount = P - initialDownPayment;
+export function calculateBuyVsRent(arg1 = {}, ...rest) {
+  let propertyPrice = 500000;
+  let downPaymentPct = 20;
+  let loanRate = 6.5;
+  let loanTenureYears = 30;
+  let propertyAppreciation = 4.0;
+  let propertyTaxRate = 1.2;
+  let maintenanceRate = 1.0;
+  let monthlyRent = 2200;
+  let rentInflation = 3.5;
+  let investmentReturn = 9.0;
+  let horizonYears = 15;
 
-  const emiData = calculateEMI(loanAmount, loanRate, loanTenureYears * 12);
-  const monthlyMortgage = emiData.monthlyEMI;
+  if (typeof arg1 === 'object' && arg1 !== null) {
+    if (arg1.propertyPrice !== undefined) propertyPrice = Number(arg1.propertyPrice);
+    else if (arg1.homePrice !== undefined) propertyPrice = Number(arg1.homePrice);
+
+    if (arg1.downPaymentPct !== undefined) downPaymentPct = Number(arg1.downPaymentPct);
+    else if (arg1.downPaymentPercent !== undefined) downPaymentPct = Number(arg1.downPaymentPercent);
+
+    if (arg1.loanRate !== undefined) loanRate = Number(arg1.loanRate);
+    else if (arg1.mortgageRate !== undefined) loanRate = Number(arg1.mortgageRate);
+    else if (arg1.interestRate !== undefined) loanRate = Number(arg1.interestRate);
+
+    if (arg1.loanTenureYears !== undefined) loanTenureYears = Number(arg1.loanTenureYears);
+    else if (arg1.mortgageYears !== undefined) loanTenureYears = Number(arg1.mortgageYears);
+
+    if (arg1.propertyAppreciation !== undefined) propertyAppreciation = Number(arg1.propertyAppreciation);
+    else if (arg1.homeAppreciationRate !== undefined) propertyAppreciation = Number(arg1.homeAppreciationRate);
+    else if (arg1.appreciationRate !== undefined) propertyAppreciation = Number(arg1.appreciationRate);
+
+    if (arg1.propertyTaxRate !== undefined) propertyTaxRate = Number(arg1.propertyTaxRate);
+    if (arg1.maintenanceRate !== undefined) maintenanceRate = Number(arg1.maintenanceRate);
+
+    if (arg1.monthlyRent !== undefined) monthlyRent = Number(arg1.monthlyRent);
+
+    if (arg1.rentInflation !== undefined) rentInflation = Number(arg1.rentInflation);
+    else if (arg1.rentInflationRate !== undefined) rentInflation = Number(arg1.rentInflationRate);
+    else if (arg1.rentIncreaseRate !== undefined) rentInflation = Number(arg1.rentIncreaseRate);
+
+    if (arg1.investmentReturn !== undefined) investmentReturn = Number(arg1.investmentReturn);
+    else if (arg1.investmentReturnRate !== undefined) investmentReturn = Number(arg1.investmentReturnRate);
+
+    if (arg1.horizonYears !== undefined) horizonYears = Number(arg1.horizonYears);
+    else if (arg1.timeHorizonYears !== undefined) horizonYears = Number(arg1.timeHorizonYears);
+    else if (arg1.analysisYears !== undefined) horizonYears = Number(arg1.analysisYears);
+  } else if (typeof arg1 === 'number' || rest.length > 0) {
+    // Positional signature:
+    // (homePrice, downPaymentPct, mortgageRate, mortgageYears, homeAppreciationRate, monthlyRent, rentInflationRate, investmentReturnRate, timeHorizonYears)
+    propertyPrice = Number(arg1) || 0;
+    if (rest[0] !== undefined) downPaymentPct = Number(rest[0]);
+    if (rest[1] !== undefined) loanRate = Number(rest[1]);
+    if (rest[2] !== undefined) loanTenureYears = Number(rest[2]);
+    if (rest[3] !== undefined) propertyAppreciation = Number(rest[3]);
+    if (rest[4] !== undefined) monthlyRent = Number(rest[4]);
+    if (rest[5] !== undefined) rentInflation = Number(rest[5]);
+    if (rest[6] !== undefined) investmentReturn = Number(rest[6]);
+    if (rest[7] !== undefined) horizonYears = Number(rest[7]);
+  }
+
+  const P = Math.max(0, propertyPrice);
+  const dpPct = Math.max(0, downPaymentPct) / 100;
+  const initialDownPayment = P * dpPct;
+  const loanAmount = Math.max(0, P - initialDownPayment);
+
+  const emiData = calculateEMI(loanAmount, loanRate, Math.max(1, loanTenureYears * 12));
+  const monthlyMortgage = loanAmount > 0 ? emiData.monthlyEMI : 0;
 
   let homeValue = P;
   let loanBal = loanAmount;
   let totalCostToBuy = initialDownPayment;
-  let homeEquity = initialDownPayment;
+  let buyerSavingsPortfolio = 0;
 
-  // Rent scenario: invest initial down payment + difference in monthly outlays
+  // Rent scenario: invest initial down payment
   let renterPortfolio = initialDownPayment;
-  let curRent = monthlyRent;
+  let curRent = Math.max(0, monthlyRent);
   let totalCostToRent = 0;
 
   const rPropApp = propertyAppreciation / 100;
@@ -1227,34 +1489,48 @@ export function calculateBuyVsRent({
       // Mortgage interest & principal
       if (loanBal > 0) {
         const intMo = loanBal * rLoanMo;
-        const princMo = Math.min(loanBal, monthlyMortgage - intMo);
+        const princMo = Math.min(loanBal, Math.max(0, monthlyMortgage - intMo));
         loanBal = Math.max(0, loanBal - princMo);
       }
 
       // Rent costs
       totalCostToRent += curRent;
 
-      // Net savings invested by renter if buy costs > rent
-      const diff = totalBuyMonth - curRent;
-      renterPortfolio = (renterPortfolio + Math.max(0, diff)) * (1 + rInvMo);
+      // Symmetric cash flow opportunity cost:
+      // If buying costs more this month, renter invests the difference.
+      // If renting costs more this month, buyer invests the difference.
+      if (totalBuyMonth > curRent) {
+        const renterSavings = totalBuyMonth - curRent;
+        renterPortfolio = (renterPortfolio + renterSavings) * (1 + rInvMo);
+        buyerSavingsPortfolio = buyerSavingsPortfolio * (1 + rInvMo);
+      } else {
+        const buyerSavings = curRent - totalBuyMonth;
+        renterPortfolio = renterPortfolio * (1 + rInvMo);
+        buyerSavingsPortfolio = (buyerSavingsPortfolio + buyerSavings) * (1 + rInvMo);
+      }
     }
 
     // Year-end updates
     homeValue = homeValue * (1 + rPropApp);
-    homeEquity = homeValue - loanBal;
+    const homeEquity = Math.max(0, homeValue - loanBal);
     curRent = curRent * (1 + rRentInf);
+
+    const buyerNetWorth = homeEquity + buyerSavingsPortfolio;
+    const renterNetWorth = renterPortfolio;
 
     trajectory.push({
       year: yr,
       homeValue: round2(homeValue),
       homeEquity: round2(homeEquity),
-      renterNetWorth: round2(renterPortfolio),
+      buyerSavingsPortfolio: round2(buyerSavingsPortfolio),
+      buyerNetWorth: round2(buyerNetWorth),
+      renterNetWorth: round2(renterNetWorth),
       totalCostToBuy: round2(totalCostToBuy),
       totalCostToRent: round2(totalCostToRent)
     });
   }
 
-  const finalBuyerNetWorth = round2(homeEquity);
+  const finalBuyerNetWorth = round2(trajectory[trajectory.length - 1]?.buyerNetWorth || (homeValue - loanBal));
   const finalRenterNetWorth = round2(renterPortfolio);
   const netAdvantage = round2(Math.abs(finalBuyerNetWorth - finalRenterNetWorth));
   const winner = finalBuyerNetWorth >= finalRenterNetWorth ? 'Buying' : 'Renting';

@@ -1,12 +1,29 @@
-# FINCULATOR — High-Utility Financial Engineering & Computation Suite
+# FINCULATOR — Institutional Financial Engineering & Wealth Suite
 
-[![Vanilla JS](https://img.shields.io/badge/JavaScript-ES_Modules-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![CSS3](https://img.shields.io/badge/CSS3-Modular_Tokens-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/CSS)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-100%25_Passing-brightgreen.svg)](#-testing--verification)
-[![Deploy Ready](https://img.shields.io/badge/Deploy-GitHub_Pages_Ready-success.svg)](#-deployment--hosting)
+[![Node Test Suite](https://img.shields.io/badge/Tests-44%2F44%20Passing%20(100%25)-brightgreen.svg?style=flat-square)](tests/test_finance_math.test.js)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES%20Modules-F7DF1E.svg?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![CSS3](https://img.shields.io/badge/CSS3-Obsidian%20Slate-1572B6.svg?style=flat-square&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![Zero Dependencies](https://img.shields.io/badge/Dependencies-0%20Runtime%20Bloat-success.svg?style=flat-square)](package.json)
+[![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA-blueviolet.svg?style=flat-square)](css/main.css)
+[![Tax Engine](https://img.shields.io/badge/Tax%20Engine-Budget%202025%20Verified-blue.svg?style=flat-square)](js/math/financeMath.js)
+[![Deploy Ready](https://img.shields.io/badge/Deploy-Cloudflare%20%7C%20Vercel-black.svg?style=flat-square)](DEPLOY.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
 
-**FINCULATOR** is an institutional-grade financial computation suite designed with an **Obsidian Slate** aesthetic, pure ES Modules architecture, responsive SVG data visualization, and 27 financial math models across 5 core categories.
+**Finculator** is a zero-defect, privacy-first financial engineering platform designed with an **Obsidian Slate** aesthetic, pure ES Modules architecture, responsive SVG visualizations, and **27 specialized financial calculation engines** across five core domains.
+
+All calculations execute **100% locally in your browser sandbox**. Your salary, debt balances, and portfolio assets are never transmitted or stored on external servers.
+
+---
+
+## Key Highlights
+
+- **📐 Institutional Math Rigor**: Financial algorithms calibrated against Reserve Bank of India (RBI) conventions, SBI quarterly compounding rules, and statutory **Union Budget 2025** provisions (FY 2025-26 & FY 2024-25 with Section 87A rebate and marginal relief proviso).
+- **🔒 True Client-Side Privacy**: Zero forced trackers, zero third-party analytics scripts, zero telemarketing lead harvesting. Calculations run locally; optional user accounts are secured with **PBKDF2-HMAC-SHA256** (100k iterations).
+- **⚡ Zero Framework Bloat**: Pure vanilla JavaScript (ES6 Modules) and native CSS design tokens. No heavy frameworks, zero hydration delay, sub-second initial load.
+- **🔤 Self-Hosted WOFF2 Typography**: Preloaded modern subsetted fonts (*Fraunces*, *Inter*, *IBM Plex Mono*) with `font-display: swap` eliminating render-blocking third-party font CDN requests.
+- **♿ WCAG 2.2 AA Accessible**: Keyboard skip links, explicit focus rings, full `@media (prefers-reduced-motion: reduce)` support, and dynamic `aria-live="polite"` calculation announcements for assistive screen readers.
+- **🔍 Full SEO Prerendering**: Includes 31 statically prerendered HTML calculator pages, complete JSON-LD structured data (`SoftwareApplication`, `FAQPage`, `BreadcrumbList`), [sitemap.xml](sitemap.xml), and clean URLs.
+- **🤖 Guardrailed AI Copilot (FinBot)**: Offline rule-based financial Retrieval-Augmented Generation (RAG) fallback paired with hardened, rate-limited serverless edge proxies for Cloudflare Pages (`functions/api/ai.js`) and Vercel (`api/ai.js`).
 
 ---
 
@@ -14,123 +31,116 @@
 
 <div align="center">
   <img src="docs/images/finculator-landing-gate.png" alt="Finculator Institutional Landing Gate" width="100%" />
-  <p><em>Institutional Gateway & Hero Experience: Conversion gate, banknote growth artwork, and secure guest access.</em></p>
+  <p><em>Institutional Gateway: Conversion gate, banknote growth artwork, and secure guest access.</em></p>
 
   <br />
 
   <img src="docs/images/finculator-portfolio-builder.png" alt="Finculator Personal Finance Portfolio Builder" width="100%" />
-  <p><em>Personal Finance Portfolio & Statement: Consolidated net worth ledger, dual-tone balance sheet bar, and 60/40 benchmark allocation.</em></p>
+  <p><em>Personal Finance Portfolio Statement: Consolidated net worth ledger, dual-tone balance sheet bar, and 60/40 benchmark allocation.</em></p>
 
   <br />
 
   <img src="docs/images/finculator-compound-interest.png" alt="Finculator Compound Interest & Wealth Suite" width="100%" />
-  <p><em>Wealth Accumulation & Yield Engines: Interactive maturity metrics, asset donut visualizer, and year-by-year trajectory curves.</em></p>
+  <p><em>Wealth Accumulation & Yield Engines: Interactive maturity metrics, asset donut visualizer, and trajectory curves.</em></p>
 </div>
 
 ---
 
-## Comprehensive Financial Modules
+## 27 Financial Computation Engines
 
-### 1. Loans & Mortgages
-* **EMI & Repayment Calculator**: Precision monthly amortization ($E = P \cdot r \cdot \frac{(1+r)^n}{(1+r)^n - 1}$), fee structuring, principal/interest breakdown, and step-down amortization schedule.
-* **Prepayment Analyzer**: Model recurring monthly prepayments and annual lump-sum debt acceleration to compute total interest saved and tenure cut-off.
-* **Multi-Scenario Loan Comparator**: Side-by-side evaluation of up to 3 competitive mortgage offers with dynamic **"Best Value (Lowest Lifetime Cost)"** detection.
-* **Loan Eligibility Calculator**: Reverse-solves maximum borrowing ceiling using institutional FOIR (Fixed Obligation to Income Ratio) and DTI metrics.
-* **Credit Card Minimum-Due Calculator**: Demonstrates the compound interest debt trap of minimum payments vs. accelerated fixed monthly payoff.
+### 1. Loans & Mortgages (5 Engines)
+1. **EMI & Loan Repayment Calculator**: Reducing-balance monthly amortization ($E = P \cdot r \cdot \frac{(1+r)^n}{(1+r)^n - 1}$), fee structuring, principal/interest breakdown, and step-down schedule with exact $0.00 final balance clamping.
+2. **Prepayment Analyzer**: Model recurring monthly prepayments and annual lump-sum debt acceleration to calculate exact interest saved and tenure cut-off.
+3. **Multi-Scenario Loan Comparator**: Side-by-side comparison of up to 3 competitive mortgage offers with dynamic **"Best Value (Lowest Lifetime Cost)"** detection.
+4. **Loan Eligibility & FOIR Calculator**: Reverse-solves maximum borrowing ceiling under institutional Fixed Obligation to Income Ratio (FOIR) and debt service limits.
+5. **Credit Card Payoff Calculator**: High-priority negative amortization detection when payments fail to cover monthly finance charges ($P \times r$), contrasting minimum dues with accelerated payoff.
 
-### 2. Savings & Deposits
-* **Compound Interest Calculator**: Compounding across Daily (365x), Monthly (12x), Quarterly (4x), Semi-Annual (2x), and Annual (1x) frequencies with recurring deposits.
-* **Simple Interest Calculator**: Linear interest computations across fixed tenures.
-* **Fixed Deposit (FD) Calculator**: Fixed-term deposit accumulation with flexible compounding.
-* **Recurring Deposit (RD) Calculator**: Systematic monthly banking deposits with maturity forecasts.
-* **PPF (Public Provident Fund) Calculator**: 15-year sovereign tax-exempt compounding and milestone schedules.
-* **Goal-Based Savings (Reverse Compound)**: Reverse-solves required monthly savings to achieve a target financial corpus.
+### 2. Savings & Deposits (5 Engines)
+6. **Compound Interest Calculator**: Compounding across Daily (365x), Monthly (12x), Quarterly (4x), Semi-Annual (2x), and Annual (1x) frequencies with regular deposits.
+7. **Simple Interest Calculator**: Linear interest computations across fixed tenures for bonds and short-term debt.
+8. **Fixed Deposit (FD) Calculator**: Indian banking standard quarterly compounding with flexible tenure maturity analysis.
+9. **Recurring Deposit (RD) Calculator**: Systematic monthly banking deposits with quarterly compounded interest yields.
+10. **PPF (Public Provident Fund) Calculator**: 15-year sovereign-backed EEE tax-exempt compounding and milestone schedules.
 
-### 3. Wealth & Investing
-* **SIP (Systematic Investment Plan)**: Monthly mutual fund and equity forecasting using annuity-due compounding.
-* **Lump Sum Investment**: Long-term single-deposit compounding curves.
-* **SIP + Lump Sum Combined**: Simultaneous initial corpus deployment with ongoing monthly investments.
-* **Step-Up SIP**: Annual percentage increase in monthly contributions.
-* **CAGR Calculator**: Compound Annual Growth Rate and absolute gain metrics.
-* **Stock & Mutual Fund Returns**: Absolute and annualized performance analytics including dividend income.
+### 3. Wealth & Investing (6 Engines)
+11. **SIP (Systematic Investment Plan) Calculator**: Mutual fund and equity forecasting using monthly annuity-due compounding.
+12. **Step-Up SIP Calculator**: Compound growth modeling with annual percentage increments in monthly contributions.
+13. **Lump Sum Investment Calculator**: Long-term single-deposit compounding curves.
+14. **CAGR & Absolute Return Calculator**: True Compound Annual Growth Rate protected against non-positive inputs.
+15. **Stock & Mutual Fund Returns Calculator**: Capital appreciation and dividend yield performance analytics.
+16. **Goal-Based Reverse Savings**: Reverse-solves the exact monthly SIP required to achieve a target financial corpus.
 
-### 4. Tax & Business
-* **Income Tax Calculator (Old vs New Regime)**: Comprehensive tax liability analysis under the Indian IT framework with automated regime recommendation and savings delta.
-* **GST Calculator**: Standard tax slabs (5%, 12%, 18%, 28%) with **Add GST (Exclusive)** and **Remove GST (Inclusive)** modes and CGST/SGST split.
-* **Take-Home / Net Salary Calculator**: Annual CTC breakdown into Basic, HRA, Employee PF, and Net Monthly In-Hand Pay.
-* **Profit Margin & Markup Calculator**: Cost price, selling price, gross margin %, markup %, and total business profit.
-* **Break-Even Analysis Calculator**: Fixed overhead recovery, unit variable cost, contribution margin, and break-even unit threshold.
+### 4. Tax & Business (5 Engines)
+17. **Income Tax Calculator (Budget 2025 FY 2025-26 & FY 2024-25)**: Evaluates New vs. Old Tax Regimes with ₹75,000 standard deduction, Section 87A rebate up to ₹12 Lakhs (salaried up to ₹12.75L pay ₹0 tax), and exact statutory marginal relief proviso.
+18. **Take-Home / Net Salary Calculator**: Annual CTC breakdown into Basic, HRA, Employee PF, Professional Tax, and net monthly in-hand salary.
+19. **GST Calculator**: Standard GST slabs (5%, 12%, 18%, 28%) with **Add GST (Exclusive)** and **Remove GST (Inclusive)** modes and CGST/SGST splits.
+20. **Profit Margin & Markup Calculator**: Cost price, selling price, gross margin %, markup %, and business profit.
+21. **Break-Even Analysis Calculator**: Fixed overhead recovery, unit variable cost, contribution margin, and break-even unit threshold.
 
-### 5. Long-Term Planning & Economics
-* **Retirement & FIRE Corpus Engine**: Comprehensive FIRE targets accounting for inflation and Safe Withdrawal Rates (SWR 3%-5%), with **Lean FIRE (75%)**, **Standard FIRE (100%)**, **Fat FIRE (130%)**, and **Coast FIRE** milestones.
-* **Inflation Adjuster**: Real purchasing power degradation schedule and future equivalent costs.
-* **Net Worth Calculator**: Comprehensive asset inventory vs. liabilities analysis with Debt-to-Asset solvency ratios.
-* **50/30/20 Budget Planner**: Structures monthly cash flows into Essential Needs (50%), Discretionary Wants (30%), and Savings (20%).
-* **Buy vs. Rent Comparison**: 10–30 year wealth trajectory comparison between homebuyer equity accumulation vs. renter stock market portfolio.
-
----
-
-## Design System & Visual Identity
-
-* **Palette**: `#0D1526` (Obsidian Navy), `#1E293B` (Slate Navy), `#2563EB` (Electric Blue), `#06B6D4` (Cyan Accent), `#F8FAFC` (Canvas Light), `#FFFFFF` (Surface White).
-* **Typography**:
-  * **Headings**: *Fraunces* editorial display serif.
-  * **UI & Controls**: *Inter* clean grotesque.
-  * **Financial Numerals**: *IBM Plex Mono* with `font-variant-numeric: tabular-nums lining-nums`.
-* **Zero External Dependencies**: Pure vanilla JavaScript (ES6 Modules) and native CSS — no bundlers or heavyweight frameworks required.
-* **SVG Data Visualizations**: Custom interactive Donut Breakdown charts, Stacked Area curves, and Amortization Trajectory graphs with hover tooltips.
-* **Multi-Currency System**: Instant switching between **USD ($)**, **EUR (€)**, **GBP (£)**, **INR (₹)** with Indian lakh/crore grouping, **JPY (¥)**, **CAD (C$)**, **AUD (A$)**, and **CHF (₣)**.
-* **Print & Export Engine**: One-click CSV downloads for all schedules and light-mode ink-saving `@media print` stylesheets for PDF generation.
+### 5. Long-Term Planning & Economics (6 Engines)
+22. **Retirement & FIRE Corpus Engine**: Financial Independence, Retire Early targets accounting for inflation and Safe Withdrawal Rates (SWR 3%-5%), with **Lean FIRE (75%)**, **Standard FIRE (100%)**, **Fat FIRE (130%)**, and **Coast FIRE** milestones.
+23. **Inflation & Purchasing Power Adjuster**: Real purchasing power degradation schedule and future equivalent costs.
+24. **Net Worth Calculator**: Comprehensive personal balance sheet auditing liquid holdings, illiquid assets, and liabilities with solvency ratios.
+25. **50/30/20 Budget Planner**: Structures after-tax income into Essential Needs (50%), Discretionary Wants (30%), and Savings (20%) with zero-allocation safety.
+26. **Buy vs. Rent Decision Engine**: Multi-decade wealth comparison between homebuyer equity accumulation vs. renter equity portfolio with symmetric cash flow opportunity cost.
+27. **Personal Finance Statement (PFS) Builder**: Consolidated balance sheet with visual 60/40 benchmark asset allocations and ink-saving client-side PDF export.
 
 ---
 
-## Project Architecture
+## Project Structure
 
 ```
 finance-calculator/
-├── index.html                   # Clean semantic HTML5 layout shell
-├── server.py                    # Multi-threaded local development server (Port 3000)
-├── .gitignore                   # Git exclusion rules
-├── docs/
-│   └── images/                  # UI screenshot previews
+├── index.html                   # Main application shell with preloaded WOFF2 typography
+├── server.py                    # Multi-threaded secure dev server (Port 3000, CSP, allowlist)
+├── package.json                 # Node package configuration & native test runner scripts
+├── vercel.json                  # Vercel deployment config (cleanUrls, headers, immutable caching)
+├── _headers                     # Cloudflare Pages security & caching headers
+├── sitemap.xml                  # Complete sitemap with all 31 calculator & legal URLs
+├── robots.txt                   # Search crawler directives
+├── site.webmanifest             # PWA manifest
+├── humans.txt                   # Developer and architecture credits
+├── SECURITY.md                  # Comprehensive security disclosure policy
+├── DEPLOY.md                    # Production deployment guide (Cloudflare Pages, Vercel, VPS)
+├── SEO_PLAYBOOK.md              # Organic search strategy, keyword matrix & schema hierarchy
+├── START_FINCULATOR.bat         # One-click Windows development launcher
+│
 ├── css/
-│   ├── main.css                 # Design tokens, typography, header, sidebar, footer
-│   ├── components.css           # Buttons, inputs, tactile sliders, cards, badges
-│   ├── calculators.css          # Tables, comparison grids, FIRE cards, scenario matrix
-│   ├── charts.css               # Interactive SVG Donut charts & Trajectory curves
-│   └── print.css                # Ink-saving print/PDF report stylesheet
+│   ├── main.css                 # Obsidian slate tokens, focus rings, prefers-reduced-motion
+│   ├── fonts.css                # Self-hosted WOFF2 font declarations (font-display: swap)
+│   ├── components.css           # Tactile sliders, buttons, inputs, modal dialogs
+│   ├── calculators.css          # Calculator grids, summary boxes, scenario matrices
+│   ├── charts.css               # Interactive SVG donut breakdowns & trajectory curves
+│   └── print.css                # Light-mode ink-saving print & PDF export styles
+│
+├── fonts/                       # 10 self-hosted, subsetted WOFF2 font files
+│   ├── fraunces-*.woff2         # Display serif typography
+│   ├── inter-*.woff2            # Clean UI typography
+│   └── ibm-plex-mono-*.woff2    # Tabular financial numerals
+│
 ├── js/
-│   ├── app.js                   # Application coordinator, router, and currency state
+│   ├── app.js                   # Coordinator, route hydration, SEO metadata & WCAG live announcer
 │   ├── math/
-│   │   └── financeMath.js       # Pure standalone financial math library (27 algorithms)
-│   ├── components/
-│   │   ├── logo.js              # Vector SVG brand logo generator
-│   │   ├── charts.js            # Interactive SVG Donut & Growth charts
-│   │   └── amortizationTable.js # Table with pagination, search, yearly/monthly views & CSV
-│   ├── calculators/
-│   │   ├── emiCalculator.js     # EMI, Amortization, and Loan Repayment view
-│   │   ├── prepaymentAnalyzer.js# Prepayment, interest saved, and payoff accelerator
-│   │   ├── loanComparator.js    # 3-scenario loan comparator with Best Value badge
-│   │   ├── loanEligibility.js   # FOIR / DTI borrowing capacity reverse solver
-│   │   ├── creditCardCalculator.js# Credit card minimum due vs fixed payment payoff
-│   │   ├── savingsDepositsSuite.js# Compound, Simple, FD, RD, PPF, Goal Savings
-│   │   ├── investmentSuite.js   # SIP, Lump Sum, Step-Up SIP, CAGR, Returns
-│   │   ├── taxBusinessSuite.js  # Income Tax (Old vs New), GST, Salary, Margin, Break-even
-│   │   ├── fireCalculator.js    # Retirement & FIRE milestone planner
-│   │   ├── inflationCalculator.js# Purchasing power erosion & future cost view
-│   │   ├── netWorthCalculator.js# Assets vs Liabilities & allocation breakdown
-│   │   ├── budgetPlanner.js     # 50/30/20 Budget allocation tool
-│   │   └── buyVsRentCalculator.js# Buy vs Rent 10-30 year wealth trajectory
-│   └── utils/
-│       ├── formatters.js        # Multi-currency formatting & Indian lakh support
-│       ├── storage.js           # LocalStorage state persistence
-│       └── export.js            # CSV generator & print handler
-├── src/utils/
-│   └── financeMath.ts           # Pure TypeScript models & definitions
-└── tests/
-    ├── test_math.py             # Python automated unit test suite (100% Pass)
-    ├── test_runner.html         # In-browser verification test runner
-    └── verify_server.py         # HTTP endpoint and asset validation
+│   │   ├── financeMath.js       # Core mathematical library (27 algorithms, Budget 2025 engine)
+│   │   └── portfolioMath.js     # Balance sheet aggregation & solvency metrics
+│   ├── calculators/             # Interactive calculator views (EMI, SIP, Tax, FIRE, etc.)
+│   ├── components/              # Chatbot, Auth, Portfolio, Footer, Donut Charts
+│   └── utils/                   # Currency formatters, client-side SEO, storage, auth
+│
+├── functions/api/ai.js          # Cloudflare Pages Serverless Edge AI proxy
+├── api/ai.js                    # Vercel Serverless Edge AI proxy
+├── scripts/
+│   ├── generate_seo_pages.js    # Static HTML prerenderer & JSON-LD schema builder
+│   ├── generate_legal_pages.js  # Generator for Privacy, Terms, Disclaimer, About, Contact
+│   └── download_fonts.py        # Font subset downloader and fonts.css synthesizer
+│
+├── tests/
+│   ├── test_finance_math.test.js    # 44 golden value unit tests (Node test runner)
+│   ├── test_client_security.test.js # Client auth, XSS neutralization & route validation tests
+│   └── test_auth_and_system.py      # Python server security, headers & auth API tests
+│
+└── .github/workflows/
+    └── ci.yml                   # GitHub Actions automated test & build verification pipeline
 ```
 
 ---
@@ -138,7 +148,7 @@ finance-calculator/
 ## Quick Start & Local Development
 
 ### Prerequisites
-- Python 3.x (or any static HTTP server)
+- Python 3.9+ (or Node.js 20+)
 
 ### 1. Clone the repository
 ```bash
@@ -146,9 +156,16 @@ git clone https://github.com/prakharrai12/finculator.git
 cd finculator
 ```
 
-### 2. Start the local server
+### 2. Start the development server
+**On Windows:**
+Double-click `START_FINCULATOR.bat` or run:
 ```bash
 python server.py
+```
+
+**On macOS / Linux:**
+```bash
+python3 server.py
 ```
 
 ### 3. Open in Browser
@@ -156,36 +173,56 @@ Visit **`http://localhost:3000`** in your browser.
 
 ---
 
-## Testing & Verification
+## Automated Test Suites
 
-### Run Python Automated Unit Tests
+Finculator includes automated tests covering financial math formulas, edge cases, password policies, XSS sanitization, and server security.
+
+### Run Core Financial Math & Client Security Tests
 ```bash
-python -m unittest tests/test_math.py
+npm test
 ```
-*Validates all 27 financial math models with floating-point precision.*
+*Executes all 44 unit tests using Node's native test runner (`node --test`). Expected: 44 pass, 0 fail.*
 
-### In-Browser Verification Suite
-Open `http://localhost:3000/tests/test_runner.html` in your browser to run live assertions across all interactive modules.
+### Run Server Security & API Integration Tests
+```bash
+python tests/test_auth_and_system.py
+```
+*Validates CSP/HSTS headers, path isolation (403), password hashing (PBKDF2), single-use reset tokens, and AI proxy limits.*
 
 ---
 
-## Deployment & Hosting
+## Production Deployment
 
-Finculator is 100% client-side compatible and can be hosted on any static hosting provider with zero configuration:
+Finculator is configured for zero-configuration, instant deployment:
 
-### GitHub Pages
-1. Push this repository to GitHub.
-2. Go to **Settings** → **Pages**.
-3. Under **Build and deployment**, select **Deploy from a branch** (`main` branch, `/ (root)` folder).
-4. Click **Save** — your site will be live instantly!
+### Cloudflare Pages (Recommended)
+1. In Cloudflare Dashboard, create a new Pages project connected to this GitHub repository.
+2. **Build command**: `node scripts/generate_seo_pages.js && node scripts/generate_legal_pages.js`
+3. **Build output directory**: `.`
+4. *(Optional)* Add `GEMINI_API_KEY` in environment variables.
+5. Deploy. `_headers` and `functions/api/ai.js` are configured automatically.
 
-### Vercel / Netlify
-1. Connect your GitHub repository to Vercel or Netlify.
-2. Set Build Command to empty (or leave default).
-3. Set Publish directory to `./` (root).
-4. Deploy.
+### Vercel
+1. Import the repository into your Vercel Dashboard.
+2. **Build command**: `node scripts/generate_seo_pages.js && node scripts/generate_legal_pages.js`
+3. **Output directory**: `.`
+4. Deploy. `vercel.json` automatically configures clean URLs, CSP headers, and `api/ai.js`.
+
+For detailed Nginx / Linux VPS setup, see [DEPLOY.md](DEPLOY.md).
+
+---
+
+## Legal & Disclosures
+
+- [Privacy Policy](privacy.html) — Explains client-side calculation privacy and zero tracking.
+- [Terms of Service](terms.html) — Platform usage terms and limitation of liability.
+- [Financial Disclaimer](disclaimer.html) — Regulatory notice: Finculator is not a registered SEBI investment advisor or chartered accounting firm.
+- [About Finculator](about.html) — Mission, architectural philosophy, and author background.
+- [Contact & Security](contact.html) — Contact channels and vulnerability reporting instructions.
 
 ---
 
 ## License
-This project is open-source and available under the [MIT License](LICENSE).
+
+This project is open-source and released under the [MIT License](LICENSE).
+Architected by **Prakhar Rai**.

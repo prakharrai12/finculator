@@ -955,3 +955,78 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* ==========================================================================
+   Portfolio Exit Warning Modal (Institutional Safety Prompt)
+   ========================================================================== */
+.portfolio-exit-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(4, 8, 16, 0.85) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  z-index: 100010 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1.5rem !important;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portfolio-exit-backdrop.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.portfolio-exit-card {
+  position: relative;
+  width: 100%;
+  max-width: 490px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.22), 0 0 40px rgba(37, 99, 235, 0.08);
+  border-radius: 18px;
+  padding: 2.2rem 2rem 1.8rem;
+  color: #0F172A;
+  transform: scale(0.96) translateY(8px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portfolio-exit-backdrop.active .portfolio-exit-card {
+  transform: scale(1) translateY(0);
+}
+
+.portfolio-exit-close-btn {
+  position: absolute;
+  top: 1.1rem;
+  right: 1.1rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.portfolio-exit-close-btn:hover {
+  color: #0F172A;
+  background: #E2E8F0;
+}
+
+.pf-exit-download-btn:hover {
+  background: #DBEAFE !important;
+  border-color: #93C5FD !important;
+  color: #1D4ED8 !important;
+  transform: translateY(-1px);
+}
+

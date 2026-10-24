@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Finculator — Independent Financial Engineering</title>
+  <meta name="description" content="Learn why Finculator was built: an independent, ad-free, institutional financial calculation engine with zero tracking and uncompromising precision." />
+  <link rel="canonical" href="https://finculator.app/about.html" />
+
+  <!-- Self-Hosted Modern WOFF2 Fonts (Zero Third-Party Latency) -->
+  <link rel="preload" href="fonts/inter-normal-400-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/fraunces-normal-600-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/fonts.css" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="docs/images/favicon.png" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/main.css?v=4.5" />
+  <link rel="stylesheet" href="css/components.css?v=4.5" />
+  <link rel="stylesheet" href="css/calculators.css?v=4.5" />
+  <link rel="stylesheet" href="css/landingGate.css?v=4.5" />
+
+  <!-- OpenGraph & Twitter Meta Tags -->
+  <meta property="og:site_name" content="Finculator" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="About Finculator — Independent Financial Engineering" />
+  <meta property="og:description" content="Learn why Finculator was built: an independent, ad-free, institutional financial calculation engine with zero tracking and uncompromising precision." />
+  <meta property="og:url" content="https://finculator.app/about.html" />
+  <meta property="og:image" content="https://finculator.app/docs/images/finculator-logo.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="About Finculator — Independent Financial Engineering" />
+  <meta name="twitter:description" content="Learn why Finculator was built: an independent, ad-free, institutional financial calculation engine with zero tracking and uncompromising precision." />
+  <meta name="twitter:image" content="https://finculator.app/docs/images/finculator-logo.png" />
+
+  <style>
+    .legal-page-container {
+      max-width: 860px;
+      margin: 2.5rem auto 4rem auto;
+      padding: 0 1.5rem;
+    }
+    .legal-header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 2rem;
+    }
+    .legal-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      color: #94A3B8;
+      margin-bottom: 1.25rem;
+    }
+    .legal-breadcrumb a {
+      color: #38BDF8;
+      text-decoration: none;
+    }
+    .legal-breadcrumb a:hover {
+      text-decoration: underline;
+    }
+    .legal-title {
+      font-family: 'Fraunces', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.75rem 0;
+    }
+    .legal-subtitle {
+      font-size: 1rem;
+      color: #94A3B8;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .legal-content {
+      color: #CBD5E1;
+      font-size: 0.95rem;
+      line-height: 1.75;
+    }
+    .legal-section {
+      margin-bottom: 2.5rem;
+    }
+    .legal-section h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: #F8FAFC;
+      margin: 0 0 1rem 0;
+      letter-spacing: -0.01em;
+    }
+    .legal-section p {
+      margin: 0 0 1rem 0;
+      color: #CBD5E1;
+    }
+    .legal-section ul {
+      margin: 0 0 1.25rem 1.25rem;
+      padding: 0;
+    }
+    .legal-section li {
+      margin-bottom: 0.6rem;
+      color: #CBD5E1;
+    }
+    .legal-section a {
+      color: #38BDF8;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .legal-section a:hover {
+      color: #7DD3FC;
+    }
+    .legal-section code {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85em;
+      color: #93C5FD;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .feature-item {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    .feature-item h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #F8FAFC;
+      margin: 0 0 0.5rem 0;
+    }
+    .feature-item p {
+      font-size: 0.88rem;
+      color: #94A3B8;
+      margin: 0;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-to-content">Skip to main content</a>
+  <div class="app-container">
+    <!-- Top Header Bar -->
+    <header class="app-header">
+      <div class="header-left">
+        <a href="/" class="brand-mark" title="FINCULATOR — Smart Decisions. Stronger Futures.">
+          <div class="brand-logo-wrap">
+            <img src="docs/images/finculator-icon.png" alt="Finculator Official Logo" class="brand-logo-img" width="38" height="38" />
+          </div>
+          <div class="brand-info">
+            <span class="brand-title"><span class="brand-title-blue">FIN</span>CULATOR</span>
+            <span class="brand-tagline">Smart Decisions. Stronger Futures.</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="header-actions">
+        <a href="/" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          Explore All 27 Calculators
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-content" id="main-content" role="main">
+      <div class="legal-page-container">
+        <div class="legal-header">
+          <nav class="legal-breadcrumb" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <span>/</span>
+            <span>About Finculator</span>
+          </nav>
+          <h1 class="legal-title">About Finculator</h1>
+          <p class="legal-subtitle">Institutional financial computation built with engineering rigor and absolute client privacy</p>
+        </div>
+
+        <div class="legal-content">
+          
+      <section class="legal-section">
+        <h2>1. The Problem with Modern Financial Portals</h2>
+        <p>Most commercial financial calculators on the internet today suffer from the same fundamental conflicts of interest: they are designed as lead-generation magnets. When you calculate a home loan or insurance policy, your data is frequently harvested, packaged, and routed to third-party telemarketers and banks.</p>
+        <p>Furthermore, many web calculators rely on oversimplified mathematical formulas that ignore compounding nuances — such as Indian quarterly bank compounding on fixed deposits, Section 87A marginal relief provisos, or negative amortization thresholds on revolving credit cards.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>2. The Finculator Philosophy</h2>
+        <p>Finculator was architected by software engineer and finance researcher <strong>Prakhar Rai</strong> to prove that modern web engineering can deliver institutional-grade financial tools without compromising user privacy or accuracy.</p>
+        <div class="features-grid">
+          <div class="feature-item">
+            <h3>🔒 100% Client-Side Privacy</h3>
+            <p>Every calculation runs in your local browser sandbox. Your income, loan balances, and net worth never touch our servers unless you explicitly create an account.</p>
+          </div>
+          <div class="feature-item">
+            <h3>📐 Verified Mathematical Rigor</h3>
+            <p>27 specialized financial engines calibrated against Reserve Bank of India (RBI) conventions, SBI compounding guidelines, and Union Budget 2025 tax code.</p>
+          </div>
+          <div class="feature-item">
+            <h3>🚫 Zero Ads &amp; Zero Trackers</h3>
+            <p>Clean, distraction-free Obsidian Slate dark theme. No popups, no affiliate redirection traps, and no invasive third-party ad networks.</p>
+          </div>
+          <div class="feature-item">
+            <h3>⚡ Instant Performance</h3>
+            <p>Self-hosted WOFF2 typography, zero bloat, and sub-second execution with print-ready PDF export capabilities.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="legal-section">
+        <h2>3. The 27 Financial Computation Engines</h2>
+        <p>Finculator covers five primary domains of personal and commercial capital management:</p>
+        <ul>
+          <li><strong>Loans &amp; Mortgages (5):</strong> Reducing Balance EMI, Loan Prepayment Analyzer, Multi-Bank Comparator, Loan Eligibility &amp; FOIR, Credit Card Payoff &amp; Negative Amortization.</li>
+          <li><strong>Savings &amp; Deposits (5):</strong> Compound Interest, Simple Interest, Fixed Deposit (Quarterly Compounding), Recurring Deposit (RD), High-Yield Savings Account.</li>
+          <li><strong>Wealth &amp; Investing (9):</strong> Systematic Investment Plan (SIP), Step-Up SIP, Lumpsum Mutual Funds, CAGR &amp; Absolute Return, PPF (15-Year EEE), EPF Corpus, NPS Pension &amp; Annuity, Mutual Fund Expense Drag, Stock Return &amp; Dividend Yield.</li>
+          <li><strong>Tax &amp; Business (5):</strong> Income Tax (Budget 2025 FY 2025-26 &amp; FY 2024-25), Take-Home In-Hand Salary, Capital Gains Tax (LTCG / STCG), HRA Section 10(13A) Exemption, GST Inclusive &amp; Exclusive.</li>
+          <li><strong>Long-Term Planning (5):</strong> FIRE (Financial Independence, Retire Early), Inflation &amp; Purchasing Power, Net Worth Balance Sheet, 50/30/20 Budget Planner, Buy vs Rent Real Estate Decision Engine.</li>
+        </ul>
+      </section>
+
+      <section class="legal-section">
+        <h2>4. Open Source &amp; Architecture</h2>
+        <p>Finculator is built with vanilla JavaScript (ES modules), clean modern CSS, and automated testing suites. View our source code, contribute, or audit the implementation on <a href="https://github.com/prakharrai12/finculator" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+      </section>
+    
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer" id="app-footer">
+      
+      <div class="footer-container">
+        <div class="footer-top">
+          <!-- Col 1: Brand Info & Developer Profile -->
+          <div class="footer-brand-col">
+            <div class="brand-mark" style="color: #FFFFFF;">
+              <div class="brand-logo-wrap">
+                <img src="docs/images/finculator-icon.png" alt="Finculator Official Logo" class="brand-logo-img" width="30" height="30" style="filter: drop-shadow(0 2px 8px rgba(2, 132, 252, 0.4));" />
+              </div>
+              <div class="brand-info">
+                <span class="brand-title" style="color: #FFFFFF; font-size: 1.05rem;"><span class="brand-title-blue" style="color: #38BDF8;">FIN</span>CULATOR</span>
+                <span class="brand-tagline" style="color: #93C5FD; font-size: 0.65rem;">Smart Decisions. Stronger Futures.</span>
+              </div>
+            </div>
+
+            <p class="footer-brand-desc">
+              Institutional financial computation & wealth optimization suite architected by Prakhar Rai. 27 calculators calibrated against RBI/SBI banking standards and Union Budget provisions with 100% client-side privacy.
+            </p>
+
+            <!-- Clean Icon-Only Social Row -->
+            <div class="footer-social-row">
+              <a href="https://github.com/prakharrai12/finculator" target="_blank" rel="noopener noreferrer" class="footer-github-btn" title="Finculator GitHub Repository & Architecture" aria-label="GitHub Repository">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Col 2: Loans & Mortgages -->
+          <div class="footer-nav-col">
+            <div class="footer-col-title">Loans & Mortgages</div>
+            <ul class="footer-links">
+              <li><a href="#/emi">EMI & Repayment</a></li>
+              <li><a href="#/prepayment">Prepayment Analyzer</a></li>
+              <li><a href="#/comparator">Loan Comparator</a></li>
+              <li><a href="#/eligibility">Loan Eligibility (FOIR)</a></li>
+              <li><a href="#/credit-card">Credit Card Payoff</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 3: Wealth & Taxes -->
+          <div class="footer-nav-col">
+            <div class="footer-col-title">Wealth & Taxes</div>
+            <ul class="footer-links">
+              <li><a href="#/invest-sip">SIP Calculator</a></li>
+              <li><a href="#/invest-step-up">Step-Up SIP</a></li>
+              <li><a href="#/invest-ppf">PPF (Tax-Free)</a></li>
+              <li><a href="#/tax-income">Income Tax (Old vs New)</a></li>
+              <li><a href="#/tax-salary">Take-Home Salary</a></li>
+              <li><a href="#/fire">Retirement & FIRE</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 4: Stay Updated Newsletter -->
+          <div class="footer-newsletter-col">
+            <div class="footer-col-title">Stay Updated</div>
+            <p class="footer-newsletter-desc">
+              Get institutional intelligence on benchmark interest rates, fiscal policy revisions, and wealth models.
+            </p>
+            <form class="newsletter-form" novalidate>
+              <div class="newsletter-input-group">
+                <input 
+                  type="email" 
+                  class="newsletter-input" 
+                  placeholder="Enter your email address" 
+                  autocomplete="email"
+                  spellcheck="false"
+                  required 
+                />
+                <button type="submit" class="newsletter-submit-btn" aria-label="Subscribe to intelligence updates" title="Subscribe">
+                  <span class="btn-icon">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                  </span>
+                </button>
+              </div>
+              <div class="newsletter-feedback" role="status" aria-live="polite"></div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Footer Bottom Legal & Back to Top -->
+        <div class="footer-bottom">
+          <div class="footer-copyright">
+            <span>© 2026 Finculator. Architected by <a href="https://github.com/prakharrai12" target="_blank" rel="noopener noreferrer" class="footer-author-link">Prakhar Rai</a>.</span>
+          </div>
+          <div class="footer-legal-links">
+            <button type="button" class="back-to-top-btn" title="Scroll smoothly to top of page">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              Back to Top
+            </button>
+            <a href="privacy.html" class="footer-legal-link">Privacy Policy</a>
+            <a href="terms.html" class="footer-legal-link">Terms of Service</a>
+            <a href="disclaimer.html" class="footer-legal-link">Disclaimer</a>
+            <a href="about.html" class="footer-legal-link">About Us</a>
+            <a href="contact.html" class="footer-legal-link">Contact</a>
+            <a href="https://github.com/prakharrai12/finculator" target="_blank" rel="noopener noreferrer" class="footer-legal-link">Source Code</a>
+          </div>
+        </div>
+      </div>
+  
+    </footer>
+  </div>
+</body>
+</html>

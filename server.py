@@ -13,6 +13,8 @@ import html
 import re
 import secrets
 import threading
+import urllib.request
+import urllib.error
 
 # ==============================================================================
 # 1. ENVIRONMENT & SECRETS CONFIGURATION
@@ -22,6 +24,7 @@ DATA_DIR = os.path.join(DIRECTORY, 'data')
 USERS_FILE = os.path.join(DATA_DIR, 'users.json')
 EMAILS_FILE = os.path.join(DATA_DIR, 'sent_emails.json')
 NEWSLETTER_FILE = os.path.join(DATA_DIR, 'newsletter_subscribers.json')
+RESET_TOKENS_FILE = os.path.join(DATA_DIR, 'reset_tokens.json')
 
 def load_env_file(filepath: str):
     """Zero-dependency .env parser to maintain pure Python standard library portability."""
@@ -48,9 +51,11 @@ PORT = int(os.getenv('PORT', 3000))
 HOST = os.getenv('HOST', '127.0.0.1')
 APP_ENV = os.getenv('APP_ENV', 'development').lower()
 DEBUG = os.getenv('DEBUG', 'false').lower() in ('true', '1') if APP_ENV != 'production' else False
+BASE_URL = os.getenv('BASE_URL', f"http://{HOST}:{PORT}")
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 ADMIN_API_KEY = os.getenv('ADMIN_API_KEY')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
 
 # Validate required secrets on startup
 if APP_ENV == 'production':
@@ -67,7 +72,7 @@ else:
         print(f"[DEV] Development ADMIN_API_KEY active: {ADMIN_API_KEY}")
 
 ALLOWED_ORIGINS = [
-    o.strip() for o in os.getenv('ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000').split(',')
+    o.strip() for o in os.getenv('ALLOWED_ORIGINS', f"http://localhost:{PORT},http://127.0.0.1:{PORT}").split(',')
     if o.strip()
 ]
 ENFORCE_HTTPS = os.getenv('ENFORCE_HTTPS', 'false').lower() in ('true', '1')
@@ -78,9 +83,9 @@ API_RATE_LIMIT = int(os.getenv('API_RATE_LIMIT_PER_MIN', 60 if APP_ENV == 'produ
 AI_DAILY_SPEND_CAP_USD = float(os.getenv('AI_DAILY_SPEND_CAP_USD', 5.00))
 AI_DAILY_REQUEST_LIMIT = int(os.getenv('AI_DAILY_REQUEST_LIMIT', 500))
 
-# Initialize database files
+# Initialize local data storage files safely
 os.makedirs(DATA_DIR, exist_ok=True)
-for file_path in (USERS_FILE, EMAILS_FILE, NEWSLETTER_FILE):
+for file_path in (USERS_FILE, EMAILS_FILE, NEWSLETTER_FILE, RESET_TOKENS_FILE):
     if not os.path.exists(file_path):
         with open(file_path, 'w', encoding='utf-8') as f:
             json.dump([], f, indent=2)
@@ -95,10 +100,38 @@ mimetypes.add_type('image/png', '.png')
 mimetypes.add_type('image/webp', '.webp')
 mimetypes.add_type('image/svg+xml', '.svg')
 mimetypes.add_type('application/json', '.json')
+mimetypes.add_type('application/xml', '.xml')
+mimetypes.add_type('application/manifest+json', '.webmanifest')
 
 # ==============================================================================
-# 2. CRYPTOGRAPHY & AUTHENTICATION UTILITIES
+# 2. CRYPTOGRAPHY, PASSWORD POLICY & AUTH UTILITIES
 # ==============================================================================
+COMMON_PASSWORDS = {
+    'password', 'password123', '12345678', '123456789', '1234567890',
+    'qwertyuiop', 'admin123', 'letmein123', 'welcome123', 'finculator',
+    'finculator123', 'iloveyou', 'sunshine', 'princess', 'football'
+}
+
+def validate_password_strength(password: str) -> tuple[bool, str]:
+    """Enforces strict fintech password policy: min 10 chars, uppercase, lowercase, digit, symbol, blocklist."""
+    if not password or len(password) < 10:
+        return False, "Password must be at least 10 characters long."
+    if len(password) > 128:
+        return False, "Password must not exceed 128 characters."
+    if not re.search(r'[A-Z]', password):
+        return False, "Password must include at least one uppercase letter."
+    if not re.search(r'[a-z]', password):
+        return False, "Password must include at least one lowercase letter."
+    if not re.search(r'[0-9]', password):
+        return False, "Password must include at least one number."
+    if not re.search(r'[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]', password):
+        return False, "Password must include at least one special character."
+    lower = password.lower()
+    stripped = re.sub(r'[^a-z]', '', lower)
+    if lower in COMMON_PASSWORDS or stripped in COMMON_PASSWORDS:
+        return False, "This password is too common and easily guessed. Please choose a stronger password."
+    return True, ""
+
 def hash_pw(password: str, salt: bytes = None) -> str:
     """PBKDF2-HMAC-SHA256 password hashing with 100,000 iterations and 16-byte random salt."""
     if salt is None:
@@ -180,7 +213,7 @@ def verify_session_token(token: str) -> dict | None:
         return None
 
 # ==============================================================================
-# 3. RATE LIMITING & ABUSE PREVENTION
+# 3. RATE LIMITING & ACCOUNT LOCKOUT
 # ==============================================================================
 class RateLimiter:
     """Thread-safe sliding-window rate limiter per client IP."""
@@ -202,99 +235,79 @@ class RateLimiter:
 
 rate_limiter = RateLimiter()
 
+# Track failed login attempts for brute-force defense
+failed_logins_lock = threading.Lock()
+failed_logins = {} # key: ip or email, val: {'count': int, 'locked_until': float}
+
+def record_failed_login(key: str) -> bool:
+    """Records a failed attempt. Returns True if account/IP is now locked out."""
+    now = time.time()
+    with failed_logins_lock:
+        rec = failed_logins.get(key, {'count': 0, 'locked_until': 0})
+        if rec['locked_until'] > now:
+            return True
+        rec['count'] += 1
+        if rec['count'] >= 5:
+            rec['locked_until'] = now + 900 # 15 minutes lockout
+            failed_logins[key] = rec
+            return True
+        failed_logins[key] = rec
+        return False
+
+def check_login_lockout(key: str) -> bool:
+    now = time.time()
+    with failed_logins_lock:
+        rec = failed_logins.get(key)
+        if rec and rec.get('locked_until', 0) > now:
+            return True
+        return False
+
+def clear_failed_login(key: str):
+    with failed_logins_lock:
+        if key in failed_logins:
+            del failed_logins[key]
+
 # ==============================================================================
-# 4. DATA ACCESS LAYER & LOGGING
+# 4. DATA ACCESS LAYER & PERSISTENCE
 # ==============================================================================
 file_lock = threading.Lock()
 
 def get_users():
     with file_lock:
         try:
-            with open(USERS_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
+            if os.path.exists(USERS_FILE):
+                with open(USERS_FILE, 'r', encoding='utf-8') as f:
+                    return json.load(f)
         except Exception:
             return []
+        return []
 
 def save_users(users):
     with file_lock:
-        # Atomic write pattern
         temp_file = f"{USERS_FILE}.tmp"
         with open(temp_file, 'w', encoding='utf-8') as f:
             json.dump(users, f, indent=2)
         os.replace(temp_file, USERS_FILE)
 
-def generate_welcome_email_html(name, email, user_id):
-    safe_name = html.escape(name)
-    safe_email = html.escape(email)
-    safe_uid = html.escape(user_id)
-    return f"""
-    <!DOCTYPE html>
-    <html>
-    <head><meta charset="utf-8"/></head>
-    <body style="margin: 0; padding: 0; background-color: #0A0F1D; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-      <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 30px auto; background-color: #0D1526; border-radius: 16px; border: 1px solid #1E293B; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
-        <tr>
-          <td align="center" style="padding: 40px 20px 24px 20px; background: linear-gradient(180deg, #131E36 0%, #0D1526 100%); border-bottom: 1px solid #1E293B;">
-            <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M 48 10 A 38 38 0 1 0 86 48" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" />
-              <rect x="34" y="52" width="7.5" height="20" rx="3.75" fill="#2563EB" />
-              <rect x="46" y="40" width="7.5" height="32" rx="3.75" fill="#3B82F6" />
-              <rect x="58" y="28" width="7.5" height="44" rx="3.75" fill="#06B6D4" />
-              <path d="M 32 68 L 76 24" fill="none" stroke="#06B6D4" stroke-width="8" stroke-linecap="round" />
-              <path d="M 56 20 L 82 20 L 82 46 Z" fill="#06B6D4" stroke-linejoin="round" />
-            </svg>
-            <div style="font-size: 24px; font-weight: 800; color: #FFFFFF; letter-spacing: 1px; margin-top: 12px;">FINCULATOR</div>
-            <div style="font-size: 12px; color: #38BDF8; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 4px;">Smart Decisions. Stronger Futures.</div>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 36px 32px 24px 32px;">
-            <h1 style="color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 12px 0;">Welcome to Finculator, {safe_name}!</h1>
-            <p style="color: #94A3B8; font-size: 15px; line-height: 1.6; margin: 0 0 24px 0;">
-              Finculator is your institutional wealth optimization platform — engineered to help you simulate loans, compound investments, navigate taxes, and build advisory-grade portfolios with mathematical precision.
-            </p>
-            <div style="background-color: #131E36; border: 1px solid #2563EB; border-radius: 12px; padding: 24px; margin-bottom: 28px;">
-              <div style="font-size: 13px; font-weight: 700; color: #38BDF8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">
-                Account Confirmation
-              </div>
-              <table width="100%" cellpadding="6" cellspacing="0">
-                <tr>
-                  <td width="38%" style="color: #94A3B8; font-size: 14px; font-weight: 600;">Registered Email:</td>
-                  <td style="color: #FFFFFF; font-size: 14px; font-family: monospace; font-weight: bold;">{safe_email}</td>
-                </tr>
-                <tr>
-                  <td style="color: #94A3B8; font-size: 14px; font-weight: 600;">Security Status:</td>
-                  <td style="color: #10B981; font-size: 14px;">PBKDF2-Encrypted Active</td>
-                </tr>
-                <tr>
-                  <td style="color: #94A3B8; font-size: 14px; font-weight: 600;">Account ID:</td>
-                  <td style="color: #64748B; font-size: 12px; font-family: monospace;">{safe_uid}</td>
-                </tr>
-              </table>
-            </div>
-            <div align="center" style="margin-bottom: 30px;">
-              <a href="http://localhost:3000/#/login" style="background: linear-gradient(135deg, #2563EB 0%, #06B6D4 100%); color: #FFFFFF; text-decoration: none; font-weight: 700; font-size: 15px; padding: 14px 32px; border-radius: 8px; display: inline-block; box-shadow: 0 6px 20px rgba(37,99,235,0.4);">
-                Access Your Financial Dashboard →
-              </a>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td align="center" style="padding: 24px; background-color: #0A0F1D; border-top: 1px solid #1E293B;">
-            <p style="color: #64748B; font-size: 12px; margin: 0 0 6px 0;">
-              Finculator Security Team • Institutional Cryptographic Architecture
-            </p>
-            <p style="color: #475569; font-size: 11px; margin: 0;">
-              © 2026 Finculator. All rights reserved.
-            </p>
-          </td>
-        </tr>
-      </table>
-    </body>
-    </html>
-    """
+def get_reset_tokens():
+    with file_lock:
+        try:
+            if os.path.exists(RESET_TOKENS_FILE):
+                with open(RESET_TOKENS_FILE, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+        except Exception:
+            return []
+        return []
+
+def save_reset_tokens(tokens):
+    with file_lock:
+        temp_file = f"{RESET_TOKENS_FILE}.tmp"
+        with open(temp_file, 'w', encoding='utf-8') as f:
+            json.dump(tokens, f, indent=2)
+        os.replace(temp_file, RESET_TOKENS_FILE)
 
 def log_sent_email(to_email, subject, body_html, body_text):
+    """Logs outgoing notification with zero credentials or plaintext passwords."""
     with file_lock:
         emails = []
         try:
@@ -307,7 +320,7 @@ def log_sent_email(to_email, subject, body_html, body_text):
         email_record = {
             'id': str(uuid.uuid4()),
             'to': to_email,
-            'from': 'auth@finculator.io',
+            'from': 'auth@finculator.app',
             'subject': subject,
             'bodyHtml': body_html,
             'bodyText': body_text,
@@ -323,17 +336,20 @@ def log_sent_email(to_email, subject, body_html, body_text):
         return email_record
 
 # ==============================================================================
-# 5. SECURE HTTP REQUEST HANDLER
+# 5. SECURE HTTP REQUEST HANDLER (PUBLIC ALLOWLIST ONLY)
 # ==============================================================================
 ALLOWED_STATIC_EXTS = {
     '.html', '.css', '.js', '.mjs', '.png', '.jpg', '.jpeg',
-    '.webp', '.svg', '.ico', '.txt', '.woff', '.woff2', '.ttf'
+    '.webp', '.svg', '.ico', '.txt', '.woff', '.woff2', '.ttf',
+    '.xml', '.webmanifest'
 }
-FORBIDDEN_PATH_SEGMENTS = {
-    'data', '.git', '.env', 'tests', '__pycache__', 'scratch', '.system_generated'
-}
-FORBIDDEN_EXTS = {
-    '.py', '.pyc', '.bat', '.json', '.zip', '.sh', '.env', '.md'
+
+ALLOWED_PUBLIC_DIRS = ('css/', 'js/', 'docs/', 'fonts/')
+ALLOWED_ROOT_FILES = {
+    'favicon.png', 'finculator-icon.png', 'finculator-logo.png',
+    'finculator-logo-horizontal.png', 'hero-illustration.webp',
+    'hero-illustration-mobile.webp', 'site.webmanifest', 'robots.txt',
+    'sitemap.xml', 'humans.txt', '_headers', 'vercel.json', 'SECURITY.md'
 }
 
 class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
@@ -341,32 +357,39 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
 
     def log_message(self, format, *args):
-        """Sanitized request logging omitting sensitive user query parameters or tokens."""
         if not DEBUG and APP_ENV == 'production':
             return
         sys.stderr.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {self.address_string()} - {format % args}\n")
 
     def end_headers(self):
-        # Cache control
-        self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-        self.send_header('Pragma', 'no-cache')
-        self.send_header('Expires', '0')
+        # Environment-aware Cache-Control
+        if APP_ENV == 'production':
+            if hasattr(self, 'path') and any(self.path.startswith(p) for p in ('/css/', '/js/', '/docs/', '/fonts/')):
+                self.send_header('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400')
+            elif hasattr(self, 'path') and any(self.path.endswith(ext) for ext in ('.png', '.webp', '.jpg', '.svg', '.ico', '.woff2', '.woff')):
+                self.send_header('Cache-Control', 'public, max-age=2592000, immutable')
+            else:
+                self.send_header('Cache-Control', 'no-cache, must-revalidate')
+        else:
+            self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            self.send_header('Pragma', 'no-cache')
+            self.send_header('Expires', '0')
 
-        # Standard Security Headers
+        # Standard Strict Security Headers
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.send_header('X-Frame-Options', 'DENY')
         self.send_header('Referrer-Policy', 'strict-origin-when-cross-origin')
         self.send_header('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()')
         self.send_header('Cross-Origin-Opener-Policy', 'same-origin')
 
-        # Content Security Policy (CSP)
+        # Content Security Policy (Strict, no third-party prompt leakage)
         csp = (
             "default-src 'self'; "
-            "script-src 'self' 'unsafe-inline'; "
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-            "font-src 'self' https://fonts.gstatic.com; "
-            "img-src 'self' data: https:; "
-            "connect-src 'self' https://generativelanguage.googleapis.com https://api.groq.com https://text.pollinations.ai; "
+            "font-src 'self' https://fonts.gstatic.com data:; "
+            "img-src 'self' data: https: blob:; "
+            "connect-src 'self' https://generativelanguage.googleapis.com https://api.groq.com; "
             "frame-ancestors 'none'; "
             "object-src 'none'; "
             "base-uri 'self'; "
@@ -393,7 +416,6 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def is_admin_request(self) -> bool:
-        """Verifies admin authorization via X-Admin-Key, Bearer token, or admin session."""
         admin_key = self.headers.get('X-Admin-Key')
         auth_header = self.headers.get('Authorization', '')
         bearer = auth_header[7:].strip() if auth_header.startswith('Bearer ') else ''
@@ -403,7 +425,6 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
         if bearer and hmac.compare_digest(bearer, ADMIN_API_KEY):
             return True
 
-        # Check signed session token with role == admin
         token_payload = verify_session_token(bearer)
         if token_payload and token_payload.get('role') == 'admin':
             return True
@@ -411,7 +432,6 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
         return False
 
     def verify_csrf(self) -> bool:
-        """Validates CSRF tokens and request origins on state-changing operations."""
         if not CSRF_PROTECTION_ENABLED:
             return True
         if self.headers.get('X-Finculator-CSRF') == '1':
@@ -435,28 +455,22 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(json.dumps(data).encode('utf-8'))
 
+    def serve_static_file(self, filepath, content_type):
+        try:
+            with open(filepath, 'rb') as f:
+                content = f.read()
+            self.send_response(200)
+            self.send_header('Content-Type', content_type)
+            self.send_header('Content-Length', str(len(content)))
+            self.end_headers()
+            self.wfile.write(content)
+        except Exception:
+            self.respond_json({'error': 'Resource not found.'}, 404)
+
     def do_GET(self):
         client_ip = self.client_address[0]
 
-        # 1. API: Sent Emails (Admin Only)
-        if self.path.startswith('/api/auth/sent-emails'):
-            if not rate_limiter.is_allowed(f"api:{client_ip}", API_RATE_LIMIT):
-                self.respond_json({'error': 'Rate limit exceeded.'}, 429, {'Retry-After': '60'})
-                return
-
-            if not self.is_admin_request():
-                self.respond_json({'error': 'Access denied: administrative authorization required.'}, 401)
-                return
-
-            try:
-                with open(EMAILS_FILE, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-            except Exception:
-                data = []
-            self.respond_json(data, 200)
-            return
-
-        # 2. API: Newsletter Subscribers (Admin Only)
+        # 1. API: Newsletter Subscribers (Admin Only)
         if self.path.startswith('/api/newsletter/subscribers'):
             if not rate_limiter.is_allowed(f"api:{client_ip}", API_RATE_LIMIT):
                 self.respond_json({'error': 'Rate limit exceeded.'}, 429, {'Retry-After': '60'})
@@ -474,37 +488,62 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
             self.respond_json(data, 200)
             return
 
-        # 3. Static Files: Strict Path Traversal & Isolation Defense
+        # Handle unrecognized /api/ endpoints with 404
+        if self.path.startswith('/api/'):
+            self.respond_json({'error': 'API endpoint not found.'}, 404)
+            return
+
+        # 2. Strict Public Static File Allowlist (Eliminates arbitrary root path traversal)
         raw_path = self.path.split('?')[0].split('#')[0]
         norm_path = os.path.normpath(raw_path).replace('\\', '/')
-        segments = [s for s in norm_path.strip('/').split('/') if s]
+        if norm_path.startswith('/'):
+            norm_path = norm_path[1:]
 
-        # Block access to database files, source code, git metadata, and tests
-        for seg in segments:
-            # Permit test_runner.html strictly in development mode for math unit verification
-            if seg == 'tests' and APP_ENV != 'production' and norm_path in ('/tests/test_runner.html', 'tests/test_runner.html'):
-                continue
-            if seg in FORBIDDEN_PATH_SEGMENTS or seg.startswith('.'):
-                self.respond_json({'error': 'Access forbidden: protected resource.'}, 403)
+        # Handle root / index
+        if norm_path in ('', 'index.html'):
+            target_file = os.path.join(DIRECTORY, 'index.html')
+            self.serve_static_file(target_file, 'text/html')
+            return
+
+        is_allowed = False
+        clean_html_target = None
+        if any(norm_path.startswith(d) for d in ALLOWED_PUBLIC_DIRS):
+            is_allowed = True
+        elif norm_path in ALLOWED_ROOT_FILES or (norm_path.endswith('.html') and '/' not in norm_path):
+            is_allowed = True
+        elif '/' not in norm_path and os.path.isfile(os.path.join(DIRECTORY, f"{norm_path}.html")):
+            is_allowed = True
+            clean_html_target = f"{norm_path}.html"
+        elif APP_ENV != 'production' and norm_path == 'tests/test_runner.html':
+            is_allowed = True
+
+        if not is_allowed:
+            # Block everything else (e.g. data/, server.py, .env, .git, tests/)
+            self.respond_json({'error': 'Access forbidden: resource is not in public allowlist.'}, 403)
+            return
+
+        if clean_html_target:
+            target_file = os.path.join(DIRECTORY, clean_html_target)
+            self.serve_static_file(target_file, 'text/html')
+            return
+
+        target_file = os.path.join(DIRECTORY, norm_path)
+        try:
+            common = os.path.commonpath([DIRECTORY, os.path.abspath(target_file)])
+            if common != DIRECTORY or not os.path.exists(target_file) or os.path.isdir(target_file):
+                self.respond_json({'error': 'Resource not found.'}, 404)
                 return
+        except Exception:
+            self.respond_json({'error': 'Access forbidden.'}, 403)
+            return
 
         _, ext = os.path.splitext(norm_path)
-        ext = ext.lower()
-
-        if ext in FORBIDDEN_EXTS:
-            self.respond_json({'error': 'Access forbidden: invalid file format.'}, 403)
+        if ext.lower() not in ALLOWED_STATIC_EXTS:
+            self.respond_json({'error': 'Access forbidden: unauthorized file format.'}, 403)
             return
 
-        # Deny directory listing or requests for non-approved extensions (except index/root)
-        if norm_path not in ('', '/', '.') and ext and ext not in ALLOWED_STATIC_EXTS:
-            self.respond_json({'error': 'Access forbidden: unauthorized file extension.'}, 403)
-            return
-
-        # Normal static file serving
-        try:
-            super().do_GET()
-        except Exception:
-            self.respond_json({'error': 'Resource not found.'}, 404)
+        content_type, _ = mimetypes.guess_type(target_file)
+        self.serve_static_file(target_file, content_type or 'application/octet-stream')
 
     def do_POST(self):
         client_ip = self.client_address[0]
@@ -541,7 +580,6 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
             email = str(payload.get('email', '')).strip().lower()
             password = str(payload.get('password', ''))
 
-            # Input validation
             if not email or not password or not name:
                 self.respond_json({'error': 'Name, email, and password are required.'}, 400)
                 return
@@ -551,8 +589,9 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
                 self.respond_json({'error': 'Please enter a valid email address.'}, 400)
                 return
 
-            if len(password) < 8 or len(password) > 128:
-                self.respond_json({'error': 'Password must be between 8 and 128 characters.'}, 400)
+            is_pw_valid, pw_err = validate_password_strength(password)
+            if not is_pw_valid:
+                self.respond_json({'error': pw_err}, 400)
                 return
 
             if len(name) > 100:
@@ -579,10 +618,10 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
 
             token = create_session_token(user_id, email, role='user')
 
-            # Send welcome email (passwords are NEVER emailed or logged in cleartext)
-            subject = "Welcome to Finculator! Your Financial Engine is Ready"
-            body_text = f"Hello {name},\n\nWelcome to Finculator! Your account is active.\nEmail: {email}\n\nLogin at: http://localhost:3000/#/login\n\n— Finculator Team"
-            body_html = generate_welcome_email_html(name, email, user_id)
+            # Send welcome confirmation (passwords are NEVER emailed or logged in cleartext)
+            subject = "Welcome to Finculator — Your Account is Ready"
+            body_text = f"Hello {name},\n\nWelcome to Finculator! Your account is active.\nEmail: {email}\n\n— Finculator Team"
+            body_html = f"<p>Hello {html.escape(name)},</p><p>Welcome to Finculator! Your account is active.</p>"
             log_sent_email(email, subject, body_html, body_text)
 
             self.respond_json({
@@ -597,13 +636,18 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
             }, 201)
             return
 
-        # --- ENDPOINT 2: USER LOGIN ---
+        # --- ENDPOINT 2: USER LOGIN (WITH LOCKOUT DEFENSE) ---
         if self.path == '/api/auth/login':
             email = str(payload.get('email', '')).strip().lower()
             password = str(payload.get('password', ''))
 
             if not email or not password:
                 self.respond_json({'error': 'Email and password are required.'}, 400)
+                return
+
+            # Check lockout
+            if check_login_lockout(email) or check_login_lockout(client_ip):
+                self.respond_json({'error': 'Too many failed login attempts. Account temporarily locked for 15 minutes.'}, 429)
                 return
 
             users = get_users()
@@ -619,8 +663,13 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
                         break
 
             if not target_user:
+                record_failed_login(email)
+                record_failed_login(client_ip)
                 self.respond_json({'error': 'Invalid email address or password.'}, 401)
                 return
+
+            clear_failed_login(email)
+            clear_failed_login(client_ip)
 
             # Upgrade legacy SHA256 hashes to PBKDF2
             if needs_rehash:
@@ -645,7 +694,7 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
             }, 200)
             return
 
-        # --- ENDPOINT 3: FORGOT PASSWORD / ACCESS RECOVERY ---
+        # --- ENDPOINT 3: FORGOT PASSWORD (SECURE EXPIRING TOKEN) ---
         if self.path in ('/api/auth/send-credentials', '/api/auth/forgot-password'):
             email = str(payload.get('email', '')).strip().lower()
             if not email:
@@ -656,21 +705,136 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
             user_match = next((u for u in users if u.get('email') == email), None)
 
             if user_match:
-                reset_token = secrets.token_urlsafe(32)
-                name = user_match.get('name', 'Investor')
-                subject = "Finculator Access Recovery Instructions"
-                body_text = f"Hello {name},\n\nWe received an access recovery request for your Finculator account.\nReset Link: http://localhost:3000/#/reset-password?token={reset_token}\n\nIf you did not request this, you can ignore this email.\n\n— Finculator Security"
-                body_html = f"<p>Hello {html.escape(name)},</p><p>We received an access recovery request for your account.</p><p><a href='http://localhost:3000/#/reset-password?token={reset_token}'>Reset Password</a></p>"
+                raw_token = secrets.token_urlsafe(32)
+                token_hash = hashlib.sha256(raw_token.encode('utf-8')).hexdigest()
+                now = time.time()
+
+                tokens = get_reset_tokens()
+                # Clean up expired tokens
+                tokens = [t for t in tokens if t.get('expiresAt', 0) > now and not t.get('used', False)]
+                tokens.append({
+                    'email': email,
+                    'tokenHash': token_hash,
+                    'expiresAt': now + 900, # 15 minutes
+                    'used': False
+                })
+                save_reset_tokens(tokens)
+
+                name = user_match.get('name', 'User')
+                reset_url = f"{BASE_URL}/#/reset-password?token={raw_token}"
+                subject = "Finculator Password Reset Request"
+                body_text = f"Hello {name},\n\nWe received a password reset request. Click the link below (valid for 15 minutes):\n{reset_url}\n\nIf you did not request this, you can ignore this email."
+                body_html = f"<p>Hello {html.escape(name)},</p><p>We received a password reset request. Click below (valid for 15 minutes):</p><p><a href='{reset_url}'>Reset Password</a></p>"
                 log_sent_email(email, subject, body_html, body_text)
 
-            # Uniform response preventing user enumeration or password leaking
+            # Uniform response preventing user enumeration
             self.respond_json({
                 'success': True,
                 'message': "If this email address is registered, password recovery instructions have been dispatched."
             }, 200)
             return
 
-        # --- ENDPOINT 4: NEWSLETTER SUBSCRIPTION ---
+        # --- ENDPOINT 4: RESET PASSWORD (SINGLE-USE VERIFICATION) ---
+        if self.path == '/api/auth/reset-password':
+            raw_token = str(payload.get('token', '')).strip()
+            new_password = str(payload.get('newPassword', ''))
+
+            if not raw_token or not new_password:
+                self.respond_json({'error': 'Reset token and new password are required.'}, 400)
+                return
+
+            is_pw_valid, pw_err = validate_password_strength(new_password)
+            if not is_pw_valid:
+                self.respond_json({'error': pw_err}, 400)
+                return
+
+            token_hash = hashlib.sha256(raw_token.encode('utf-8')).hexdigest()
+            now = time.time()
+
+            tokens = get_reset_tokens()
+            matched_token = None
+            for t in tokens:
+                if t.get('tokenHash') == token_hash and not t.get('used', False) and t.get('expiresAt', 0) > now:
+                    matched_token = t
+                    break
+
+            if not matched_token:
+                self.respond_json({'error': 'Invalid or expired password reset token.'}, 400)
+                return
+
+            # Mark token as used immediately (single-use)
+            matched_token['used'] = True
+            save_reset_tokens(tokens)
+
+            # Update password for target email
+            users = get_users()
+            target_user = next((u for u in users if u.get('email') == matched_token['email']), None)
+            if not target_user:
+                self.respond_json({'error': 'User account associated with token was not found.'}, 404)
+                return
+
+            target_user['passwordHash'] = hash_pw(new_password)
+            save_users(users)
+
+            self.respond_json({
+                'success': True,
+                'message': 'Password has been successfully updated. You may now log in.'
+            }, 200)
+            return
+
+        # --- ENDPOINT 5: FINBOT AI PROXY (ENVIRONMENT KEY PROTECTION) ---
+        if self.path == '/api/ai/query':
+            prompt = str(payload.get('prompt', '')).strip()
+            if not prompt:
+                self.respond_json({'error': 'Query prompt is required.'}, 400)
+                return
+            if len(prompt) > 1000:
+                self.respond_json({'error': 'Prompt exceeds maximum length (1000 characters).'}, 400)
+                return
+
+            if not GEMINI_API_KEY or GEMINI_API_KEY.startswith('your-'):
+                # Return offline fallback indicator so client switches to financial RAG engine
+                self.respond_json({
+                    'success': False,
+                    'offlineFallback': True,
+                    'error': 'AI proxy key not configured. Using local financial knowledge engine.'
+                }, 200)
+                return
+
+            # Secure upstream proxy call to Google Gemini
+            try:
+                gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+                system_instruction = (
+                    "You are FinBot, the financial copilot on Finculator. Answer accurately, concisely, and professionally. "
+                    "When suggesting relevant tools, format them strictly as [NAVIGATE:route|Button Label]. "
+                    "Always maintain a responsible financial disclaimer: calculations are for educational and illustrative purposes."
+                )
+                gemini_body = json.dumps({
+                    "contents": [{
+                        "role": "user",
+                        "parts": [{"text": f"{system_instruction}\n\nUser Question: {prompt}"}]
+                    }]
+                }).encode('utf-8')
+
+                req = urllib.request.Request(
+                    gemini_url,
+                    data=gemini_body,
+                    headers={'Content-Type': 'application/json'}
+                )
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    resp_json = json.loads(resp.read().decode('utf-8'))
+                    text = resp_json['candidates'][0]['content']['parts'][0]['text']
+                    self.respond_json({'success': True, 'response': text}, 200)
+                    return
+            except Exception as e:
+                self.respond_json({
+                    'success': False,
+                    'offlineFallback': True,
+                    'error': f"AI Proxy upstream error: {str(e)}"
+                }, 200)
+                return
+
+        # --- ENDPOINT 6: NEWSLETTER SUBSCRIPTION ---
         if self.path == '/api/newsletter/subscribe':
             email = str(payload.get('email', '')).strip().lower()
             email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'

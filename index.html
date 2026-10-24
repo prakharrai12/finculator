@@ -6,23 +6,27 @@
   <title>FINCULATOR — Smart Decisions. Stronger Futures.</title>
   <meta name="description" content="FINCULATOR is an AI-powered financial computation engine that helps you calculate, compare, and optimize loans, savings, taxes, and investments with institutional-grade accuracy." />
 
-  <!-- Google Fonts: Fraunces (Display Serif), Inter (UI Grotesque), IBM Plex Mono (Tabular Numerals) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Self-Hosted Modern WOFF2 Fonts (Zero Third-Party Latency) -->
+  <link rel="preload" href="fonts/inter-normal-400-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/fraunces-normal-600-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/fonts.css" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="docs/images/favicon.png" />
 
   <!-- Stylesheets with cache-busting -->
-  <link rel="stylesheet" href="css/main.css?v=4.2" />
-  <link rel="stylesheet" href="css/components.css?v=4.2" />
-  <link rel="stylesheet" href="css/calculators.css?v=4.2" />
-  <link rel="stylesheet" href="css/charts.css?v=4.2" />
-  <link rel="stylesheet" href="css/portfolio.css?v=4.2" />
-  <link rel="stylesheet" href="css/auth.css?v=4.2" />
-  <link rel="stylesheet" href="css/landingGate.css?v=4.2" />
-  <link rel="stylesheet" href="css/chatbot.css?v=4.2" />
-  <link rel="stylesheet" href="css/print.css?v=4.2" />
+  <link rel="stylesheet" href="css/main.css?v=4.4" />
+  <link rel="stylesheet" href="css/components.css?v=4.4" />
+  <link rel="stylesheet" href="css/calculators.css?v=4.4" />
+  <link rel="stylesheet" href="css/charts.css?v=4.4" />
+  <link rel="stylesheet" href="css/portfolio.css?v=4.4" />
+  <link rel="stylesheet" href="css/auth.css?v=4.4" />
+  <link rel="stylesheet" href="css/landingGate.css?v=4.4" />
+  <link rel="stylesheet" href="css/chatbot.css?v=4.4" />
+  <link rel="stylesheet" href="css/print.css?v=4.4" />
 </head>
 <body>
+  <a href="#main-content" class="skip-to-content">Skip to main content</a>
   <div class="app-container">
     <!-- Top Header Bar -->
     <header class="app-header">
@@ -31,26 +35,13 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
         </button>
 
-        <!-- Brand Mark: Official Finculator SVG Logo -->
-        <a href="#/emi" class="brand-mark">
+        <!-- Brand Mark: Official Finculator Logo -->
+        <a href="#/emi" class="brand-mark" title="FINCULATOR — Smart Decisions. Stronger Futures.">
           <div class="brand-logo-wrap">
-            <svg width="34" height="34" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="logo-arrow-grad" x1="30" y1="70" x2="85" y2="15" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#2563EB" />
-                  <stop offset="100%" stop-color="#06B6D4" />
-                </linearGradient>
-              </defs>
-              <path d="M 48 10 A 38 38 0 1 0 86 48" fill="none" stroke="#0D1526" stroke-width="12" stroke-linecap="round" />
-              <rect x="34" y="52" width="7.5" height="20" rx="3.75" fill="#2563EB" />
-              <rect x="46" y="40" width="7.5" height="32" rx="3.75" fill="#3B82F6" />
-              <rect x="58" y="28" width="7.5" height="44" rx="3.75" fill="#06B6D4" />
-              <path d="M 32 68 L 76 24" fill="none" stroke="url(#logo-arrow-grad)" stroke-width="9" stroke-linecap="round" />
-              <path d="M 56 20 L 82 20 L 82 46 Z" fill="url(#logo-arrow-grad)" stroke-linejoin="round" />
-            </svg>
+            <img src="docs/images/finculator-icon.png" alt="Finculator Official Logo" class="brand-logo-img" width="38" height="38" />
           </div>
           <div class="brand-info">
-            <span class="brand-title">FINCULATOR</span>
+            <span class="brand-title"><span class="brand-title-blue">FIN</span>CULATOR</span>
             <span class="brand-tagline">Smart Decisions. Stronger Futures.</span>
           </div>
         </a>

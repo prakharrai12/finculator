@@ -3,7 +3,7 @@
  * Generates an advisory-grade Personal Financial Statement (PFS) & Wealth Portfolio Report
  */
 
-import { formatCurrency, formatPercent, getGlobalCurrency } from '../utils/formatters.js';
+import { formatCurrency, formatPercent, getGlobalCurrency, escapeHTML } from '../utils/formatters.js';
 import { calculatePortfolioMetrics } from '../math/portfolioMath.js';
 
 /**
@@ -37,7 +37,7 @@ export function generatePortfolioPDF(portfolioState) {
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Finculator Personal Financial Statement — ${profile.fullName || 'Client Portfolio'}</title>
+  <title>Finculator Personal Financial Statement — ${escapeHTML(profile.fullName || 'Client Portfolio')}</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -292,8 +292,8 @@ export function generatePortfolioPDF(portfolioState) {
         <p>Institutional Personal Financial Statement & Investment Portfolio Report</p>
       </div>
       <div class="meta-group">
-        <div>Statement Date: <strong>${profile.asOfDate || new Date().toISOString().split('T')[0]}</strong></div>
-        <div>Reporting Currency: <strong>${curr.code} (${curr.symbol})</strong></div>
+        <div>Statement Date: <strong>${escapeHTML(profile.asOfDate || new Date().toISOString().split('T')[0])}</strong></div>
+        <div>Reporting Currency: <strong>${escapeHTML(curr.code)} (${escapeHTML(curr.symbol)})</strong></div>
         <div>Document Ref: <strong>FIN-${Date.now().toString().slice(-6)}</strong></div>
       </div>
     </div>
@@ -302,19 +302,19 @@ export function generatePortfolioPDF(portfolioState) {
     <div class="profile-card">
       <div class="profile-item">
         <span>Full Name</span>
-        <strong>${profile.fullName || 'N/A'}</strong>
+        <strong>${escapeHTML(profile.fullName || 'N/A')}</strong>
       </div>
       <div class="profile-item">
         <span>Occupation / Employer</span>
-        <strong>${profile.occupation || 'Professional'} (${profile.employer || 'Private'})</strong>
+        <strong>${escapeHTML(profile.occupation || 'Professional')} (${escapeHTML(profile.employer || 'Private')})</strong>
       </div>
       <div class="profile-item">
         <span>Contact Email / Phone</span>
-        <strong>${profile.email || 'N/A'} | ${profile.phone || 'N/A'}</strong>
+        <strong>${escapeHTML(profile.email || 'N/A')} | ${escapeHTML(profile.phone || 'N/A')}</strong>
       </div>
       <div class="profile-item">
         <span>Credit Score & Status</span>
-        <strong>${credit.creditScore || '785'} (Prime Tier)</strong>
+        <strong>${escapeHTML(credit.creditScore || '785')} (Prime Tier)</strong>
       </div>
     </div>
 
@@ -514,11 +514,11 @@ export function generatePortfolioPDF(portfolioState) {
             const pct = g.targetAmount > 0 ? Math.min(100, Math.round(((g.currentAmount || 0) / g.targetAmount) * 100)) : 0;
             return `
               <tr>
-                <td><strong>${g.title}</strong></td>
-                <td>${g.type}</td>
+                <td><strong>${escapeHTML(g.title || '')}</strong></td>
+                <td>${escapeHTML(g.type || '')}</td>
                 <td class="num">${formatCurrency(g.targetAmount)}</td>
                 <td class="num">${formatCurrency(g.currentAmount || 0)}</td>
-                <td class="num">${g.targetDate || '2030'}</td>
+                <td class="num">${escapeHTML(g.targetDate || '2030')}</td>
                 <td class="num"><strong>${pct}%</strong></td>
               </tr>
             `;

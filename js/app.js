@@ -37,6 +37,7 @@ import { HeroLandingGate } from './components/heroLandingGate.js';
 import { GuestConfirmModal } from './components/guestConfirmModal.js';
 import { hasGuestSessionData, clearGuestSession } from './utils/storage.js';
 import { auth } from './utils/auth.js';
+import { updatePageSEO } from './utils/seoMetadata.js';
 
 class FinculatorApp {
   constructor() {
@@ -193,9 +194,20 @@ class FinculatorApp {
   }
 
   handleRoute() {
-    const rawHash = window.location.hash.slice(2) || 'emi';
+    let rawRoute = '';
+    if (window.location.hash && window.location.hash.startsWith('#/')) {
+      rawRoute = window.location.hash.slice(2);
+    } else {
+      const autoRoute = this.contentContainer?.getAttribute('data-auto-route');
+      if (autoRoute) {
+        rawRoute = autoRoute;
+      } else {
+        const path = window.location.pathname.replace(/^\/|\.html$/g, '');
+        rawRoute = path || 'emi';
+      }
+    }
 
-    if (rawHash === 'about' || rawHash === 'about-us') {
+    if (rawRoute === 'about' || rawRoute === 'about-us') {
       if (this.landingGate) {
         this.landingGate.showAbout();
       }
@@ -206,6 +218,7 @@ class FinculatorApp {
           link.classList.remove('active');
         }
       });
+      updatePageSEO('about');
       window.scrollTo({ top: 0, behavior: 'instant' });
       return;
     } else {
@@ -214,19 +227,19 @@ class FinculatorApp {
       }
     }
 
-    if (rawHash === 'login' || rawHash === 'signin') {
+    if (rawRoute === 'login' || rawRoute === 'signin') {
       if (this.authModal) this.authModal.open('signin');
       return;
-    } else if (rawHash === 'register' || rawHash === 'signup') {
+    } else if (rawRoute === 'register' || rawRoute === 'signup') {
       if (this.authModal) this.authModal.open('signup');
       return;
-    } else if (rawHash === 'credentials') {
+    } else if (rawRoute === 'credentials') {
       if (this.authModal) this.authModal.open('credentials');
       return;
-    } else if (rawHash === 'inbox') {
+    } else if (rawRoute === 'inbox') {
       if (this.authModal) this.authModal.open('inbox');
       return;
-    } else if (rawHash === 'portfolio' || rawHash === 'my-portfolio') {
+    } else if (rawRoute === 'portfolio' || rawRoute === 'my-portfolio') {
       if (this.portfolio) {
         this.portfolio.toggle(true);
       }
@@ -241,15 +254,17 @@ class FinculatorApp {
         this.currentRoute = 'net-worth';
         this.renderCurrentCalculator();
       }
+      updatePageSEO('net-worth');
       return;
     }
 
-    this.currentRoute = rawHash;
+    this.currentRoute = rawRoute;
+    updatePageSEO(this.currentRoute);
 
     // Update active nav link
     this.navLinks.forEach((link) => {
       const route = link.getAttribute('data-route');
-      if (route === rawHash) {
+      if (route === rawRoute) {
         link.classList.add('active');
       } else {
         link.classList.remove('active');
@@ -325,6 +340,14 @@ class FinculatorApp {
       // Fallback
       initEMICalculator(this.contentContainer);
     }
+
+    // WCAG 2.2 AA Accessibility: Ensure calculation output summaries announce dynamically
+    this.contentContainer.querySelectorAll('.summary-grid, .metric-box-hero').forEach((el) => {
+      if (!el.hasAttribute('aria-live')) {
+        el.setAttribute('aria-live', 'polite');
+        el.setAttribute('aria-atomic', 'true');
+      }
+    });
   }
 
   navigateTo(target) {

@@ -22,16 +22,16 @@
   --color-text-secondary: #475569;    /* Clean dark slate for subtext and body copy */
   --color-text-tertiary: #64748B;     /* Muted labels, captions */
 
-  /* Accent System (Cobalt Institutional Blue) */
-  --color-accent: #2563EB;            /* Vibrant cobalt blue */
-  --color-accent-hover: #1D4ED8;      /* Deep blue hover */
+  /* Accent System (Finculator Official Royal Blue) */
+  --color-accent: #0284FC;            /* Official brand blue */
+  --color-accent-hover: #0449E2;      /* Royal cobalt hover */
   --color-accent-muted: #EFF6FF;      /* Tinted icon & badge background */
-  --color-accent-border: #BFDBFE;     /* Delicate blue border */
+  --color-accent-border: #BAE6FD;     /* Delicate blue border */
 
-  /* Primary Button (Ultra-Premium Deep Obsidian with Subtle Highlight) */
-  --btn-primary-bg: #0F172A;
-  --btn-primary-bg-hover: #1E293B;
-  --btn-primary-border: #0F172A;
+  /* Primary Button (Official Brand Blue Gradient from Logo) */
+  --btn-primary-bg: linear-gradient(135deg, #0449E2 0%, #0284FC 100%);
+  --btn-primary-bg-hover: linear-gradient(135deg, #0338B0 0%, #0274DF 100%);
+  --btn-primary-border: #0449E2;
   --btn-primary-text: #FFFFFF;
 
   /* Secondary / Outline Button (Crisp Elevated White Card Button) */
@@ -129,9 +129,8 @@ body.gate-locked {
 
 .landing-gate-overlay .btn-primary:hover {
   background: var(--btn-primary-bg-hover);
-  border-color: #0F172A;
-  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.1), 
-              0 14px 28px -4px rgba(15, 23, 42, 0.24);
+  border-color: #0449E2;
+  box-shadow: 0 4px 14px rgba(2, 132, 252, 0.35);
   transform: translateY(-1.5px);
 }
 

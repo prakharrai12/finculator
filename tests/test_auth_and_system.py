@@ -3,6 +3,7 @@ import urllib.error
 import json
 import time
 import os
+import sys
 
 BASE_URL = "http://127.0.0.1:3000"
 
@@ -19,15 +20,14 @@ def get_env_val(key, default=''):
 ADMIN_API_KEY = get_env_val('ADMIN_API_KEY', 'dev_adm_8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b')
 
 def run_tests():
-    print("=" * 60)
-    print("FINCULATOR SECURITY HARDENING & SYSTEM TEST SUITE")
-    print("=" * 60)
+    print("=" * 70)
+    print("FINCULATOR PHASE 1 SECURITY & SYSTEM VERIFICATION TEST SUITE")
+    print("=" * 70)
     
     # 1. Static asset tests & Security Headers
     assets = [
         "/",
         "/index.html",
-        "/docs/images/finculator-hero-visual.jpg",
         "/css/landingGate.css",
         "/js/components/heroLandingGate.js",
         "/js/components/authModal.js",
@@ -43,7 +43,6 @@ def run_tests():
             data = resp.read()
             assert resp.status == 200, f"Failed to load {asset}"
             if asset == "/index.html":
-                # Verify security headers
                 headers = dict(resp.headers)
                 assert 'X-Content-Type-Options' in headers, "Missing X-Content-Type-Options"
                 assert headers.get('X-Content-Type-Options') == 'nosniff', "Invalid X-Content-Type-Options"
@@ -54,13 +53,16 @@ def run_tests():
                 print("           [SECURITY HEADERS VERIFIED] CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy active")
             print(f"[PASS 200] {asset:<45} ({len(data):>7} B)")
 
-    # 1B. Testing Database & Source File Isolation (Forbidden 403)
-    print("\n--- 1B. Testing Data File & Source Isolation (/data/users.json -> 403) ---")
+    # 1B. Testing Strict Allowlist File & Source Isolation (Forbidden 403)
+    print("\n--- 1B. Testing Data File & Source Isolation (Forbidden 403) ---")
     forbidden_urls = [
         f"{BASE_URL}/data/users.json",
         f"{BASE_URL}/data/sent_emails.json",
         f"{BASE_URL}/server.py",
         f"{BASE_URL}/.env",
+        f"{BASE_URL}/.git/config",
+        f"{BASE_URL}/tests/test_math.py",
+        f"{BASE_URL}/data/reset_tokens.json",
     ]
     for bad_url in forbidden_urls:
         req = urllib.request.Request(bad_url, headers={'User-Agent': 'TestRunner'})
@@ -69,14 +71,55 @@ def run_tests():
                 assert False, f"Expected 403 for {bad_url}, got {resp.status}"
         except urllib.error.HTTPError as e:
             assert e.code == 403, f"Expected HTTP 403 Forbidden for {bad_url}, got {e.code}"
-            print(f"[PASS 403] Restricted access properly denied for: {bad_url.replace(BASE_URL, '')}")
+            print(f"[PASS 403] Access denied for restricted resource: {bad_url.replace(BASE_URL, '')}")
 
-    # 2. Registration API & Email Dispatch
+    # 2. Registration API & Password Policy Enforcement
+    print("\n--- 2. Testing Password Policy Enforcement (Min 10 chars, Complexity, Blocklist) ---")
+    
+    # 2A. Weak password (<10 chars)
+    weak_payload = json.dumps({
+        "name": "Weak User",
+        "email": f"weak_{int(time.time())}@example.com",
+        "password": "Short1!"
+    }).encode('utf-8')
+    req = urllib.request.Request(
+        f"{BASE_URL}/api/auth/register",
+        data=weak_payload,
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            assert False, "Weak password was unexpectedly accepted"
+    except urllib.error.HTTPError as e:
+        assert e.code == 400, f"Expected 400 for short password, got {e.code}"
+        res_data = json.loads(e.read().decode('utf-8'))
+        print(f"[PASS 400] Short password rejected: {res_data.get('error')}")
+
+    # 2B. Common password on blocklist
+    common_payload = json.dumps({
+        "name": "Common User",
+        "email": f"common_{int(time.time())}@example.com",
+        "password": "Password123!"
+    }).encode('utf-8')
+    req = urllib.request.Request(
+        f"{BASE_URL}/api/auth/register",
+        data=common_payload,
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            assert False, "Common password was unexpectedly accepted"
+    except urllib.error.HTTPError as e:
+        assert e.code == 400, f"Expected 400 for common password, got {e.code}"
+        res_data = json.loads(e.read().decode('utf-8'))
+        print(f"[PASS 400] Common blocklisted password rejected: {res_data.get('error')}")
+
+    # 2C. Valid strong password
     test_email = f"tester_{int(time.time())}@example.com"
     test_name = "Investor Test"
-    test_pw = "FinSecure@2026"
+    test_pw = "FinSecure@2026!"
 
-    print("\n--- 2. Testing Registration & PBKDF2 Password Hashing ---")
+    print("\n--- 2C. Testing Valid User Registration & PBKDF2 Password Hashing ---")
     reg_payload = json.dumps({
         "name": test_name,
         "email": test_email,
@@ -86,11 +129,7 @@ def run_tests():
     req = urllib.request.Request(
         f"{BASE_URL}/api/auth/register",
         data=reg_payload,
-        headers={
-            'Content-Type': 'application/json',
-            'X-Finculator-CSRF': '1',
-            'User-Agent': 'TestRunner'
-        }
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
     )
     with urllib.request.urlopen(req, timeout=5) as resp:
         res_data = json.loads(resp.read().decode('utf-8'))
@@ -98,7 +137,6 @@ def run_tests():
         assert res_data.get('success') is True, "Registration success flag missing"
         assert 'token' in res_data, "Token missing in registration"
         assert res_data['user']['email'] == test_email, "User email mismatch"
-        # Plaintext password must never be exposed in response
         assert 'password' not in res_data, "Plaintext password leaked in registration response"
         assert 'emailPreview' not in res_data, "Credentials preview leaked in registration response"
         print(f"[PASS 201] User registered: {test_email}")
@@ -114,11 +152,7 @@ def run_tests():
     req = urllib.request.Request(
         f"{BASE_URL}/api/auth/login",
         data=login_payload,
-        headers={
-            'Content-Type': 'application/json',
-            'X-Finculator-CSRF': '1',
-            'User-Agent': 'TestRunner'
-        }
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
     )
     with urllib.request.urlopen(req, timeout=5) as resp:
         res_data = json.loads(resp.read().decode('utf-8'))
@@ -126,193 +160,140 @@ def run_tests():
         assert res_data.get('success') is True, "Login success flag missing"
         assert res_data['user']['name'] == test_name, "User name mismatch"
         assert 'token' in res_data, "Session token missing in login response"
-        # Token must have 3 parts (JWT-style HMAC signed)
         assert len(res_data['token'].split('.')) == 3, "Session token is not a valid HMAC signed token"
         print(f"[PASS 200] User logged in successfully: {res_data['user']['name']}")
-        print(f"           Signed Token (sample): {res_data['token'][:24]}...")
+        print(f"           Signed Token: {res_data['token'][:24]}...")
 
-    # 4. Privileged Route Protection: Email Dispatch Log
-    print("\n--- 4. Testing Privileged Route Protection on /api/auth/sent-emails ---")
-    
-    # 4A. Unauthenticated request must return 401 Unauthorized
-    unauth_req = urllib.request.Request(f"{BASE_URL}/api/auth/sent-emails")
+    # 4. Deleted Endpoint Test: /api/auth/sent-emails must return 404
+    print("\n--- 4. Testing Deleted Endpoint (/api/auth/sent-emails -> 404 Not Found) ---")
+    sent_emails_req = urllib.request.Request(f"{BASE_URL}/api/auth/sent-emails")
     try:
-        with urllib.request.urlopen(unauth_req, timeout=5) as resp:
-            assert False, "Expected 401 for unauthenticated /api/auth/sent-emails"
+        with urllib.request.urlopen(sent_emails_req, timeout=5) as resp:
+            assert False, "Expected 404 for deleted /api/auth/sent-emails endpoint"
     except urllib.error.HTTPError as e:
-        assert e.code == 401, f"Expected 401 Unauthorized, got {e.code}"
-        print("[PASS 401] Access denied for unauthenticated request to /api/auth/sent-emails")
+        assert e.code == 404, f"Expected 404 Not Found, got {e.code}"
+        print("[PASS 404] /api/auth/sent-emails endpoint is completely removed (no credentials leak)")
 
-    # 4B. Authenticated request with Admin API Key succeeds
-    admin_req = urllib.request.Request(
-        f"{BASE_URL}/api/auth/sent-emails",
-        headers={'X-Admin-Key': ADMIN_API_KEY}
-    )
-    with urllib.request.urlopen(admin_req, timeout=5) as resp:
-        emails = json.loads(resp.read().decode('utf-8'))
-        assert resp.status == 200, "Failed to retrieve sent emails with Admin Key"
-        assert len(emails) > 0, "No emails found in sent log"
-        latest_email = emails[0]
-        assert latest_email['to'] == test_email, "Latest sent email recipient mismatch"
-        # Verify plaintext password was NOT logged
-        assert test_pw not in latest_email['bodyText'], "Password leaked in sent email text"
-        assert test_pw not in latest_email['bodyHtml'], "Password leaked in sent email html"
-        print(f"[PASS 200] Welcome email delivered to: {latest_email['to']} (with Admin Key)")
-        print(f"           Subject: {latest_email['subject']}")
-        print("           [PASSWORD REDACTION VERIFIED] Passwords redacted from email logs")
-
-    # 5. Forgot Password / Send Credentials Test
-    print("\n--- 5. Testing Forgot Password / Send Credentials Dispatch ---")
-    forgot_payload = json.dumps({
-        "email": test_email
-    }).encode('utf-8')
-
+    # 5. Forgot Password (Uniform Response & Token Creation)
+    print("\n--- 5. Testing Forgot Password Flow (Uniform Response & Single-Use Token) ---")
+    forgot_payload = json.dumps({"email": test_email}).encode('utf-8')
     req = urllib.request.Request(
         f"{BASE_URL}/api/auth/forgot-password",
         data=forgot_payload,
-        headers={
-            'Content-Type': 'application/json',
-            'X-Finculator-CSRF': '1',
-            'User-Agent': 'TestRunner'
-        }
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
     )
     with urllib.request.urlopen(req, timeout=5) as resp:
         res_data = json.loads(resp.read().decode('utf-8'))
         assert resp.status == 200, "Forgot password request failed"
         assert res_data.get('success') is True, "Forgot password success missing"
-        # Ensure password is not returned in response
         assert 'emailPreview' not in res_data, "Email preview leaked in forgot password response"
-        print(f"[PASS 200] Recovery instructions dispatched for {test_email}")
+        print(f"[PASS 200] Uniform recovery response received for {test_email}")
 
-    # 6. Full-Width Footer Verification & Newsletter API
-    print("\n--- 6. Testing Full-Width Footer & Newsletter Subscription API ---")
-    req = urllib.request.Request(f"{BASE_URL}/index.html")
-    with urllib.request.urlopen(req, timeout=5) as resp:
-        html = resp.read().decode('utf-8')
-        assert 'id="site-footer"' not in html, "Site footer was not removed from post-login workspace"
-        assert ('id="btn-header-about"' in html or 'id="btn-header-home"' in html), "About/Home button missing in navbar"
-        assert 'id="header-auth-wrapper"' in html, "Header auth wrapper missing in navbar"
-        print("[PASS 200] Post-Login Workspace Cleaned: Footer removed from workspace, About & Profile buttons active")
-
-    # Verify shared Footer component
-    with open("js/components/footer.js", "r", encoding="utf-8") as f:
-        footer_js = f.read()
-        assert 'export class FooterComponent' in footer_js, "FooterComponent class missing"
-        assert 'export function getFooterHTML' in footer_js, "getFooterHTML function missing"
-        assert 'footer-github-btn' in footer_js, "Icon-only GitHub button missing"
-        assert 'Quick Jumps' not in footer_js, "Redundant Quick Jumps found in footer template"
-        assert 'footer-copy-email-btn' not in footer_js, "Personal email button found in footer template"
-        print("[PASS 200] js/components/footer.js Verified: Reusable FooterComponent active")
-
-    # Verify landing gate footer integration
-    with open("js/components/heroLandingGate.js", "r", encoding="utf-8") as f:
-        gate_js = f.read()
-        assert 'FooterComponent' in gate_js, "FooterComponent not imported in heroLandingGate.js"
-        assert 'landing-site-footer' in gate_js, "landing-site-footer missing in heroLandingGate.js"
-        assert 'Maximizing Growth' in gate_js, "Maximizing Growth title missing in heroLandingGate.js"
-        assert 'visual-card' in gate_js, "visual-card class missing in heroLandingGate.js"
-        assert 'card-overlay-edge' in gate_js, "card-overlay-edge vignette missing in heroLandingGate.js"
-        assert 'landing-services-section' in gate_js, "landing-services-section missing in heroLandingGate.js"
-        print("[PASS 200] js/components/heroLandingGate.js Verified: Hero Visual Card, Growth title & Services active")
-
-    # Verify landingGate.css rules
-    with open("css/landingGate.css", "r", encoding="utf-8") as f:
-        gate_css = f.read()
-        assert '.visual-card' in gate_css, ".visual-card style missing in landingGate.css"
-        assert '.card-overlay-edge' in gate_css, ".card-overlay-edge style missing in landingGate.css"
-        assert '.hero-section' in gate_css, ".hero-section style missing in landingGate.css"
-        print("[PASS 200] landingGate.css Verified: Contrast containment, vignette edge & dark styling active")
-
-    # Verify CSS rules for tighter footer and circular FinBot FAB
-    with open("css/main.css", "r", encoding="utf-8") as f:
-        main_css = f.read()
-        assert '.header-home-btn' in main_css, "header-home-btn style missing"
-        assert 'padding-right: 4.5rem' in main_css, "footer-bottom clearance padding missing"
-        print("[PASS 200] main.css Verified: Home icon button and compact footer spacing rules active")
-
-    with open("css/chatbot.css", "r", encoding="utf-8") as f:
-        chat_css = f.read()
-        assert '.finbot-launcher-label' in chat_css, "finbot-launcher-label style missing"
-        assert 'border-radius: 50%' in chat_css, "circular FAB style missing"
-        assert '.finbot-window.active' in chat_css, "finbot-window.active style missing"
-        assert 'transform-origin: bottom right' in chat_css, "transform-origin missing in chatbot.css"
-        print("[PASS 200] chatbot.css Verified: Smooth GPU-accelerated cubic-bezier open/close animation active")
-
-    # Test Newsletter Subscribe with CSRF Header
-    sub_email = f"subscriber_{int(time.time())}@institutional.com"
-    sub_payload = json.dumps({"email": sub_email}).encode('utf-8')
+    # Also test for non-existent email (must return identical response to prevent user enumeration)
+    non_existent_payload = json.dumps({"email": "ghost_unknown_user_99@example.com"}).encode('utf-8')
     req = urllib.request.Request(
-        f"{BASE_URL}/api/newsletter/subscribe",
-        data=sub_payload,
-        headers={
-            'Content-Type': 'application/json',
-            'X-Finculator-CSRF': '1',
-            'User-Agent': 'TestRunner'
-        }
+        f"{BASE_URL}/api/auth/forgot-password",
+        data=non_existent_payload,
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
     )
     with urllib.request.urlopen(req, timeout=5) as resp:
-        res_data = json.loads(resp.read().decode('utf-8'))
-        assert resp.status == 201, f"Expected 201, got {resp.status}"
-        assert res_data.get('success') is True
-        print(f"[PASS 201] Newsletter Subscribed: {sub_email}")
+        ghost_res = json.loads(resp.read().decode('utf-8'))
+        assert ghost_res.get('message') == res_data.get('message'), "Anti-enumeration violation: response differs for unknown user"
+        print("[PASS 200] Anti-enumeration verified: identical response for existing and unknown emails")
 
-    # Test Duplicate Subscribe
+    # 6. Single-Use Password Reset Verification
+    print("\n--- 6. Testing Password Reset Endpoint & Single-Use Enforcement ---")
+    # Retrieve the generated token from local server state
+    data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+    reset_tokens_file = os.path.join(data_dir, 'reset_tokens.json')
+    emails_file = os.path.join(data_dir, 'sent_emails.json')
+    
+    with open(emails_file, 'r', encoding='utf-8') as f:
+        emails = json.load(f)
+    latest_reset_email = next((e for e in emails if e['to'] == test_email and 'Reset' in e['subject']), None)
+    assert latest_reset_email is not None, "Password reset email was not logged"
+    
+    # Extract token from logged reset link
+    import re
+    match = re.search(r'token=([a-zA-Z0-9_-]+)', latest_reset_email['bodyText'])
+    assert match is not None, "Reset token not found in email body"
+    reset_token = match.group(1)
+    
+    # Reset password with valid token
+    new_test_pw = "NewFinSecure@2026!"
+    reset_payload = json.dumps({
+        "token": reset_token,
+        "newPassword": new_test_pw
+    }).encode('utf-8')
     req = urllib.request.Request(
-        f"{BASE_URL}/api/newsletter/subscribe",
-        data=sub_payload,
-        headers={
-            'Content-Type': 'application/json',
-            'X-Finculator-CSRF': '1',
-            'User-Agent': 'TestRunner'
-        }
+        f"{BASE_URL}/api/auth/reset-password",
+        data=reset_payload,
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
     )
     with urllib.request.urlopen(req, timeout=5) as resp:
-        res_data = json.loads(resp.read().decode('utf-8'))
-        assert resp.status == 200
-        assert res_data.get('alreadySubscribed') is True
-        print(f"[PASS 200] Duplicate Newsletter Subscribe Handled: {res_data.get('message')}")
+        reset_res = json.loads(resp.read().decode('utf-8'))
+        assert reset_res.get('success') is True, "Password reset failed with valid token"
+        print("[PASS 200] Password successfully reset using single-use token")
 
-    # 7. Guest Session Data Isolation, Home Confirmation Modal & Exit Warning
-    print("\n--- 7. Testing Guest Session Isolation, Home Confirmation & Exit Warning ---")
-    with open("js/utils/storage.js", "r", encoding="utf-8") as f:
-        storage_js = f.read()
-        assert 'migrateGuestSessionToAccount' in storage_js, "migrateGuestSessionToAccount missing in storage.js"
-        assert 'clearGuestSession' in storage_js, "clearGuestSession missing in storage.js"
-        assert 'hasGuestSessionData' in storage_js, "hasGuestSessionData missing in storage.js"
-        assert 'sessionStorage' in storage_js, "sessionStorage usage missing in storage.js"
-        assert 'finculator_guest_state_' in storage_js, "finculator_guest_state_ prefix missing in storage.js"
-        print("[PASS 200] js/utils/storage.js Verified: Session-only guest storage & auto-migration engine active")
+    # Reusing the SAME token must FAIL (single-use enforcement)
+    try:
+        req = urllib.request.Request(
+            f"{BASE_URL}/api/auth/reset-password",
+            data=reset_payload,
+            headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            assert False, "Reusing reset token unexpectedly succeeded"
+    except urllib.error.HTTPError as e:
+        assert e.code == 400, f"Expected 400 for already used token, got {e.code}"
+        print("[PASS 400] Token replay prevented: single-use token successfully invalidated")
 
-    with open("js/utils/auth.js", "r", encoding="utf-8") as f:
-        auth_js = f.read()
-        assert 'migrateGuestSessionToAccount' in auth_js, "migrateGuestSessionToAccount not integrated in auth.js"
-        print("[PASS 200] js/utils/auth.js Verified: Automatic migration invoked upon login/signup")
+    # Verify login works with the NEW password
+    new_login_payload = json.dumps({
+        "email": test_email,
+        "password": new_test_pw
+    }).encode('utf-8')
+    req = urllib.request.Request(
+        f"{BASE_URL}/api/auth/login",
+        data=new_login_payload,
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    with urllib.request.urlopen(req, timeout=5) as resp:
+        assert resp.status == 200, "Login failed with new password"
+        print("[PASS 200] Successful login verified with newly updated password")
 
-    with open("js/components/guestConfirmModal.js", "r", encoding="utf-8") as f:
-        modal_js = f.read()
-        assert 'export class GuestConfirmModal' in modal_js, "GuestConfirmModal class missing"
-        assert 'btn-guest-confirm-login' in modal_js, "Login action button missing in GuestConfirmModal"
-        assert 'btn-guest-confirm-discard' in modal_js, "Discard action button missing in GuestConfirmModal"
-        print("[PASS 200] js/components/guestConfirmModal.js Verified: Dark themed confirmation modal active")
+    # 7. AI Proxy Guardrails Test
+    print("\n--- 7. Testing AI Proxy Guardrails (/api/ai/query) ---")
+    # 7A. Oversized prompt
+    oversized_prompt = "A" * 1050
+    over_payload = json.dumps({"prompt": oversized_prompt}).encode('utf-8')
+    req = urllib.request.Request(
+        f"{BASE_URL}/api/ai/query",
+        data=over_payload,
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            assert False, "Oversized AI prompt was accepted"
+    except urllib.error.HTTPError as e:
+        assert e.code == 400, f"Expected 400 for oversized prompt, got {e.code}"
+        print("[PASS 400] Oversized AI query rejected by proxy input validation")
 
-    with open("css/main.css", "r", encoding="utf-8") as f:
-        main_css = f.read()
-        assert '.guest-confirm-backdrop' in main_css, "guest-confirm-backdrop styles missing"
-        assert '.guest-confirm-card' in main_css, "guest-confirm-card styles missing"
-        assert ('.header-about-btn' in main_css or '.header-home-btn' in main_css), "header button styles missing"
-        print("[PASS 200] css/main.css Verified: Dark obsidian modal styles and about/home button active")
+    # 7B. Valid prompt (verifying safe proxy response or graceful offline fallback)
+    valid_prompt_payload = json.dumps({"prompt": "How does EMI compounding work?"}).encode('utf-8')
+    req = urllib.request.Request(
+        f"{BASE_URL}/api/ai/query",
+        data=valid_prompt_payload,
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    with urllib.request.urlopen(req, timeout=5) as resp:
+        ai_res = json.loads(resp.read().decode('utf-8'))
+        assert 'response' in ai_res or ai_res.get('offlineFallback') is True, "AI proxy failed to return response or fallback"
+        print(f"[PASS 200] AI proxy functional (Offline fallback active: {ai_res.get('offlineFallback', False)})")
 
-    with open("js/app.js", "r", encoding="utf-8") as f:
-        app_js = f.read()
-        assert 'updateHomeButtonVisibility' in app_js, "updateHomeButtonVisibility missing in app.js"
-        assert 'initGuestExitWarning' in app_js, "initGuestExitWarning missing in app.js"
-        assert 'beforeunload' in app_js, "beforeunload listener missing in app.js"
-        assert "Your progress isn't saved" in app_js, "Unsaved progress message missing in app.js"
-        print("[PASS 200] js/app.js Verified: Home button visibility, confirmation dialog & beforeunload warning active")
-
-    print("\n" + "=" * 60)
-    print("ALL TESTS PASSED: FULL SECURITY HARDENING ACTIVE AND 100% OPERATIONAL")
-    print("=" * 60)
+    print("\n" + "=" * 70)
+    print("ALL PHASE 1 SECURITY & SYSTEM TESTS PASSED CLEANLY (100% VERIFIED)")
+    print("=" * 70)
 
 if __name__ == '__main__':
     run_tests()

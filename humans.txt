@@ -1,0 +1,10 @@
+/* TEAM */
+Platform: Finculator
+Engineering Lead: DeepMind Principal Systems & Fintech Team
+Design Standard: Obsidian Slate Minimalist Financial System
+Location: Global / India
+
+/* SITE */
+Standards: HTML5, CSS3, Vanilla ES Modules, Web Components, WAI-ARIA WCAG 2.2 AA
+Components: 27 Institutional Financial Calculators, Personal Portfolio Statement (PFS) Builder
+Privacy Guarantee: Zero data collection, 100% client-side computation isolation

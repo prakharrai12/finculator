@@ -1,0 +1,50 @@
+name: Finculator Production CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-verify:
+    name: Financial Math, Security & Build Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Run Core Financial Math & Security Tests
+        run: npm test
+
+      - name: Verify SEO & Prerendered HTML Generator
+        run: node scripts/generate_seo_pages.js
+
+      - name: Verify Legal & Brand Pages Generator
+        run: node scripts/generate_legal_pages.js
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install pillow
+
+      - name: Verify Python Server Security & System Tests
+        run: |
+          python server.py &
+          SERVER_PID=$!
+          sleep 2
+          python tests/test_auth_and_system.py
+          kill $SERVER_PID

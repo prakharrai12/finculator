@@ -36,22 +36,9 @@ export class HeroLandingGate {
         <header class="landing-nav-bar" id="landing-nav-bar">
           <div class="landing-scroll-progress" id="landing-scroll-progress"></div>
           <div class="landing-brand-mark" id="about-nav-logo" style="cursor: pointer;" title="Explore Calculators">
-            <svg width="34" height="34" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="gate-logo-grad" x1="30" y1="70" x2="85" y2="15" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#3B6FD4" />
-                  <stop offset="100%" stop-color="#4A7FE0" />
-                </linearGradient>
-              </defs>
-              <path d="M 48 10 A 38 38 0 1 0 86 48" fill="none" stroke="#0F172A" stroke-width="10" stroke-linecap="round" />
-              <rect x="34" y="52" width="7.5" height="20" rx="3.75" fill="#2563EB" />
-              <rect x="46" y="40" width="7.5" height="32" rx="3.75" fill="#3B82F6" />
-              <rect x="58" y="28" width="7.5" height="44" rx="3.75" fill="#06B6D4" />
-              <path d="M 32 68 L 76 24" fill="none" stroke="url(#gate-logo-grad)" stroke-width="9" stroke-linecap="round" />
-              <path d="M 56 20 L 82 20 L 82 46 Z" fill="url(#gate-logo-grad)" stroke-linejoin="round" />
-            </svg>
+            <img src="docs/images/finculator-icon.png" alt="Finculator Official Logo" class="brand-logo-img" width="34" height="34" style="filter: drop-shadow(0 2px 8px rgba(2, 132, 252, 0.25));" />
             <div>
-              <span class="landing-brand-title">FINCULATOR</span>
+              <span class="landing-brand-title"><span class="brand-title-blue">FIN</span>CULATOR</span>
               <span class="landing-brand-tagline">Smart Decisions. Stronger Futures.</span>
             </div>
           </div>
@@ -74,13 +61,13 @@ export class HeroLandingGate {
                 type="image/webp"
               >
               <img 
-                src="image_435406.jpg" 
+                src="hero-illustration.webp" 
                 alt="" 
                 class="hero-bg-art-img hero-img"
                 loading="eager" 
                 fetchpriority="high" 
-                width="1376" 
-                height="768"
+                width="1200" 
+                height="670"
               >
             </picture>
             <div class="hero-bg-overlay-left card-overlay-edge"></div>
@@ -112,12 +99,12 @@ export class HeroLandingGate {
             
             <!-- 3. Subtext -->
             <p class="hero-subtitle reveal-on-scroll">
-              Smarter financial tools designed to plan, project, and optimize your wealth trajectory with verified mathematical precision. 27+ institutional computation engines with instant access.
+              Smarter financial tools designed to plan, project, and optimize your wealth trajectory with verified mathematical precision. 27 institutional computation engines with instant access.
             </p>
 
             <!-- 4. Action buttons -->
             <div class="hero-actions reveal-on-scroll">
-              <button type="button" class="btn btn-primary" id="about-hero-btn-calc">Explore 27+ Calculators &rarr;</button>
+              <button type="button" class="btn btn-primary" id="about-hero-btn-calc">Explore All 27 Calculators &rarr;</button>
               <button type="button" class="btn btn-secondary" id="about-hero-btn-portfolio">
                 Open Personal Portfolio
               </button>
@@ -130,7 +117,7 @@ export class HeroLandingGate {
           <div class="trust-bar-container">
             <div class="trust-bar-item reveal-on-scroll">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
-              <span><strong class="trust-counter-val" data-target="27" data-suffix="+">27+</strong> Financial Engines</span>
+              <span><strong class="trust-counter-val" data-target="27" data-suffix="">27</strong> Financial Engines</span>
             </div>
             <div class="trust-bar-item reveal-on-scroll">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
@@ -138,7 +125,7 @@ export class HeroLandingGate {
             </div>
             <div class="trust-bar-item reveal-on-scroll">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              <span><strong class="trust-counter-val" data-target="99.9" data-suffix="%" data-decimals="1">99.9%</strong> Institutional Accuracy</span>
+              <span><strong class="trust-counter-val" data-target="100" data-suffix="%">100%</strong> Browser-Local Execution</span>
             </div>
             <div class="trust-bar-item reveal-on-scroll">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -175,7 +162,7 @@ export class HeroLandingGate {
               
               <!-- Interactive Category Filter Switcher -->
               <div class="landing-filter-pills" role="tablist" aria-label="Engine Category Filters">
-                <button type="button" class="filter-pill active" data-filter="all">All Engines (27+)</button>
+                <button type="button" class="filter-pill active" data-filter="all">All Engines (27)</button>
                 <button type="button" class="filter-pill" data-filter="portfolio">Net Worth &amp; Assets</button>
                 <button type="button" class="filter-pill" data-filter="fire">FIRE &amp; Tax Roadmap</button>
                 <button type="button" class="filter-pill" data-filter="emi">Debt &amp; Amortization</button>
@@ -331,9 +318,9 @@ export class HeroLandingGate {
             </div>
             <div class="cta-content-wrapper">
               <h2 class="landing-cta-title">Ready to Master Your Capital Trajectory?</h2>
-              <p class="landing-cta-sub">Join institutional investors, independent advisers, and forward-looking individuals who trust Finculator for uncompromising calculation accuracy.</p>
+              <p class="landing-cta-sub">Engineered for investors, borrowers, and planners who demand mathematical clarity, zero ads, and total data privacy.</p>
               <div class="landing-cta-actions">
-                <button type="button" class="btn btn-primary" id="about-cta-calc-btn">Explore 27+ Calculators &rarr;</button>
+                <button type="button" class="btn btn-primary" id="about-cta-calc-btn">Explore All 27 Calculators &rarr;</button>
                 <button type="button" class="landing-cta-link-btn" id="about-cta-portfolio-btn">
                   Open Personal Portfolio <span class="link-arrow">&rarr;</span>
                 </button>

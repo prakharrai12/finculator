@@ -4,9 +4,9 @@
  */
 
 import { formatCurrency, formatPercent, getGlobalCurrency, escapeHTML } from '../utils/formatters.js';
-import { getStoredState, setStoredState } from '../utils/storage.js';
+import { getStoredState, setStoredState, clearStoredState } from '../utils/storage.js';
 import { renderDonutChart } from './charts.js';
-import { DEFAULT_PORTFOLIO_STATE, calculatePortfolioMetrics } from '../math/portfolioMath.js';
+import { DEFAULT_PORTFOLIO_STATE, getDefaultPortfolioState, calculatePortfolioMetrics } from '../math/portfolioMath.js';
 import { generatePortfolioPDF } from './portfolioPDF.js';
 import { auth } from '../utils/auth.js';
 
@@ -14,8 +14,10 @@ export class PortfolioModal {
   constructor(app) {
     this.app = app;
     this.isOpen = false;
-    this.state = getStoredState('personal_portfolio', DEFAULT_PORTFOLIO_STATE);
+    this.state = getStoredState('personal_portfolio', getDefaultPortfolioState());
     this.saveTimeout = null;
+    this.hasDownloadedPDF = sessionStorage.getItem('finculator_downloaded_pdf') === 'true';
+    this.exitModal = null;
 
     this.initDOM();
     this.attachEvents();
@@ -177,7 +179,7 @@ export class PortfolioModal {
                   <span class="portfolio-acc-title">Personal & Identification Details</span>
                 </div>
                 <div class="portfolio-acc-meta">
-                  <span class="portfolio-acc-sum" id="pf-sum-profile">${profile.fullName || 'Not specified'}</span>
+                  <span class="portfolio-acc-sum" id="pf-sum-profile">${escapeHTML(profile.fullName || 'Not specified')}</span>
                   <svg class="portfolio-acc-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
               </div>
@@ -185,35 +187,35 @@ export class PortfolioModal {
                 <div class="portfolio-form-grid">
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Full Legal Name</label>
-                    <input type="text" class="portfolio-field-input" id="pf-prof-name" placeholder="e.g. John Doe" value="${profile.fullName || ''}" />
+                    <input type="text" class="portfolio-field-input" id="pf-prof-name" placeholder="e.g. John Doe" value="${escapeHTML(profile.fullName || '')}" />
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Date of Birth</label>
-                    <input type="date" class="portfolio-field-input" id="pf-prof-dob" value="${profile.dob || ''}" />
+                    <input type="date" class="portfolio-field-input" id="pf-prof-dob" value="${escapeHTML(profile.dob || '')}" />
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Email Address</label>
-                    <input type="email" class="portfolio-field-input" id="pf-prof-email" placeholder="e.g. john@example.com" value="${profile.email || ''}" />
+                    <input type="email" class="portfolio-field-input" id="pf-prof-email" placeholder="e.g. john@example.com" value="${escapeHTML(profile.email || '')}" />
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Phone Number</label>
-                    <input type="text" class="portfolio-field-input" id="pf-prof-phone" placeholder="e.g. +91 98765 43210" value="${profile.phone || ''}" />
+                    <input type="text" class="portfolio-field-input" id="pf-prof-phone" placeholder="e.g. +91 98765 43210" value="${escapeHTML(profile.phone || '')}" />
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Occupation / Title</label>
-                    <input type="text" class="portfolio-field-input" id="pf-prof-occ" placeholder="e.g. Software Engineer / Consultant" value="${profile.occupation || ''}" />
+                    <input type="text" class="portfolio-field-input" id="pf-prof-occ" placeholder="e.g. Software Engineer / Consultant" value="${escapeHTML(profile.occupation || '')}" />
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Employer / Organization</label>
-                    <input type="text" class="portfolio-field-input" id="pf-prof-emp" placeholder="e.g. Acme Corp" value="${profile.employer || ''}" />
+                    <input type="text" class="portfolio-field-input" id="pf-prof-emp" placeholder="e.g. Acme Corp" value="${escapeHTML(profile.employer || '')}" />
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Statement "As of" Date</label>
-                    <input type="date" class="portfolio-field-input" id="pf-prof-date" value="${profile.asOfDate || new Date().toISOString().split('T')[0]}" />
+                    <input type="date" class="portfolio-field-input" id="pf-prof-date" value="${escapeHTML(profile.asOfDate || new Date().toISOString().split('T')[0])}" />
                   </div>
                   <div class="portfolio-field">
                     <label class="portfolio-field-label">Number of Dependents</label>
-                    <input type="number" class="portfolio-field-input" id="pf-prof-dep" min="0" max="20" placeholder="0" value="${profile.dependents || ''}" />
+                    <input type="number" class="portfolio-field-input" id="pf-prof-dep" min="0" max="20" placeholder="0" value="${escapeHTML(profile.dependents || '')}" />
                   </div>
                 </div>
               </div>
@@ -870,14 +872,47 @@ export class PortfolioModal {
   }
 
   attachEvents() {
-    this.backdrop.addEventListener('click', () => this.toggle(false));
+    this.backdrop.addEventListener('click', () => this.handleCloseAttempt());
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.isOpen) {
+        if (this.exitModal && this.exitModal.classList.contains('active')) {
+          this.closeExitWarning();
+        } else {
+          this.handleCloseAttempt();
+        }
+      }
+    });
+  }
+
+  markDownloaded() {
+    this.hasDownloadedPDF = true;
+    try {
+      sessionStorage.setItem('finculator_downloaded_pdf', 'true');
+    } catch (_) {}
   }
 
   attachDynamicEvents() {
     // Close and PDF actions
-    this.drawer.querySelector('#pf-btn-close').addEventListener('click', () => this.toggle(false));
-    this.drawer.querySelector('#pf-btn-download-pdf').addEventListener('click', () => generatePortfolioPDF(this.state));
-    this.drawer.querySelector('#pf-btn-print-hero').addEventListener('click', () => generatePortfolioPDF(this.state));
+    const closeBtn = this.drawer.querySelector('#pf-btn-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => this.handleCloseAttempt());
+    }
+
+    const downloadPdfBtn = this.drawer.querySelector('#pf-btn-download-pdf');
+    if (downloadPdfBtn) {
+      downloadPdfBtn.addEventListener('click', () => {
+        this.markDownloaded();
+        generatePortfolioPDF(this.state);
+      });
+    }
+
+    const printHeroBtn = this.drawer.querySelector('#pf-btn-print-hero');
+    if (printHeroBtn) {
+      printHeroBtn.addEventListener('click', () => {
+        this.markDownloaded();
+        generatePortfolioPDF(this.state);
+      });
+    }
 
     const guestLoginBtn = this.drawer.querySelector('#pf-btn-guest-login');
     if (guestLoginBtn) {
@@ -912,13 +947,21 @@ export class PortfolioModal {
     });
 
     // Reset Defaults / Clear All
-    this.drawer.querySelector('#pf-btn-reset').addEventListener('click', () => {
-      if (confirm('Clear all fields and reset your portfolio?')) {
-        this.state = JSON.parse(JSON.stringify(DEFAULT_PORTFOLIO_STATE));
-        setStoredState('personal_portfolio', this.state);
-        this.render();
-      }
-    });
+    const resetBtn = this.drawer.querySelector('#pf-btn-reset');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        if (confirm('Clear all fields and reset your portfolio?')) {
+          clearTimeout(this.saveTimeout);
+          this.state = getDefaultPortfolioState();
+          clearStoredState('personal_portfolio');
+          setStoredState('personal_portfolio', this.state);
+          this.render();
+          if (this.app && this.app.showToast) {
+            this.app.showToast('Portfolio cleared and reset to blank.');
+          }
+        }
+      });
+    }
 
     // Accordion Toggle
     const headers = this.drawer.querySelectorAll('.portfolio-acc-header');
@@ -1119,6 +1162,185 @@ export class PortfolioModal {
     }
   }
 
+  handleCloseAttempt() {
+    // 1. If user is authenticated, their portfolio is automatically saved to their account
+    if (auth.isAuthenticated()) {
+      this.toggle(false);
+      return;
+    }
+
+    // 2. User is in Guest Mode: check if user already clicked download portfolio option
+    const hasDownloaded = this.hasDownloadedPDF || sessionStorage.getItem('finculator_downloaded_pdf') === 'true';
+
+    this.showExitWarning(hasDownloaded);
+  }
+
+  showExitWarning(hasDownloaded) {
+    if (!this.exitModal) {
+      this.exitModal = document.createElement('div');
+      this.exitModal.className = 'portfolio-exit-backdrop';
+      this.exitModal.id = 'pf-exit-modal';
+      this.exitModal.setAttribute('role', 'dialog');
+      this.exitModal.setAttribute('aria-modal', 'true');
+      this.exitModal.setAttribute('aria-labelledby', 'pf-exit-title');
+      document.body.appendChild(this.exitModal);
+    }
+
+    this.exitModal.innerHTML = `
+      <div class="portfolio-exit-card" role="document">
+        <!-- Top Close / Cancel Button -->
+        <button type="button" class="portfolio-exit-close-btn" id="pf-exit-btn-cancel" aria-label="Cancel and return to portfolio" title="Return to Portfolio">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+
+        ${!hasDownloaded ? `
+          <!-- State 1: User has NOT downloaded PDF yet -->
+          <div class="guest-confirm-header">
+            <div class="guest-confirm-icon-wrap" style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35);">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </div>
+            <div class="guest-confirm-eyebrow" style="color: #D97706;">UNSAVED GUEST PROGRESS</div>
+            <h2 class="guest-confirm-title" id="pf-exit-title">Save Your Portfolio Progress</h2>
+            <p class="guest-confirm-desc">
+              You are exploring Finculator in <strong>Guest Mode</strong>. To prevent losing your balance sheet, asset allocation, and net worth calculations, sign in to save or download your advisory PDF report.
+            </p>
+          </div>
+
+          <div class="guest-confirm-callout">
+            <div class="guest-confirm-callout-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+            </div>
+            <div class="guest-confirm-callout-text">
+              <strong>Save before closing:</strong> Log in or create an account to permanently preserve your financial statement, or download an advisory PDF for your records.
+            </div>
+          </div>
+
+          <div class="guest-confirm-actions">
+            <button type="button" class="btn btn-primary guest-confirm-login-btn" id="pf-exit-btn-login">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                <polyline points="10 17 15 12 10 7"></polyline>
+                <line x1="15" y1="12" x2="3" y2="12"></line>
+              </svg>
+              Log In / Sign Up to Save
+            </button>
+            <button type="button" class="btn pf-exit-download-btn" id="pf-exit-btn-download" style="display:flex; align-items:center; justify-content:center; gap:0.55rem; width:100%; padding:0.75rem 1.25rem; font-size:0.92rem; font-weight:600; color:#2563EB; background:#EFF6FF; border:1.5px solid #BFDBFE; border-radius:10px; cursor:pointer; transition:all 0.2s ease;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download PDF Statement
+            </button>
+            <button type="button" class="btn guest-confirm-discard-btn" id="pf-exit-btn-discard">
+              Close Without Saving
+            </button>
+          </div>
+        ` : `
+          <!-- State 2: User HAS ALREADY downloaded PDF once -->
+          <div class="guest-confirm-header">
+            <div class="guest-confirm-icon-wrap" style="background: rgba(37, 99, 235, 0.12); border: 1px solid rgba(37, 99, 235, 0.35);">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div class="guest-confirm-eyebrow" style="color: #2563EB;">SAVE PROGRESS TO ACCOUNT</div>
+            <h2 class="guest-confirm-title" id="pf-exit-title">Sign In to Save Progress</h2>
+            <p class="guest-confirm-desc">
+              You have already downloaded your portfolio PDF report. To access, update, and sync your live financial statement across all your devices, sign in to your Finculator account.
+            </p>
+          </div>
+
+          <div class="guest-confirm-callout" style="background: #F0FDF4; border-color: #BBF7D0;">
+            <div class="guest-confirm-callout-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+            <div class="guest-confirm-callout-text" style="color: #166534;">
+              <strong>PDF Statement Downloaded:</strong> Your offline file is saved. Create a free account or log in to keep your live portfolio permanently saved in the cloud.
+            </div>
+          </div>
+
+          <div class="guest-confirm-actions">
+            <button type="button" class="btn btn-primary guest-confirm-login-btn" id="pf-exit-btn-login">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                <polyline points="10 17 15 12 10 7"></polyline>
+                <line x1="15" y1="12" x2="3" y2="12"></line>
+              </svg>
+              Log In / Sign Up to Save Progress
+            </button>
+            <button type="button" class="btn guest-confirm-discard-btn" id="pf-exit-btn-discard">
+              Close Portfolio
+            </button>
+          </div>
+        `}
+      </div>
+    `;
+
+    // Bind event handlers
+    const cancelBtn = this.exitModal.querySelector('#pf-exit-btn-cancel');
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', () => this.closeExitWarning());
+    }
+
+    const loginBtn = this.exitModal.querySelector('#pf-exit-btn-login');
+    if (loginBtn) {
+      loginBtn.addEventListener('click', () => {
+        this.closeExitWarning();
+        if (this.app && this.app.authModal) {
+          this.app.authModal.open('signin');
+        }
+      });
+    }
+
+    const downloadBtn = this.exitModal.querySelector('#pf-exit-btn-download');
+    if (downloadBtn) {
+      downloadBtn.addEventListener('click', () => {
+        this.markDownloaded();
+        generatePortfolioPDF(this.state);
+        // User has now clicked download option once -> switch immediately to state 2 (sign-in only)
+        this.showExitWarning(true);
+      });
+    }
+
+    const discardBtn = this.exitModal.querySelector('#pf-exit-btn-discard');
+    if (discardBtn) {
+      discardBtn.addEventListener('click', () => {
+        this.closeExitWarning();
+        this.toggle(false);
+      });
+    }
+
+    this.exitModal.onclick = (e) => {
+      if (e.target === this.exitModal) {
+        this.closeExitWarning();
+      }
+    };
+
+    this.exitModal.classList.add('active');
+  }
+
+  closeExitWarning() {
+    if (this.exitModal) {
+      this.exitModal.classList.remove('active');
+    }
+  }
+
   toggle(open) {
     const willOpen = open !== undefined ? open : !this.isOpen;
     if (willOpen) {
@@ -1128,6 +1350,7 @@ export class PortfolioModal {
       this.drawer.classList.add('active');
       document.body.style.overflow = 'hidden';
     } else {
+      this.closeExitWarning();
       this.isOpen = false;
       this.backdrop.classList.remove('active');
       this.drawer.classList.remove('active');

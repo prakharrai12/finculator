@@ -23,7 +23,7 @@ OPTION 3: Direct Browser Open (Offline / Static Mode)
 ------------------------------------------------------------------------
 KEY FEATURES INCLUDED:
 ------------------------------------------------------------------------
-1. 27+ Specialized Financial Computation Engines:
+1. 27 Specialized Financial Computation Engines:
    - Loans & Mortgages (EMI Amortization, Prepayment Analyzer, Comparator, FOIR Eligibility, Credit Card Payoff)
    - Savings & Deposits (Compound Interest, Simple Interest, FD, RD, PPF, Goal-Based Savings)
    - Wealth & Investing (SIP, Lump Sum, Step-Up SIP, CAGR, Stock & Mutual Fund Returns)

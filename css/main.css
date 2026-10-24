@@ -6,14 +6,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Core Brand Palette */
-  --brand-navy-dark: #0D1526;        /* Primary Deep Obsidian */
-  --brand-navy-card: #111A2E;        /* Deep Hero Card Surface */
-  --brand-slate-navy: #1E293B;       /* Secondary Dark Accent */
-  --brand-blue: #2563EB;             /* Primary Accent Blue */
-  --brand-blue-hover: #1D4ED8;
-  --brand-cyan: #06B6D4;             /* Precise Metric Cyan */
-  --brand-cyan-dim: rgba(6, 182, 212, 0.12);
+  /* Core Brand Palette — Finculator Official Identity */
+  --brand-blue: #0284FC;             /* Official Brand Blue */
+  --brand-blue-dark: #0449E2;        /* Royal Cobalt Blue */
+  --brand-blue-cyan: #02B0FE;        /* Electric Highlight Cyan */
+  --brand-blue-hover: #0369A1;       /* Deep Blue Hover */
+  --brand-blue-subtle: #EFF6FF;      /* Ultra-soft blue tint */
+  --brand-blue-glow: rgba(2, 132, 252, 0.28);
+  
+  /* Brand Secondary & Accent Tokens (replacing dark obsidian) */
+  --brand-secondary: #0284FC;
+  --brand-secondary-dark: #0449E2;
+  --brand-secondary-gradient: linear-gradient(135deg, #0449E2 0%, #0284FC 100%);
+  --brand-secondary-gradient-hover: linear-gradient(135deg, #0338B0 0%, #0274DF 100%);
+  --brand-highlight-gradient: linear-gradient(135deg, #0449E2 0%, #0284FC 60%, #02B0FE 100%);
+
+  --brand-navy-dark: #0A192F;        /* Deep midnight navy for crisp typography */
+  --brand-navy-card: #111A2E;        
+  --brand-slate-navy: #1E293B;       
+  --brand-cyan: #02B0FE;             /* Precise Metric Cyan */
+  --brand-cyan-dim: rgba(2, 176, 254, 0.14);
   
   --bg-app: #F8FAFC;                 /* Clean Light Canvas */
   --bg-surface: #FFFFFF;             /* Pure White Surface */
@@ -23,10 +35,10 @@
   --border-subtle: #F1F5F9;
   --border-primary: #E2E8F0;
   --border-medium: #CBD5E1;
-  --border-dark: #0D1526;
-  --border-focus: #0D1526;
+  --border-dark: #0284FC;
+  --border-focus: #0284FC;
 
-  --text-primary: #0D1526;
+  --text-primary: #0A192F;
   --text-secondary: #334155;
   --text-muted: #64748B;
   --text-faint: #94A3B8;
@@ -197,7 +209,7 @@ p, span, label, input, select, button {
 
 .mobile-menu-toggle:hover {
   background: var(--bg-subtle);
-  border-color: var(--brand-navy-dark);
+  border-color: var(--brand-blue);
 }
 
 .brand-mark {
@@ -220,13 +232,23 @@ p, span, label, input, select, button {
   flex-direction: column;
 }
 
+.brand-logo-img {
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(2, 132, 252, 0.28));
+}
+
 .brand-title {
   font-family: var(--font-sans);
   font-size: 1.15rem;
   font-weight: 800;
   letter-spacing: 0.03em;
-  color: var(--brand-navy-dark);
+  color: var(--text-primary);
   line-height: 1.1;
+}
+
+.brand-title-blue {
+  color: var(--brand-blue);
 }
 
 .brand-tagline {
@@ -268,7 +290,7 @@ p, span, label, input, select, button {
 .header-about-btn:hover,
 .header-home-btn:hover {
   background: var(--bg-subtle);
-  border-color: var(--brand-navy-dark);
+  border-color: var(--brand-blue);
   color: var(--brand-blue);
   transform: translateY(-1px);
 }
@@ -367,9 +389,11 @@ p, span, label, input, select, button {
 }
 
 .nav-item.active {
-  background-color: var(--brand-navy-dark);
+  background: var(--brand-secondary-gradient);
   color: #FFFFFF;
   font-weight: 600;
+  box-shadow: 0 4px 14px rgba(2, 132, 252, 0.28);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .nav-icon {
@@ -384,11 +408,11 @@ p, span, label, input, select, button {
 }
 
 .nav-item:hover .nav-icon {
-  color: var(--text-primary);
+  color: var(--brand-blue);
 }
 
 .nav-item.active .nav-icon {
-  color: var(--brand-cyan);
+  color: #FFFFFF;
 }
 
 .nav-badge {
@@ -405,8 +429,8 @@ p, span, label, input, select, button {
 }
 
 .nav-item.active .nav-badge {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.35);
   color: #FFFFFF;
 }
 
@@ -1106,3 +1130,58 @@ p, span, label, input, select, button {
   background: #FEF2F2;
   border-color: #FCA5A5;
 }
+
+/* ==============================================================================
+ * ACCESSIBILITY & WCAG 2.2 AA ENHANCEMENTS
+ * ============================================================================== */
+
+/* Keyboard Navigation Skip Link */
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  z-index: 99999;
+  padding: 0.75rem 1.25rem;
+  background: #2563EB;
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.88rem;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  transition: top 0.2s ease;
+}
+
+.skip-to-content:focus {
+  top: 1rem;
+  outline: 2px solid #38BDF8;
+  outline-offset: 2px;
+}
+
+/* Explicit Focus Rings for Keyboard Navigation */
+:focus-visible {
+  outline: 2px solid #38BDF8 !important;
+  outline-offset: 2px !important;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 2px solid #38BDF8 !important;
+  outline-offset: 2px !important;
+}
+
+/* Vestibular Motion Disorder & Reduced Motion Standard */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

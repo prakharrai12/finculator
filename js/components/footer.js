@@ -11,23 +11,16 @@ export function getFooterHTML() {
           <div class="footer-brand-col">
             <div class="brand-mark" style="color: #FFFFFF;">
               <div class="brand-logo-wrap">
-                <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M 48 10 A 38 38 0 1 0 86 48" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" />
-                  <rect x="34" y="52" width="7.5" height="20" rx="3.75" fill="#2563EB" />
-                  <rect x="46" y="40" width="7.5" height="32" rx="3.75" fill="#3B82F6" />
-                  <rect x="58" y="28" width="7.5" height="44" rx="3.75" fill="#06B6D4" />
-                  <path d="M 32 68 L 76 24" fill="none" stroke="#06B6D4" stroke-width="9" stroke-linecap="round" />
-                  <path d="M 56 20 L 82 20 L 82 46 Z" fill="#06B6D4" stroke-linejoin="round" />
-                </svg>
+                <img src="docs/images/finculator-icon.png" alt="Finculator Official Logo" class="brand-logo-img" width="30" height="30" style="filter: drop-shadow(0 2px 8px rgba(2, 132, 252, 0.4));" />
               </div>
               <div class="brand-info">
-                <span class="brand-title" style="color: #FFFFFF; font-size: 1.05rem;">FINCULATOR</span>
-                <span class="brand-tagline" style="color: #38BDF8; font-size: 0.65rem;">Smart Decisions. Stronger Futures.</span>
+                <span class="brand-title" style="color: #FFFFFF; font-size: 1.05rem;"><span class="brand-title-blue" style="color: #38BDF8;">FIN</span>CULATOR</span>
+                <span class="brand-tagline" style="color: #93C5FD; font-size: 0.65rem;">Smart Decisions. Stronger Futures.</span>
               </div>
             </div>
 
             <p class="footer-brand-desc">
-              Institutional financial computation & wealth optimization suite architected by Prakhar Rai. Calculate, compare, and optimize loans, investments, and taxes with 100% mathematical precision.
+              Institutional financial computation & wealth optimization suite architected by Prakhar Rai. 27 calculators calibrated against RBI/SBI banking standards and Union Budget provisions with 100% client-side privacy.
             </p>
 
             <!-- Clean Icon-Only Social Row -->
@@ -57,8 +50,8 @@ export function getFooterHTML() {
             <div class="footer-col-title">Wealth & Taxes</div>
             <ul class="footer-links">
               <li><a href="#/invest-sip">SIP Calculator</a></li>
-              <li><a href="#/invest-stepup">Step-Up SIP</a></li>
-              <li><a href="#/savings-ppf">PPF (Tax-Free)</a></li>
+              <li><a href="#/invest-step-up">Step-Up SIP</a></li>
+              <li><a href="#/invest-ppf">PPF (Tax-Free)</a></li>
               <li><a href="#/tax-income">Income Tax (Old vs New)</a></li>
               <li><a href="#/tax-salary">Take-Home Salary</a></li>
               <li><a href="#/fire">Retirement & FIRE</a></li>
@@ -102,8 +95,11 @@ export function getFooterHTML() {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
               Back to Top
             </button>
-            <a href="#/emi" class="footer-legal-link">Privacy Policy</a>
-            <a href="#/emi" class="footer-legal-link">Terms of Service</a>
+            <a href="privacy.html" class="footer-legal-link">Privacy Policy</a>
+            <a href="terms.html" class="footer-legal-link">Terms of Service</a>
+            <a href="disclaimer.html" class="footer-legal-link">Disclaimer</a>
+            <a href="about.html" class="footer-legal-link">About Us</a>
+            <a href="contact.html" class="footer-legal-link">Contact</a>
             <a href="https://github.com/prakharrai12/finculator" target="_blank" rel="noopener noreferrer" class="footer-legal-link">Source Code</a>
           </div>
         </div>

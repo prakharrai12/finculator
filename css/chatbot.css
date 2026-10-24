@@ -16,11 +16,11 @@
   height: 46px;
   padding: 0;
   border-radius: 50%;
-  background: rgba(13, 21, 38, 0.94);
+  background: linear-gradient(135deg, #0449E2 0%, #0284FC 100%);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 16px rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 8px 24px rgba(2, 132, 252, 0.38), 0 0 16px rgba(2, 176, 254, 0.25);
   color: #FFFFFF;
   cursor: pointer;
   font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Inter', sans-serif);
@@ -120,7 +120,7 @@
   height: 10px;
   border-radius: 50%;
   background: #10B981;
-  border: 2px solid #0D1526;
+  border: 2px solid #0449E2;
   box-shadow: 0 0 8px #10B981;
   animation: pulse-online 2s infinite ease-in-out;
   pointer-events: none;

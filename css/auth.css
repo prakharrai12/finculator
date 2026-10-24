@@ -122,8 +122,8 @@
 }
 
 .auth-tab-btn.active {
-  color: #2563EB;
-  border-bottom-color: #2563EB;
+  color: #0284FC;
+  border-bottom-color: #0284FC;
   background: #FFFFFF;
   font-weight: 700;
 }
@@ -198,7 +198,7 @@
 }
 
 .auth-link {
-  color: #2563EB;
+  color: #0284FC;
   text-decoration: none;
   font-weight: 600;
   cursor: pointer;
@@ -210,12 +210,12 @@
 
 .auth-link:hover {
   text-decoration: underline;
-  color: #1D4ED8;
+  color: #0449E2;
 }
 
 .auth-submit-btn {
   width: 100%;
-  background: linear-gradient(135deg, #2563EB 0%, #06B6D4 100%);
+  background: linear-gradient(135deg, #0449E2 0%, #0284FC 100%);
   color: #FFFFFF;
   border: none;
   border-radius: 9px;
@@ -223,6 +223,7 @@
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 4px 14px rgba(2, 132, 252, 0.35);
   transition: opacity 0.2s, transform 0.1s;
   display: flex;
   align-items: center;

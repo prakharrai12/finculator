@@ -1,0 +1,7 @@
+# https://finculator.app robots.txt
+User-agent: *
+Allow: /
+Disallow: /api/auth/
+Disallow: /data/
+
+Sitemap: https://finculator.app/sitemap.xml

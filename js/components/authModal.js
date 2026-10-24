@@ -34,13 +34,7 @@ export class AuthModal {
         <div class="auth-header">
           <div class="auth-brand">
             <div class="auth-brand-logo">
-              <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 48 10 A 38 38 0 1 0 86 48" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" />
-                <rect x="34" y="52" width="7.5" height="20" rx="3.75" fill="#2563EB" />
-                <rect x="46" y="40" width="7.5" height="32" rx="3.75" fill="#3B82F6" />
-                <rect x="58" y="28" width="7.5" height="44" rx="3.75" fill="#06B6D4" />
-                <path d="M 32 68 L 76 24" fill="none" stroke="#06B6D4" stroke-width="9" stroke-linecap="round" />
-              </svg>
+              <img src="docs/images/finculator-icon.png" alt="Finculator Official Logo" class="brand-logo-img" width="34" height="34" style="filter: drop-shadow(0 2px 6px rgba(2, 132, 252, 0.3));" />
             </div>
             <div>
               <div class="auth-title" id="auth-modal-title">Finculator Access</div>
@@ -199,18 +193,18 @@ export class AuthModal {
           <div class="auth-form-group">
             <label class="auth-label" for="auth-signup-pw">Create Password</label>
             <div class="auth-input-wrap">
-              <input type="password" id="auth-signup-pw" class="auth-input" placeholder="Minimum 6 characters" minlength="6" required autocomplete="new-password" />
+              <input type="password" id="auth-signup-pw" class="auth-input" placeholder="Min 10 chars (upper, lower, digit, symbol)" minlength="10" required autocomplete="new-password" />
             </div>
           </div>
 
           <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; padding: 12px; margin-top: 0.75rem; font-size: 0.78rem; color: #38BDF8; line-height: 1.45; display: flex; align-items: flex-start; gap: 8px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0; margin-top: 2px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-            <div><strong>Direct Credentials Dispatch:</strong> A formal welcome email with your verified login credentials and security tokens will be sent directly to your email address.</div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0; margin-top: 2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <div><strong>Zero-Knowledge Security:</strong> Passwords are cryptographically salted and hashed with PBKDF2. We never email, log, or store plaintext passwords.</div>
           </div>
 
           <button type="submit" class="auth-submit-btn" id="btn-submit-signup">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
-            Create Account & Send Credentials
+            Create Free Account
           </button>
 
           <div style="text-align:center; margin-top: 1rem;">
@@ -246,14 +240,14 @@ export class AuthModal {
         const email = (emailInput && emailInput.value.trim()) || prompt('Enter your registered email address:');
         if (!email) return;
 
-        forgotBtn.textContent = 'Sending credentials...';
+        forgotBtn.textContent = 'Sending reset instructions...';
         try {
-          const res = await auth.sendCredentials({ email });
-          this.showToast(res.message || `Credentials sent directly to ${email}!`);
+          const res = await auth.forgotPassword({ email });
+          this.showToast(res.message || `Password reset instructions dispatched to ${email}!`);
         } catch (err) {
-          alert(err.message || 'Could not send credentials.');
+          alert(err.message || 'Could not send reset instructions.');
         } finally {
-          forgotBtn.textContent = 'Forgot Password? Email Credentials';
+          forgotBtn.textContent = 'Forgot Password? Send Reset Link';
         }
       });
     }
@@ -305,11 +299,11 @@ export class AuthModal {
         const submitBtn = container.querySelector('#btn-submit-signup');
 
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Creating Account & Dispatching Credentials...';
+        submitBtn.textContent = 'Creating Account...';
 
         try {
           const res = await auth.register({ name, email, password });
-          this.showToast(`Account created! Credentials sent directly to ${email}`);
+          this.showToast(`Account created successfully! Welcome, ${res.user.name || res.user.email}`);
           this.close();
 
           if (this.isPortfolioGate) {
@@ -322,7 +316,7 @@ export class AuthModal {
           alert(err.message || 'Registration failed.');
         } finally {
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Create Account & Send Credentials';
+          submitBtn.textContent = 'Create Free Account';
         }
       });
     }

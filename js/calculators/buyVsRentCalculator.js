@@ -26,17 +26,17 @@ export function initBuyVsRentCalculator(container) {
   const state = getStoredState('buy_vs_rent', defaultState);
 
   function calculate() {
-    const res = calculateBuyVsRent(
-      state.homePrice,
-      state.downPaymentPct,
-      state.mortgageRate,
-      state.mortgageYears,
-      state.homeAppreciationRate,
-      state.monthlyRent,
-      state.rentInflationRate,
-      state.investmentReturnRate,
-      state.timeHorizonYears
-    );
+    const res = calculateBuyVsRent({
+      homePrice: state.homePrice,
+      downPaymentPct: state.downPaymentPct,
+      mortgageRate: state.mortgageRate,
+      mortgageYears: state.mortgageYears,
+      homeAppreciationRate: state.homeAppreciationRate,
+      monthlyRent: state.monthlyRent,
+      rentInflationRate: state.rentInflationRate,
+      investmentReturnRate: state.investmentReturnRate,
+      timeHorizonYears: state.timeHorizonYears
+    });
     setStoredState('buy_vs_rent', state);
     return res;
   }

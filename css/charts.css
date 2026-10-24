@@ -51,15 +51,15 @@
 }
 
 .donut-segment.principal {
-  stroke: var(--brand-navy-dark);
-}
-
-.donut-segment.interest {
   stroke: var(--brand-blue);
 }
 
-.donut-segment.extra {
+.donut-segment.interest {
   stroke: var(--brand-cyan);
+}
+
+.donut-segment.extra {
+  stroke: var(--brand-blue-dark);
 }
 
 .donut-center-text {
@@ -132,7 +132,7 @@
 
 .chart-line-total {
   fill: none;
-  stroke: var(--brand-navy-dark);
+  stroke: var(--brand-blue);
   stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -140,7 +140,7 @@
 
 .chart-line-invested {
   fill: none;
-  stroke: var(--brand-blue);
+  stroke: var(--brand-blue-dark);
   stroke-width: 2;
   stroke-dasharray: 4 4;
 }
@@ -160,7 +160,7 @@
 
 .chart-data-point {
   fill: var(--bg-surface);
-  stroke: var(--brand-navy-dark);
+  stroke: var(--brand-blue);
   stroke-width: 2;
   r: 3.5;
   transition: r var(--transition-fast);
@@ -169,13 +169,13 @@
 
 .chart-data-point:hover {
   r: 5.5;
-  fill: var(--brand-navy-dark);
+  fill: var(--brand-blue);
 }
 
 /* Chart Tooltip */
 .chart-tooltip {
   position: absolute;
-  background: var(--brand-navy-dark);
+  background: var(--brand-secondary-gradient);
   color: #FFFFFF;
   padding: 0.4rem 0.7rem;
   border-radius: var(--radius-sm);
@@ -185,7 +185,8 @@
   pointer-events: none;
   z-index: 20;
   display: none;
-  box-shadow: 0 4px 12px rgba(13, 21, 38, 0.25);
+  box-shadow: 0 4px 16px rgba(2, 132, 252, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   white-space: nowrap;
   transform: translate(-50%, -120%);
 }
@@ -198,7 +199,7 @@
   transform: translateX(-50%);
   border-width: 4px;
   border-style: solid;
-  border-color: var(--brand-navy-dark) transparent transparent transparent;
+  border-color: var(--brand-blue-dark) transparent transparent transparent;
 }
 
 .chart-legend {
@@ -224,8 +225,8 @@
   border-radius: 2px;
 }
 
-.legend-swatch.primary { background: var(--brand-navy-dark); }
-.legend-swatch.secondary { background: var(--brand-blue); }
+.legend-swatch.primary { background: var(--brand-blue); }
+.legend-swatch.secondary { background: var(--brand-cyan); }
 .legend-swatch.dashed { 
   background: repeating-linear-gradient(
     45deg,

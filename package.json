@@ -1,0 +1,21 @@
+{
+  "name": "finculator",
+  "version": "4.5.0",
+  "description": "Zero-defect, privacy-preserving financial computation engine and wealth platform",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "test:server": "python tests/test_auth_and_system.py"
+  },
+  "keywords": [
+    "finance",
+    "calculator",
+    "emi",
+    "sip",
+    "tax",
+    "investment",
+    "financial-planning"
+  ],
+  "author": "Finculator Team",
+  "license": "MIT"
+}

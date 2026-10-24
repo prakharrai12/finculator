@@ -3,96 +3,109 @@
  * Computes Balance Sheet, Cash Flow, Asset Allocation, and Solvency Metrics
  */
 
-export const DEFAULT_PORTFOLIO_STATE = {
-  profile: {
-    fullName: '',
-    dob: '',
-    email: '',
-    phone: '',
-    address: '',
-    occupation: '',
-    employer: '',
-    maritalStatus: '',
-    dependents: '',
-    asOfDate: new Date().toISOString().split('T')[0],
-    currency: 'INR'
-  },
-  assets: {
-    // Liquid Assets
-    cashChecking: '',
-    savingsAccounts: '',
-    moneyMarket: '',
-    // Fixed Deposits / CDs
-    fixedDeposits: '',
-    recurringDeposits: '',
-    // Investment Holdings
-    stocksEquities: '',
-    mutualFundsETFs: '',
-    bondsFixedIncome: '',
-    retirementAccounts: '', // EPF, PPF, NPS
-    // Real Estate
-    primaryResidence: '',
-    investmentProperties: '',
-    // Vehicles & Personal Valuables
-    vehicles: '',
-    valuablesArtJewelry: '',
-    // Business & Receivables
-    businessEquity: '',
-    lifeInsuranceCashValue: '',
-    receivables: ''
-  },
-  liabilities: {
-    creditCards: '',
-    mortgagePrimary: '',
-    mortgageInvestment: '',
-    autoLoans: '',
-    studentLoans: '',
-    personalLoans: '',
-    linesOfCredit: '',
-    unpaidTaxes: '',
-    otherDebts: ''
-  },
-  income: {
-    primarySalary: '', // Monthly
-    secondarySalary: '',
-    businessIncome: '',
-    rentalIncome: '',
-    dividendsInterest: '',
-    otherIncome: ''
-  },
-  expenses: {
-    fixedLiving: '', // Monthly (Rent/EMI, utilities, insurance)
-    variableDiscretionary: '', // Dining, leisure, shopping
-    debtPayments: '' // Monthly EMIs
-  },
-  allocation: {
-    equityPct: '',
-    fixedIncomePct: '',
-    cashPct: '',
-    realEstatePct: '',
-    goldCommoditiesPct: '',
-    alternativesPct: ''
-  },
-  holdings: [],
-  insurance: {
-    lifeType: '',
-    lifeCoverage: '',
-    lifePremium: '',
-    healthCoverage: '',
-    healthPremium: '',
-    otherCoverageNotes: ''
-  },
-  goals: [],
-  estate: {
-    willStatus: '',
-    namedBeneficiaries: '',
-    powerOfAttorney: ''
-  },
-  credit: {
-    creditScore: '',
-    scoreSource: ''
-  }
-};
+export function getDefaultPortfolioState() {
+  return {
+    profile: {
+      fullName: '',
+      dob: '',
+      email: '',
+      phone: '',
+      address: '',
+      occupation: '',
+      employer: '',
+      maritalStatus: '',
+      dependents: '',
+      asOfDate: new Date().toISOString().split('T')[0],
+      currency: 'INR'
+    },
+    assets: {
+      // Liquid Assets
+      cashChecking: '',
+      savingsAccounts: '',
+      moneyMarket: '',
+      // Fixed Deposits / CDs
+      fixedDeposits: '',
+      recurringDeposits: '',
+      // Investment Holdings
+      stocksEquities: '',
+      mutualFundsETFs: '',
+      bondsFixedIncome: '',
+      retirementAccounts: '', // EPF, PPF, NPS
+      // Real Estate
+      primaryResidence: '',
+      investmentProperties: '',
+      // Vehicles & Personal Valuables
+      vehicles: '',
+      valuablesArtJewelry: '',
+      // Business & Receivables
+      businessEquity: '',
+      lifeInsuranceCashValue: '',
+      receivables: ''
+    },
+    liabilities: {
+      creditCards: '',
+      mortgagePrimary: '',
+      mortgageInvestment: '',
+      autoLoans: '',
+      studentLoans: '',
+      personalLoans: '',
+      linesOfCredit: '',
+      unpaidTaxes: '',
+      otherDebts: ''
+    },
+    income: {
+      primarySalary: '', // Monthly
+      secondarySalary: '',
+      businessIncome: '',
+      rentalIncome: '',
+      dividendsInterest: '',
+      otherIncome: ''
+    },
+    expenses: {
+      fixedLiving: '', // Monthly (Rent/EMI, utilities, insurance)
+      variableDiscretionary: '', // Dining, leisure, shopping
+      debtPayments: '' // Monthly EMIs
+    },
+    allocation: {
+      equityPct: '',
+      fixedIncomePct: '',
+      cashPct: '',
+      realEstatePct: '',
+      goldCommoditiesPct: '',
+      alternativesPct: ''
+    },
+    holdings: [],
+    insurance: {
+      lifeType: '',
+      lifeCoverage: '',
+      lifePremium: '',
+      healthCoverage: '',
+      healthPremium: '',
+      otherCoverageNotes: ''
+    },
+    goals: [],
+    estate: {
+      willStatus: '',
+      namedBeneficiaries: '',
+      powerOfAttorney: ''
+    },
+    credit: {
+      creditScore: '',
+      scoreSource: ''
+    }
+  };
+}
+
+function deepFreeze(obj) {
+  Object.keys(obj).forEach((prop) => {
+    if (typeof obj[prop] === 'object' && obj[prop] !== null && !Object.isFrozen(obj[prop])) {
+      deepFreeze(obj[prop]);
+    }
+  });
+  return Object.freeze(obj);
+}
+
+export const DEFAULT_PORTFOLIO_STATE = deepFreeze(getDefaultPortfolioState());
 
 /**
  * Calculate comprehensive Portfolio Financial Metrics

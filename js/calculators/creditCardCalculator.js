@@ -48,23 +48,42 @@ export function initCreditCardCalculator(container) {
           </div>
         </div>
 
-        <!-- High-Impact Savings Banner -->
-        <div class="savings-banner">
-          <div class="savings-info">
-            <span class="savings-label">Interest Saved by Fixed Payment</span>
-            <span class="savings-amount" id="cc-saved-amt">${formatCurrency(res.savings.interestSaved)}</span>
-          </div>
-          <div class="savings-meta">
-            <div class="savings-subitem">
-              <span class="sub-label">Debt-Free Time Saved</span>
-              <span class="sub-val" id="cc-saved-time">${res.savings.yearsSaved} Years (${res.savings.monthsSaved} Months)</span>
+        <!-- High-Impact Savings Banner / Negative Amortization Alert -->
+        ${!res.fixedPlan.isPayoffPossible ? `
+          <div class="savings-banner" style="background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.4);">
+            <div class="savings-info">
+              <span class="savings-label" style="color: #ef4444;">Negative Amortization Warning</span>
+              <span class="savings-amount" id="cc-saved-amt" style="font-size: 1.25rem; color: #fca5a5;">Payment fails to cover monthly interest</span>
             </div>
-            <div class="savings-subitem">
-              <span class="sub-label">Accelerated Payoff Term</span>
-              <span class="sub-val" id="cc-accel-term">${(res.fixedPlan.months / 12).toFixed(1)} Years (${res.fixedPlan.months} Mos)</span>
+            <div class="savings-meta">
+              <div class="savings-subitem">
+                <span class="sub-label">Current Monthly Interest</span>
+                <span class="sub-val" style="color: #ef4444;">${formatCurrency(state.balance * (state.aprPercent / 1200))} / mo</span>
+              </div>
+              <div class="savings-subitem">
+                <span class="sub-label">Required Action</span>
+                <span class="sub-val">Increase monthly payment above interest</span>
+              </div>
             </div>
           </div>
-        </div>
+        ` : `
+          <div class="savings-banner">
+            <div class="savings-info">
+              <span class="savings-label">Interest Saved by Fixed Payment</span>
+              <span class="savings-amount" id="cc-saved-amt">${formatCurrency(res.savings.interestSaved)}</span>
+            </div>
+            <div class="savings-meta">
+              <div class="savings-subitem">
+                <span class="sub-label">Debt-Free Time Saved</span>
+                <span class="sub-val" id="cc-saved-time">${res.savings.yearsSaved} Years (${res.savings.monthsSaved} Months)</span>
+              </div>
+              <div class="savings-subitem">
+                <span class="sub-label">Accelerated Payoff Term</span>
+                <span class="sub-val" id="cc-accel-term">${(res.fixedPlan.months / 12).toFixed(1)} Years (${res.fixedPlan.months} Mos)</span>
+              </div>
+            </div>
+          </div>
+        `}
 
         <div class="calc-grid">
           <!-- Input Controls Panel -->
@@ -197,25 +216,41 @@ export function initCreditCardCalculator(container) {
     if (savedTime) savedTime.textContent = `${res.savings.yearsSaved} Years (${res.savings.monthsSaved} Months)`;
 
     const accelTerm = container.querySelector('#cc-accel-term');
-    if (accelTerm) accelTerm.textContent = `${(res.fixedPlan.months / 12).toFixed(1)} Years (${res.fixedPlan.months} Mos)`;
+    if (accelTerm) {
+      accelTerm.textContent = res.fixedPlan.isPayoffPossible
+        ? `${(res.fixedPlan.months / 12).toFixed(1)} Years (${res.fixedPlan.months} Mos)`
+        : 'Never (Debt Grows)';
+    }
 
     const minInitPay = container.querySelector('#cc-min-init-pay');
     if (minInitPay) minInitPay.textContent = `${formatCurrency(res.minPlan.initialMonthly)} / mo`;
 
     const minTotInt = container.querySelector('#cc-min-tot-int');
-    if (minTotInt) minTotInt.textContent = formatCurrency(res.minPlan.totalInterest);
+    if (minTotInt) {
+      minTotInt.textContent = res.minPlan.isPayoffPossible ? formatCurrency(res.minPlan.totalInterest) : 'Indefinite';
+    }
 
     const minTotTime = container.querySelector('#cc-min-tot-time');
-    if (minTotTime) minTotTime.textContent = `${(res.minPlan.months / 12).toFixed(1)} Years (${res.minPlan.months} Mos)`;
+    if (minTotTime) {
+      minTotTime.textContent = res.minPlan.isPayoffPossible
+        ? `${(res.minPlan.months / 12).toFixed(1)} Years (${res.minPlan.months} Mos)`
+        : 'Never (Negative Amortization)';
+    }
 
     const fixPay = container.querySelector('#cc-fix-pay');
     if (fixPay) fixPay.textContent = `${formatCurrency(res.fixedPlan.monthlyPayment)} / mo`;
 
     const fixTotInt = container.querySelector('#cc-fix-tot-int');
-    if (fixTotInt) fixTotInt.textContent = formatCurrency(res.fixedPlan.totalInterest);
+    if (fixTotInt) {
+      fixTotInt.textContent = res.fixedPlan.isPayoffPossible ? formatCurrency(res.fixedPlan.totalInterest) : 'Indefinite';
+    }
 
     const fixTotTime = container.querySelector('#cc-fix-tot-time');
-    if (fixTotTime) fixTotTime.textContent = `${(res.fixedPlan.months / 12).toFixed(1)} Years (${res.fixedPlan.months} Mos)`;
+    if (fixTotTime) {
+      fixTotTime.textContent = res.fixedPlan.isPayoffPossible
+        ? `${(res.fixedPlan.months / 12).toFixed(1)} Years (${res.fixedPlan.months} Mos)`
+        : 'Never (Negative Amortization)';
+    }
 
     // Render Trajectory Chart
     const chartBox = container.querySelector('#cc-chart-box');

@@ -1,0 +1,21 @@
+{
+  "name": "Finculator — Financial Calculators & Portfolio Builder",
+  "short_name": "Finculator",
+  "description": "Institutional-grade suite of 27 financial calculators, tax planning engines, and personal portfolio statements.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0b0e",
+  "theme_color": "#0a0b0e",
+  "icons": [
+    {
+      "src": "/docs/images/finculator-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/docs/images/finculator-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

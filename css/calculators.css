@@ -63,7 +63,7 @@
 }
 
 .table-search:focus {
-  border-color: var(--brand-navy-dark);
+  border-color: var(--brand-blue);
   background: var(--bg-surface);
   width: 170px;
 }
@@ -148,12 +148,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  background: linear-gradient(135deg, #0D1526 0%, #1E293B 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--brand-highlight-gradient);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-lg, 14px);
   padding: 1.5rem 1.85rem;
   color: #FFFFFF;
-  box-shadow: 0 10px 30px -5px rgba(13, 21, 38, 0.18), 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px -5px rgba(2, 132, 252, 0.35), 0 4px 12px rgba(4, 73, 226, 0.15);
   margin-bottom: 0.5rem;
   flex-wrap: wrap;
   position: relative;
@@ -298,9 +298,9 @@
 }
 
 .comparison-card.highlight-card .card-tag {
-  background: #0D1526;
-  color: #38BDF8;
-  border-color: #1E293B;
+  background: var(--brand-secondary-gradient);
+  color: #FFFFFF;
+  border-color: var(--brand-secondary-dark);
 }
 
 /* FIRE Milestone Cards */
@@ -322,10 +322,10 @@
 }
 
 .fire-tier-card.primary-tier {
-  background: var(--bg-surface);
-  border-color: var(--brand-navy-dark);
+  background: var(--brand-blue-subtle);
+  border-color: var(--brand-blue);
   border-width: 1.5px;
-  box-shadow: var(--shadow-subtle);
+  box-shadow: 0 2px 10px rgba(2, 132, 252, 0.15);
 }
 
 .fire-tier-name {
@@ -369,8 +369,8 @@
 }
 
 .comparator-column.best-value {
-  border-color: var(--brand-navy-dark);
-  box-shadow: var(--shadow-card);
+  border-color: var(--brand-blue);
+  box-shadow: 0 4px 16px rgba(2, 132, 252, 0.18);
 }
 
 .comparator-card-header {

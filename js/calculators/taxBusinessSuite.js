@@ -24,6 +24,7 @@ export function initTaxBusinessSuite(container) {
     taxGross: 0,
     taxDeductions: 0,
     taxRegime: 'new',
+    taxFY: 'FY_2025_26',
     // GST
     gstAmount: 0,
     gstRate: 18,
@@ -51,7 +52,7 @@ export function initTaxBusinessSuite(container) {
     if (tab === 'tax') {
       return {
         type: 'tax',
-        res: calculateIncomeTax(state.taxGross, state.taxDeductions, state.taxRegime)
+        res: calculateIncomeTax(state.taxGross, state.taxDeductions, state.taxRegime, state.taxFY || 'FY_2025_26')
       };
     } else if (tab === 'gst') {
       return {
@@ -191,6 +192,16 @@ export function initTaxBusinessSuite(container) {
           </div>
           <div class="slider-container">
             <input type="range" id="tb-tax-d-slider" class="range-slider" min="0" max="500000" step="10000" value="${state.taxDeductions || 0}" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <label class="form-label">Financial Year (Budget Assessment)</label>
+          </div>
+          <div class="toggle-group" id="tb-tax-fy-toggle">
+            <button class="toggle-option ${state.taxFY !== 'FY_2024_25' ? 'active' : ''}" data-fy="FY_2025_26">FY 2025-26 (Budget 2025)</button>
+            <button class="toggle-option ${state.taxFY === 'FY_2024_25' ? 'active' : ''}" data-fy="FY_2024_25">FY 2024-25</button>
           </div>
         </div>
 
@@ -351,7 +362,7 @@ export function initTaxBusinessSuite(container) {
     if (type === 'tax') {
       return `
         <div class="hero-metric-box">
-          <span class="metric-label">Total Tax Liability (${state.taxRegime === 'new' ? 'New Regime' : 'Old Regime'})</span>
+          <span class="metric-label">Total Tax Liability (${state.taxRegime === 'new' ? 'New Regime' : 'Old Regime'} · ${res.financialYearLabel || 'FY 2025-26'})</span>
           <span class="metric-value">${formatCurrency(res.selectedTax)}</span>
           <span class="metric-subtext">Effective tax rate: ${res.effectiveRate}% on ${formatCurrency(state.taxGross)}</span>
         </div>
@@ -588,6 +599,15 @@ export function initTaxBusinessSuite(container) {
     if (state.activeTab === 'tax') {
       bindInput('tb-tax-g-input', 'tb-tax-g-slider', (v) => { state.taxGross = v; });
       bindInput('tb-tax-d-input', 'tb-tax-d-slider', (v) => { state.taxDeductions = v; });
+      const fyToggle = container.querySelector('#tb-tax-fy-toggle');
+      if (fyToggle) {
+        fyToggle.querySelectorAll('.toggle-option').forEach((b) => {
+          b.addEventListener('click', () => {
+            state.taxFY = b.getAttribute('data-fy');
+            render();
+          });
+        });
+      }
       const regToggle = container.querySelector('#tb-tax-regime-toggle');
       if (regToggle) {
         regToggle.querySelectorAll('.toggle-option').forEach((b) => {

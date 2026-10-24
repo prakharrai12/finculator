@@ -1,14 +1,45 @@
 /**
  * Finculator Authentication & Credentials Management Engine
- * Provides dual-mode (REST API + LocalStorage fallback) authentication,
- * session management, and credential dispatch handling.
+ * Secure REST API client with zero client-side password caching.
+ * Enforces client-first privacy and strict password validation.
  */
 
 import { migrateGuestSessionToAccount } from './storage.js';
 
 const AUTH_STORAGE_KEY = 'finculator_auth_session';
-const USERS_STORAGE_KEY = 'finculator_local_users';
-const SENT_EMAILS_STORAGE_KEY = 'finculator_local_sent_emails';
+
+const COMMON_PASSWORDS = new Set([
+  'password', 'password123', '12345678', '123456789', '1234567890',
+  'qwertyuiop', 'admin123', 'letmein123', 'welcome123', 'finculator',
+  'finculator123', 'iloveyou', 'sunshine', 'princess', 'football'
+]);
+
+export function validatePasswordPolicy(password) {
+  if (!password || password.length < 10) {
+    return { valid: false, error: 'Password must be at least 10 characters long.' };
+  }
+  if (password.length > 128) {
+    return { valid: false, error: 'Password must not exceed 128 characters.' };
+  }
+  if (!/[A-Z]/.test(password)) {
+    return { valid: false, error: 'Password must contain at least one uppercase letter (A-Z).' };
+  }
+  if (!/[a-z]/.test(password)) {
+    return { valid: false, error: 'Password must contain at least one lowercase letter (a-z).' };
+  }
+  if (!/[0-9]/.test(password)) {
+    return { valid: false, error: 'Password must contain at least one digit (0-9).' };
+  }
+  if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
+    return { valid: false, error: 'Password must contain at least one special character (!@#$%^&*...).' };
+  }
+  const lower = password.toLowerCase();
+  const stripped = lower.replace(/[^a-z]/g, '');
+  if (COMMON_PASSWORDS.has(lower) || COMMON_PASSWORDS.has(stripped)) {
+    return { valid: false, error: 'This password is too common and easily guessed. Please choose a stronger password.' };
+  }
+  return { valid: true };
+}
 
 class AuthService {
   constructor() {
@@ -26,9 +57,16 @@ class AuthService {
   }
 
   saveSession(user, token) {
-    this.currentUser = { ...user, token };
+    // Only store safe public user profile fields and signed token. Never store passwords.
+    this.currentUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role || 'user',
+      token
+    };
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(this.currentUser));
-    
+
     // Migrate any guest session data into permanent account
     try {
       migrateGuestSessionToAccount();
@@ -50,7 +88,7 @@ class AuthService {
   }
 
   isAuthenticated() {
-    return !!this.currentUser && !!this.currentUser.email;
+    return !!this.currentUser && !!this.currentUser.email && !!this.currentUser.token;
   }
 
   onAuthChange(cb) {
@@ -75,124 +113,115 @@ class AuthService {
    * Register a new user
    */
   async register({ name, email, password }) {
-    name = name.trim();
-    email = email.trim().toLowerCase();
+    name = (name || '').trim();
+    email = (email || '').trim().toLowerCase();
 
-    // 1. Try Backend API
-    try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Finculator-CSRF': '1'
-        },
-        body: JSON.stringify({ name, email, password })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Registration failed.');
-      }
-      this.saveSession(data.user, data.token);
-      return data;
-    } catch (apiErr) {
-      // 2. Fallback to LocalStorage Auth
-      console.warn('Backend API unavailable, using offline client storage:', apiErr.message);
-      return this.localRegister({ name, email, password });
+    if (!name || !email || !password) {
+      throw new Error('Name, email, and password are required.');
     }
+
+    const policyCheck = validatePasswordPolicy(password);
+    if (!policyCheck.valid) {
+      throw new Error(policyCheck.error);
+    }
+
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Finculator-CSRF': '1'
+      },
+      body: JSON.stringify({ name, email, password })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.error || 'Registration failed. Please check your connection and try again.');
+    }
+
+    this.saveSession(data.user, data.token);
+    return data;
   }
 
   /**
    * Log In
    */
   async login({ email, password }) {
-    email = email.trim().toLowerCase();
+    email = (email || '').trim().toLowerCase();
 
-    // 1. Try Backend API
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Finculator-CSRF': '1'
-        },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Login failed.');
-      }
-      this.saveSession(data.user, data.token);
-      return data;
-    } catch (apiErr) {
-      // 2. Fallback to LocalStorage
-      console.warn('Backend API login fallback:', apiErr.message);
-      return this.localLogin({ email, password });
+    if (!email || !password) {
+      throw new Error('Email address and password are required.');
     }
+
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Finculator-CSRF': '1'
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.error || 'Invalid credentials or authentication server unavailable.');
+    }
+
+    this.saveSession(data.user, data.token);
+    return data;
   }
 
   /**
-   * Send Credentials to Email
-   */
-  async sendCredentials({ email }) {
-    email = email.trim().toLowerCase();
-
-    try {
-      const res = await fetch('/api/auth/send-credentials', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Finculator-CSRF': '1'
-        },
-        body: JSON.stringify({ email })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Could not send credentials.');
-      }
-      return data;
-    } catch (err) {
-      console.warn('Backend sendCredentials fallback:', err.message);
-      return this.localSendCredentials({ email });
-    }
-  }
-
-  /**
-   * Forgot Password
+   * Request password reset instructions
    */
   async forgotPassword({ email }) {
-    email = email.trim().toLowerCase();
-
-    try {
-      const res = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Finculator-CSRF': '1'
-        },
-        body: JSON.stringify({ email })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Could not process request.');
-      }
-      return data;
-    } catch (err) {
-      return this.localForgotPassword({ email });
+    email = (email || '').trim().toLowerCase();
+    if (!email) {
+      throw new Error('Please enter your email address.');
     }
+
+    const res = await fetch('/api/auth/forgot-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Finculator-CSRF': '1'
+      },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.error || 'Unable to process password reset request.');
+    }
+
+    return data;
   }
 
   /**
-   * Fetch sent email logs for inbox simulation
+   * Reset password with one-time expiring token
    */
-  async getSentEmails() {
-    try {
-      const res = await fetch('/api/auth/sent-emails');
-      if (res.ok) {
-        return await res.json();
-      }
-    } catch {}
-    const local = localStorage.getItem(SENT_EMAILS_STORAGE_KEY);
-    return local ? JSON.parse(local) : [];
+  async resetPassword({ token, newPassword }) {
+    if (!token) throw new Error('Password reset token is required.');
+    const policyCheck = validatePasswordPolicy(newPassword);
+    if (!policyCheck.valid) {
+      throw new Error(policyCheck.error);
+    }
+
+    const res = await fetch('/api/auth/reset-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Finculator-CSRF': '1'
+      },
+      body: JSON.stringify({ token, newPassword })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.error || 'Password reset failed. The link may have expired.');
+    }
+
+    return data;
   }
 
   /**
@@ -200,125 +229,6 @@ class AuthService {
    */
   logout() {
     this.clearSession();
-  }
-
-  // --- LocalStorage Fallback Methods ---
-
-  localRegister({ name, email, password }) {
-    let users = [];
-    try {
-      users = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
-    } catch {}
-
-    if (users.some((u) => u.email === email)) {
-      throw new Error('An account with this email address already exists.');
-    }
-
-    const userId = 'usr_' + Math.random().toString(36).substring(2, 9);
-    const token = 'tok_' + Math.random().toString(36).substring(2, 12);
-    const user = { id: userId, name, email, password };
-    users.push(user);
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-
-    const emailRec = this.saveLocalEmail(
-      email,
-      'Welcome to Finculator — Your Account Credentials',
-      `<p>Hello <strong>${name}</strong>,</p><p>Your Finculator account has been created. Keep your login credentials safe.</p>`
-    );
-
-    this.saveSession({ id: userId, name, email }, token);
-    return {
-      success: true,
-      message: 'Account created successfully. Credentials sent.',
-      user: { id: userId, name, email },
-      token,
-      emailPreview: emailRec
-    };
-  }
-
-  localLogin({ email, password }) {
-    let users = [];
-    try {
-      users = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
-    } catch {}
-
-    const match = users.find((u) => u.email === email && u.password === password);
-    if (!match) {
-      throw new Error('Invalid email or password.');
-    }
-
-    const token = 'tok_' + Math.random().toString(36).substring(2, 12);
-    this.saveSession({ id: match.id, name: match.name, email: match.email }, token);
-    return {
-      success: true,
-      message: `Welcome back, ${match.name}!`,
-      user: { id: match.id, name: match.name, email: match.email },
-      token
-    };
-  }
-
-  localSendCredentials({ email }) {
-    let users = [];
-    try {
-      users = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
-    } catch {}
-
-    let user = users.find((u) => u.email === email);
-    const tempPass = 'Fin@' + Math.floor(1000 + Math.random() * 9000);
-    const name = user ? user.name : email.split('@')[0];
-
-    if (!user) {
-      user = { id: 'usr_' + Math.random().toString(36).substring(2, 9), name, email, password: tempPass };
-      users.push(user);
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-    }
-
-    const emailRec = this.saveLocalEmail(
-      email,
-      'Your Finculator Login Credentials & Access Pass',
-      `<p>Hello <strong>${name}</strong>,</p><p>Here are your requested login credentials:</p><p><strong>Email:</strong> ${email}<br/><strong>Access Pass:</strong> <code>${tempPass}</code></p>`
-    );
-
-    return {
-      success: true,
-      message: `Credentials dispatched to ${email}`,
-      emailPreview: emailRec
-    };
-  }
-
-  localForgotPassword({ email }) {
-    const code = 'RST-' + Math.floor(100000 + Math.random() * 900000);
-    const emailRec = this.saveLocalEmail(
-      email,
-      'Finculator Password Reset Code',
-      `<p>Your one-time password reset code is: <strong>${code}</strong></p>`
-    );
-    return {
-      success: true,
-      message: `Password reset instructions sent to ${email}`,
-      emailPreview: emailRec
-    };
-  }
-
-  saveLocalEmail(to, subject, html) {
-    let emails = [];
-    try {
-      emails = JSON.parse(localStorage.getItem(SENT_EMAILS_STORAGE_KEY) || '[]');
-    } catch {}
-
-    const rec = {
-      id: 'eml_' + Math.random().toString(36).substring(2, 9),
-      to,
-      from: 'auth@finculator.io',
-      subject,
-      bodyHtml: html,
-      bodyText: html.replace(/<[^>]+>/g, ' '),
-      sentAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
-      status: 'DELIVERED'
-    };
-    emails.unshift(rec);
-    localStorage.setItem(SENT_EMAILS_STORAGE_KEY, JSON.stringify(emails.slice(0, 50)));
-    return rec;
   }
 }
 
