@@ -1,0 +1,50 @@
+{
+  "name": "Finculator Cloud WAF Security Ruleset",
+  "description": "Production edge WAF rules for Cloudflare and Vercel protecting against OWASP Top 10, automated credential stuffing, and bot scans.",
+  "rules": [
+    {
+      "id": "block_malicious_scanners",
+      "description": "Block automated security scanners and exploit probes",
+      "expression": "(http.user_agent contains \"sqlmap\" or http.user_agent contains \"nikto\" or http.user_agent contains \"acunetix\" or http.user_agent contains \"dirbuster\" or http.user_agent contains \"nessus\" or http.user_agent contains \"nmap\" or http.user_agent contains \"masscan\")",
+      "action": "block"
+    },
+    {
+      "id": "block_http_trace_track",
+      "description": "Cross-Site Tracing (XST) defense: block HTTP TRACE and TRACK methods",
+      "expression": "(http.request.method in {\"TRACE\" \"TRACK\"})",
+      "action": "block"
+    },
+    {
+      "id": "rate_limit_auth_endpoints",
+      "description": "Rate limit authentication endpoints to prevent brute-force and credential stuffing",
+      "expression": "(http.request.uri.path contains \"/api/auth/\")",
+      "action": "rate_limit",
+      "rate_limit": {
+        "characteristics": ["ip.src"],
+        "period": 60,
+        "requests_per_period": 10,
+        "mitigation_timeout": 300,
+        "action": "managed_challenge"
+      }
+    },
+    {
+      "id": "rate_limit_ai_proxies",
+      "description": "Rate limit generative AI query endpoint to prevent spend exhaustion and scraping",
+      "expression": "(http.request.uri.path contains \"/api/ai/\")",
+      "action": "rate_limit",
+      "rate_limit": {
+        "characteristics": ["ip.src"],
+        "period": 60,
+        "requests_per_period": 30,
+        "mitigation_timeout": 300,
+        "action": "managed_challenge"
+      }
+    },
+    {
+      "id": "block_sensitive_data_files",
+      "description": "Defense-in-depth: Block direct web access to runtime data files or dotfiles",
+      "expression": "(http.request.uri.path contains \"/data/\" or http.request.uri.path contains \"/.env\" or http.request.uri.path contains \"/.git\")",
+      "action": "block"
+    }
+  ]
+}

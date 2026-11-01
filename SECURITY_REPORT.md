@@ -190,13 +190,23 @@ Before deploying updates to production, verify:
 
 ---
 
-## 7. Recommended Next Steps for Ongoing Security
+## 7. Next Steps & Continuous Protection Implementation
 
-1. **Cloud Web Application Firewall (WAF):**
-   * Enable Vercel / Cloudflare WAF managed rules to block DDoS and OWASP Top 10 automated attack vectors at the CDN edge before reaching serverless functions.
-2. **Automated Continuous Secret Scanning:**
-   * Configure GitHub Secret Scanning and Dependabot alerts to prevent accidental credential commits.
-3. **Periodic Key & Pepper Rotation:**
-   * Schedule bi-annual rotation of `SECRET_KEY` and session signing keys. (Note: Rotating `PASSWORD_PEPPER` requires rehashing stored passwords with a dual-pepper fallback pattern).
-4. **Third-Party External Penetration Testing & Bug Bounty:**
-   * Commission an independent black-box / gray-box penetration test prior to handling live transactional capital or customer banking credentials.
+All four security recommendations have been engineered into production-ready specifications and tooling:
+
+1. **Cloud Web Application Firewall (WAF) Integration:**
+   * Created [`CLOUD_WAF_GUIDE.md`](CLOUD_WAF_GUIDE.md) and [`cloudflare-waf-rules.json`](cloudflare-waf-rules.json).
+   * Defines exact Vercel and Cloudflare edge WAF rules to block OWASP Top 10 exploits, rate-limit authentication and AI endpoints, challenge automated bots, and prevent data scraping before traffic hits serverless functions.
+
+2. **Zero-Downtime Periodic Secret Rotation:**
+   * Implemented dual-key rotation architecture in [`server.py`](server.py) (`SECRET_KEY_FALLBACK` & `PASSWORD_PEPPER_FALLBACK`).
+   * Created automated rotation engine [`scripts/rotate_secrets.py`](scripts/rotate_secrets.py) to generate 256-bit cryptographically secure keys, manage graceful fallback transition windows, auto-upgrade password hashes to the new pepper upon login, and format Vercel CLI environment updates.
+   * Documented fallback keys in [`.env.example`](.env.example).
+
+3. **Continuous Secret Scanning & Commit Guardrails:**
+   * Created [`.github/workflows/security-scan.yml`](.github/workflows/security-scan.yml) running automated Gitleaks scans on every push, pull request, and weekly schedule.
+   * Created client-side Git hook installer [`scripts/install_git_hooks.py`](scripts/install_git_hooks.py) configuring `.git/hooks/pre-commit` to prevent committing API keys, private keys, or `.env` files locally.
+
+4. **Third-Party Penetration Testing Charter:**
+   * Published formal charter [`PEN_TEST_SCOPE.md`](PEN_TEST_SCOPE.md) establishing scope boundaries, OWASP ASVS v4.0 Level 2 testing parameters, safe harbor policies, multi-tenant IDOR audit flows, credential provisioning guidelines, and CVSS v3.1 remediation SLAs.
+

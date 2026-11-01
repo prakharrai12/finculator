@@ -1,0 +1,66 @@
+name: Continuous Security & Secret Scanning
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run weekly automated security audit every Monday at 00:00 UTC
+    - cron: '0 0 * * 1'
+
+jobs:
+  secret-scan:
+    name: Gitleaks Automated Secret Detection
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Codebase (Full History)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks Secret Scanner
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: false
+
+  dependency-audit:
+    name: Dependency & Vulnerability Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run npm Audit
+        run: npm audit --audit-level=high
+
+  system-security-tests:
+    name: Auth Flow & Injection Security Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Negative Security Tests & System Verifications
+        env:
+          ADMIN_API_KEY: dev_adm_8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b
+          SECRET_KEY: dev_sec_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+          PASSWORD_PEPPER: dev_pep_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+          APP_ENV: development
+        run: |
+          python server.py &
+          SERVER_PID=$!
+          sleep 2
+          python tests/test_auth_and_system.py
+          kill $SERVER_PID

@@ -58,8 +58,10 @@ DEBUG = os.getenv('DEBUG', 'false').lower() in ('true', '1') if APP_ENV != 'prod
 BASE_URL = os.getenv('BASE_URL', f"http://{HOST}:{PORT}")
 
 SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY_FALLBACK = os.getenv('SECRET_KEY_FALLBACK', '')
 ADMIN_API_KEY = os.getenv('ADMIN_API_KEY')
 PASSWORD_PEPPER = os.getenv('PASSWORD_PEPPER')
+PASSWORD_PEPPER_FALLBACK = os.getenv('PASSWORD_PEPPER_FALLBACK', '')
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
 
 # Validate required secrets on startup
@@ -215,9 +217,10 @@ def validate_password_strength(password: str) -> tuple[bool, str]:
         return False, "This password is too common or easily guessed. Please choose a stronger passphrase."
     return True, ""
 
-def apply_pepper(password: str) -> bytes:
+def apply_pepper(password: str, pepper: str = None) -> bytes:
     """Combines password with server-side pepper via HMAC-SHA256 prior to key derivation."""
-    return hmac.new(PASSWORD_PEPPER.encode('utf-8'), password.encode('utf-8'), hashlib.sha256).digest()
+    active_pepper = pepper if pepper is not None else PASSWORD_PEPPER
+    return hmac.new(active_pepper.encode('utf-8'), password.encode('utf-8'), hashlib.sha256).digest()
 
 def hash_pw(password: str, salt: bytes = None) -> str:
     """
@@ -236,14 +239,15 @@ def verify_pw(password: str, stored_hash: str) -> tuple[bool, bool]:
     Verifies password against stored hash in constant time.
     Returns: (is_valid, needs_rehash)
     Seamlessly verifies:
-      1. Modern scrypt with pepper
-      2. Legacy PBKDF2 (flags needs_rehash=True for auto-upgrade)
-      3. Legacy unsalted SHA-256 (flags needs_rehash=True for auto-upgrade)
+      1. Modern scrypt with current pepper
+      2. Modern scrypt with fallback pepper (flags needs_rehash=True for zero-downtime rotation)
+      3. Legacy PBKDF2 (flags needs_rehash=True for auto-upgrade)
+      4. Legacy unsalted SHA-256 (flags needs_rehash=True for auto-upgrade)
     """
     if not stored_hash or not isinstance(stored_hash, str):
         return False, False
 
-    # 1. Modern scrypt with pepper
+    # 1. Modern scrypt with pepper (primary + zero-downtime fallback rotation)
     if stored_hash.startswith('scrypt:16384:8:1$'):
         try:
             parts = stored_hash.split('$')
@@ -251,9 +255,22 @@ def verify_pw(password: str, stored_hash: str) -> tuple[bool, bool]:
                 return False, False
             salt = bytes.fromhex(parts[1])
             expected_derived = bytes.fromhex(parts[2])
-            peppered = apply_pepper(password)
+
+            # Check with primary pepper
+            peppered = apply_pepper(password, PASSWORD_PEPPER)
             actual_derived = hashlib.scrypt(peppered, salt=salt, n=16384, r=8, p=1)
-            return hmac.compare_digest(actual_derived, expected_derived), False
+            if hmac.compare_digest(actual_derived, expected_derived):
+                return True, False
+
+            # Check with fallback pepper if configured during rotation window
+            if PASSWORD_PEPPER_FALLBACK:
+                peppered_fb = apply_pepper(password, PASSWORD_PEPPER_FALLBACK)
+                actual_derived_fb = hashlib.scrypt(peppered_fb, salt=salt, n=16384, r=8, p=1)
+                if hmac.compare_digest(actual_derived_fb, expected_derived):
+                    # Flag needs_rehash=True so password hash is automatically upgraded to new pepper
+                    return True, True
+
+            return False, False
         except Exception:
             return False, False
 
@@ -405,7 +422,14 @@ def verify_session_token(token: str, current_session_version: int = None) -> dic
 
         expected_sig = hmac.new(SECRET_KEY.encode('utf-8'), f"{p1}.{p2}".encode('utf-8'), hashlib.sha256).digest()
         actual_sig = b64url_decode(p3)
-        if not hmac.compare_digest(expected_sig, actual_sig):
+        valid_sig = hmac.compare_digest(expected_sig, actual_sig)
+
+        # Fallback to previous key during zero-downtime secret rotation
+        if not valid_sig and SECRET_KEY_FALLBACK:
+            expected_sig_fb = hmac.new(SECRET_KEY_FALLBACK.encode('utf-8'), f"{p1}.{p2}".encode('utf-8'), hashlib.sha256).digest()
+            valid_sig = hmac.compare_digest(expected_sig_fb, actual_sig)
+
+        if not valid_sig:
             return None
 
         payload = json.loads(b64url_decode(p2).decode('utf-8'))
