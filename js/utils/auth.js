@@ -46,6 +46,7 @@ export function validatePasswordPolicy(password) {
 
 class AuthService {
   constructor() {
+    this.inMemoryToken = null;
     this.currentUser = this.loadSession();
     this.listeners = [];
   }
@@ -53,22 +54,42 @@ class AuthService {
   loadSession() {
     try {
       const raw = localStorage.getItem(AUTH_STORAGE_KEY);
-      return raw ? JSON.parse(raw) : null;
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      // Security hygiene: scrub any legacy token from localStorage
+      if (parsed.token) {
+        delete parsed.token;
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(parsed));
+      }
+      return parsed;
     } catch {
       return null;
     }
   }
 
+  getAuthHeaders(extraHeaders = {}) {
+    const headers = {
+      'Content-Type': 'application/json',
+      'X-Finculator-CSRF': '1',
+      ...extraHeaders
+    };
+    if (this.inMemoryToken) {
+      headers['Authorization'] = `Bearer ${this.inMemoryToken}`;
+    }
+    return headers;
+  }
+
   saveSession(user, token) {
-    // Only store safe public user profile fields and signed token. Never store passwords.
+    // Keep JWT token strictly in volatile memory; NEVER store in localStorage!
+    // The session is maintained securely and persistently via HttpOnly; SameSite=Lax; Secure cookie.
+    this.inMemoryToken = token || null;
     this.currentUser = {
       id: user.id,
       name: user.name,
       email: user.email,
       role: user.role || 'user',
       emailVerified: !!user.emailVerified,
-      mfaEnabled: !!user.mfaEnabled,
-      token
+      mfaEnabled: !!user.mfaEnabled
     };
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(this.currentUser));
 
@@ -83,6 +104,7 @@ class AuthService {
   }
 
   clearSession() {
+    this.inMemoryToken = null;
     this.currentUser = null;
     localStorage.removeItem(AUTH_STORAGE_KEY);
     this.broadcast();
@@ -93,7 +115,7 @@ class AuthService {
   }
 
   isAuthenticated() {
-    return !!this.currentUser && !!this.currentUser.email && !!this.currentUser.token;
+    return !!this.currentUser && !!this.currentUser.email;
   }
 
   onAuthChange(cb) {
@@ -273,10 +295,7 @@ class AuthService {
     const res = await fetch('/api/user/profile', {
       method: 'GET',
       credentials: 'include',
-      headers: {
-        'Authorization': this.currentUser?.token ? `Bearer ${this.currentUser.token}` : '',
-        'X-Finculator-CSRF': '1'
-      }
+      headers: this.getAuthHeaders()
     });
 
     const data = await res.json().catch(() => ({}));
@@ -299,11 +318,7 @@ class AuthService {
     const res = await fetch('/api/user/change-password', {
       method: 'POST',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': this.currentUser?.token ? `Bearer ${this.currentUser.token}` : '',
-        'X-Finculator-CSRF': '1'
-      },
+      headers: this.getAuthHeaders(),
       body: JSON.stringify({ currentPassword, newPassword })
     });
 
@@ -322,11 +337,7 @@ class AuthService {
     const res = await fetch('/api/auth/mfa/setup', {
       method: 'POST',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': this.currentUser?.token ? `Bearer ${this.currentUser.token}` : '',
-        'X-Finculator-CSRF': '1'
-      }
+      headers: this.getAuthHeaders()
     });
 
     const data = await res.json().catch(() => ({}));
@@ -344,11 +355,7 @@ class AuthService {
     const res = await fetch('/api/auth/mfa/verify', {
       method: 'POST',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': this.currentUser?.token ? `Bearer ${this.currentUser.token}` : '',
-        'X-Finculator-CSRF': '1'
-      },
+      headers: this.getAuthHeaders(),
       body: JSON.stringify({ code })
     });
 
@@ -374,10 +381,7 @@ class AuthService {
       await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
-        headers: {
-          'Authorization': this.currentUser?.token ? `Bearer ${this.currentUser.token}` : '',
-          'X-Finculator-CSRF': '1'
-        }
+        headers: this.getAuthHeaders()
       });
     } catch (e) {
       console.warn('Server logout notice:', e);
@@ -392,10 +396,7 @@ class AuthService {
     const res = await fetch('/api/auth/logout-all', {
       method: 'POST',
       credentials: 'include',
-      headers: {
-        'Authorization': this.currentUser?.token ? `Bearer ${this.currentUser.token}` : '',
-        'X-Finculator-CSRF': '1'
-      }
+      headers: this.getAuthHeaders()
     });
 
     const data = await res.json().catch(() => ({}));

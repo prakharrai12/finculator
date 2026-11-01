@@ -561,8 +561,112 @@ def run_tests():
     assert validate_redirect_url('/emi-calculator', ['http://127.0.0.1:3000']) == '/emi-calculator'
     print("[PASS REDIRECT FILTER] Open redirect filter verified: relative URLs preserved, exploits neutralized")
 
+    # 17. Account Lockout After Repeated Failures
+    print("\n--- 17. Testing Account Lockout Enforcement (5 Failures -> 429 Locked) ---")
+    lockout_email = f"lockout_{int(time.time())}@example.com"
+    # Register account first
+    reg_req = urllib.request.Request(
+        f"{BASE_URL}/api/auth/register",
+        data=json.dumps({"name": "Lockout Test", "email": lockout_email, "password": "SecurePassword123!"}).encode('utf-8'),
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    with urllib.request.urlopen(reg_req, timeout=5) as resp:
+        assert resp.status == 201
+
+    # Attempt up to 6 wrong passwords until lockout is confirmed
+    locked = False
+    for attempt in range(1, 7):
+        try:
+            bad_req = urllib.request.Request(
+                f"{BASE_URL}/api/auth/login",
+                data=json.dumps({"email": lockout_email, "password": "WrongPassword123!"}).encode('utf-8'),
+                headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+            )
+            with urllib.request.urlopen(bad_req, timeout=5) as resp:
+                pass
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                locked = True
+                print(f"[PASS 429] Account lockout triggered on attempt {attempt}: {lockout_email}")
+                break
+    assert locked, "Account was not locked out after repeated failed logins"
+    from server import clear_failed_login
+    clear_failed_login('127.0.0.1')
+
+    # 18. Expired Token Rejection
+    print("\n--- 18. Testing Expired Token Rejection (401 Unauthorized) ---")
+    from server import create_session_token
+    # Token with negative expiry
+    expired_token, _ = create_session_token("dummy-user-id", "test@example.com", role="user", session_version=1, expires_in=-3600)
+    exp_req = urllib.request.Request(
+        f"{BASE_URL}/api/user/profile",
+        headers={'Authorization': f"Bearer {expired_token}", 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    try:
+        with urllib.request.urlopen(exp_req, timeout=5) as resp:
+            assert False, "Expired token was accepted"
+    except urllib.error.HTTPError as e:
+        assert e.code == 401, f"Expected 401 for expired token, got {e.code}"
+        print("[PASS 401] Expired session token rejected by authentication middleware")
+
+    # 19. IDOR / Tampered Token Protection
+    print("\n--- 19. Testing IDOR & Token Tampering Prevention ---")
+    # Token claiming a different, non-existent or administrative user ID
+    spoofed_token, _ = create_session_token("non-existent-victim-id", "victim@example.com", role="admin", session_version=1)
+    idor_req = urllib.request.Request(
+        f"{BASE_URL}/api/user/profile",
+        headers={'Authorization': f"Bearer {spoofed_token}", 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    try:
+        with urllib.request.urlopen(idor_req, timeout=5) as resp:
+            assert False, "Spoofed user ID token was accepted"
+    except urllib.error.HTTPError as e:
+        assert e.code == 401, f"Expected 401 for invalid user identity claim, got {e.code}"
+        print("[PASS 401] IDOR prevented: token with unauthorized/unmatched user ID rejected")
+
+    # 20. SQL Injection (SQLi) Payload Neutralization
+    print("\n--- 20. Testing SQL Injection (SQLi) Payload Neutralization ---")
+    sqli_payloads = [
+        "' OR '1'='1",
+        "admin' --",
+        "1; DROP TABLE users; --",
+        "' UNION SELECT * FROM users --"
+    ]
+    for sqli in sqli_payloads:
+        sqli_req = urllib.request.Request(
+            f"{BASE_URL}/api/auth/login",
+            data=json.dumps({"email": sqli, "password": "AnyPassword123!"}).encode('utf-8'),
+            headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+        )
+        try:
+            with urllib.request.urlopen(sqli_req, timeout=5) as resp:
+                assert False, f"SQLi payload unexpectedly succeeded: {sqli}"
+        except urllib.error.HTTPError as e:
+            assert e.code in (400, 401, 429), f"Unexpected status {e.code} for SQLi payload"
+    print("[PASS SECURE] All SQLi payloads neutralized cleanly without server errors or injection")
+
+    # 21. Oversized Upload Rejection (>2 MB)
+    print("\n--- 21. Testing Oversized File Upload Rejection (413 Payload Too Large) ---")
+    oversized_data = b"X" * (2 * 1024 * 1024 + 1024)  # 2MB + 1KB
+    over_upload_req = urllib.request.Request(
+        f"{BASE_URL}/api/portfolio/upload",
+        data=oversized_data,
+        headers={
+            'Content-Type': 'application/json',
+            'X-File-Name': 'huge.json',
+            'X-Finculator-CSRF': '1',
+            'User-Agent': 'TestRunner'
+        }
+    )
+    try:
+        with urllib.request.urlopen(over_upload_req, timeout=5) as resp:
+            assert False, "Oversized upload was accepted"
+    except urllib.error.HTTPError as e:
+        assert e.code == 413, f"Expected 413 for oversized upload, got {e.code}"
+        print(f"[PASS 413] Oversized upload ({len(oversized_data)} bytes) rejected by body size limit")
+
     print("\n" + "=" * 75)
-    print("ALL PART 1 & PART 3 SECURITY FILTERS PASSED CLEANLY (100% VERIFIED)")
+    print("ALL SECURITY SUITES AND NEGATIVE TEST CASES PASSED (100% VERIFIED)")
     print("=" * 75)
 
 if __name__ == '__main__':

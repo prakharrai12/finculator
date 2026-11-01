@@ -14,7 +14,7 @@ function isUserAuthenticated() {
     const raw = localStorage.getItem('finculator_auth_session');
     if (!raw) return false;
     const session = JSON.parse(raw);
-    return !!(session && (session.email || session.token));
+    return !!(session && session.email);
   } catch (_) {
     return false;
   }

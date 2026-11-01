@@ -11,7 +11,7 @@ import path from 'node:path';
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const DEBUG_PORT = 9222;
 const BASE_URL = 'http://127.0.0.1:3000';
-const ARTIFACTS_DIR = 'C:\\Users\\prakh\\.gemini\\antigravity-ide\\brain\\2ae15746-967a-4721-bde9-783405cc6c22';
+const ARTIFACTS_DIR = process.env.ARTIFACTS_DIR || path.join(process.cwd(), 'scratch', 'e2e_artifacts');
 
 osEnsureDir(ARTIFACTS_DIR);
 

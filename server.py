@@ -16,6 +16,7 @@ import struct
 import threading
 import urllib.request
 import urllib.error
+import urllib.parse
 
 # ==============================================================================
 # 1. ENVIRONMENT & SECRETS CONFIGURATION
@@ -745,8 +746,14 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
         if origin and origin in ALLOWED_ORIGINS:
             return True
         referer = self.headers.get('Referer')
-        if referer and any(referer.startswith(o) for o in ALLOWED_ORIGINS):
-            return True
+        if referer:
+            try:
+                parsed_ref = urllib.parse.urlparse(referer)
+                ref_origin = f"{parsed_ref.scheme}://{parsed_ref.netloc}"
+                if ref_origin in ALLOWED_ORIGINS:
+                    return True
+            except Exception:
+                pass
         if self.headers.get('User-Agent') == 'TestRunner' and APP_ENV != 'production':
             return True
         return False
@@ -1110,8 +1117,12 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
 
             if not target_user:
                 timing_attack_dummy_hash(password)
-                record_failed_login(email)
-                record_failed_login(client_ip)
+                locked_email = record_failed_login(email)
+                locked_ip = record_failed_login(client_ip)
+                if locked_email or locked_ip:
+                    log_audit_event('LOGIN_LOCKED', client_ip, email=email, status='BLOCKED', details={'reason': 'Account or IP in 15m lockout'})
+                    self.respond_json({'error': 'Too many failed login attempts. Account temporarily locked for 15 minutes.'}, 429)
+                    return
                 log_audit_event('LOGIN_FAILED', client_ip, email=email, status='FAILURE', details={'reason': 'Invalid credentials'})
                 self.respond_json({'error': 'Invalid email address or password.'}, 401)
                 return
@@ -1126,8 +1137,12 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
                     log_audit_event('MFA_RECOVERY_USED', client_ip, email=email, user_id=target_user['id'], status='SUCCESS')
 
                 if not mfa_verified:
-                    record_failed_login(email)
-                    record_failed_login(client_ip)
+                    locked_email = record_failed_login(email)
+                    locked_ip = record_failed_login(client_ip)
+                    if locked_email or locked_ip:
+                        log_audit_event('LOGIN_LOCKED', client_ip, email=email, status='BLOCKED', details={'reason': 'Account or IP in 15m lockout'})
+                        self.respond_json({'error': 'Too many failed login attempts. Account temporarily locked for 15 minutes.'}, 429)
+                        return
                     log_audit_event('LOGIN_MFA_CHALLENGE', client_ip, email=email, user_id=target_user['id'], status='CHALLENGE')
                     self.respond_json({
                         'error': 'Multi-factor authentication required. Please enter your 6-digit authenticator code or recovery key.',
@@ -1441,7 +1456,7 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
                 return
 
             try:
-                gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+                gemini_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
                 system_instruction = (
                     "You are FinBot, the financial copilot on Finculator. Answer accurately, concisely, and professionally. "
                     "When suggesting relevant tools, format them strictly as [NAVIGATE:route|Button Label]. "
@@ -1457,18 +1472,22 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
                 req = urllib.request.Request(
                     gemini_url,
                     data=gemini_body,
-                    headers={'Content-Type': 'application/json'}
+                    headers={
+                        'Content-Type': 'application/json',
+                        'x-goog-api-key': GEMINI_API_KEY
+                    }
                 )
                 with urllib.request.urlopen(req, timeout=10) as resp:
                     resp_json = json.loads(resp.read().decode('utf-8'))
                     text = resp_json['candidates'][0]['content']['parts'][0]['text']
                     self.respond_json({'success': True, 'response': text}, 200)
                     return
-            except Exception as e:
+            except Exception:
+                # Mask exception details to prevent leaking endpoints, parameters, or credentials
                 self.respond_json({
                     'success': False,
                     'offlineFallback': True,
-                    'error': f"AI Proxy upstream error: {str(e)}"
+                    'error': 'Upstream AI service temporarily unavailable.'
                 }, 200)
                 return
 
