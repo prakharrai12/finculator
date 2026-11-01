@@ -15,7 +15,7 @@ PRE_COMMIT_PATH = os.path.join(GIT_HOOKS_DIR, 'pre-commit')
 def get_hook_content():
     # Assembled dynamically to avoid false-positive detection during self-scanning
     pattern_private = "BEGIN (RSA|EC|DSA|OPENSSH)? ?PRIVATE KEY"
-    pattern_google = "AIza" + "[0-9A-Za-z-_]{35}"
+    pattern_google = "AIza" + "[-0-9A-Za-z_]{35}"
     pattern_openai = "sk-" + "[0-9A-Za-z]{32,}"
     combined = f"({pattern_private}|{pattern_google}|{pattern_openai})"
 
