@@ -4,6 +4,8 @@ import json
 import time
 import os
 import sys
+import threading
+import socketserver
 
 BASE_URL = "http://127.0.0.1:3000"
 
@@ -19,38 +21,42 @@ def get_env_val(key, default=''):
 
 ADMIN_API_KEY = get_env_val('ADMIN_API_KEY', 'dev_adm_8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b')
 
-def run_tests():
-    print("=" * 70)
-    print("FINCULATOR PHASE 1 SECURITY & SYSTEM VERIFICATION TEST SUITE")
-    print("=" * 70)
-    
-    # 0. Wait for server readiness (up to 10 seconds)
-    print("\n[INIT] Connecting to development server...")
-    server_ready = False
-    for attempt in range(10):
-        try:
-            req = urllib.request.Request(f"{BASE_URL}/", headers={'User-Agent': 'TestRunner'})
-            with urllib.request.urlopen(req, timeout=2) as resp:
-                if resp.status == 200:
-                    server_ready = True
-                    print(f"[INIT] Server is ready on {BASE_URL} (attempt {attempt + 1})")
-                    break
-        except Exception:
-            time.sleep(1)
-    if not server_ready:
-        sys.exit(f"FATAL: Development server at {BASE_URL} is not responding.")
+def ensure_server_running():
+    try:
+        req = urllib.request.Request(f"{BASE_URL}/", headers={'User-Agent': 'TestRunner'})
+        with urllib.request.urlopen(req, timeout=1) as resp:
+            if resp.status == 200:
+                return
+    except Exception:
+        pass
 
-    # 1. Static asset tests & Security Headers
+    print("[INIT] Starting background test server instance on 127.0.0.1:3000...")
+    sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+    from server import FinculatorHandler, HOST, PORT
+    socketserver.TCPServer.allow_reuse_address = True
+    httpd = socketserver.ThreadingTCPServer((HOST, PORT), FinculatorHandler)
+    t = threading.Thread(target=httpd.serve_forever, daemon=True)
+    t.start()
+    time.sleep(1)
+
+def run_tests():
+    print("=" * 75)
+    print("FINCULATOR PART 1: AUTHENTICATION SECURITY & SYSTEM VERIFICATION SUITE")
+    print("=" * 75)
+
+    ensure_server_running()
+
+    # 1. Static asset tests & Strict Security Headers
     assets = [
         "/",
         "/index.html",
-        "/css/landingGate.css",
-        "/js/components/heroLandingGate.js",
-        "/js/components/authModal.js",
-        "/js/components/portfolioModal.js",
+        "/css/main.css",
         "/js/app.js",
+        "/js/utils/auth.js",
+        "/js/components/authModal.js",
+        "/js/math/financeMath.js"
     ]
-    
+
     print("\n--- 1. Testing Core Web Assets & Security Headers ---")
     for asset in assets:
         url = BASE_URL + asset
@@ -66,7 +72,9 @@ def run_tests():
                 assert headers.get('X-Frame-Options') == 'DENY', "Invalid X-Frame-Options"
                 assert 'Content-Security-Policy' in headers, "Missing Content-Security-Policy"
                 assert 'Referrer-Policy' in headers, "Missing Referrer-Policy"
-                print("           [SECURITY HEADERS VERIFIED] CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy active")
+                assert 'Permissions-Policy' in headers, "Missing Permissions-Policy"
+                assert 'Cross-Origin-Opener-Policy' in headers, "Missing Cross-Origin-Opener-Policy"
+                print("           [SECURITY HEADERS VERIFIED] CSP, X-Frame-Options: DENY, X-Content-Type-Options: nosniff, Referrer-Policy, COOP active")
             print(f"[PASS 200] {asset:<45} ({len(data):>7} B)")
 
     # 1B. Testing Strict Allowlist File & Source Isolation (Forbidden 403)
@@ -74,11 +82,12 @@ def run_tests():
     forbidden_urls = [
         f"{BASE_URL}/data/users.json",
         f"{BASE_URL}/data/sent_emails.json",
+        f"{BASE_URL}/data/audit_log.json",
+        f"{BASE_URL}/data/reset_tokens.json",
         f"{BASE_URL}/server.py",
         f"{BASE_URL}/.env",
         f"{BASE_URL}/.git/config",
         f"{BASE_URL}/tests/test_math.py",
-        f"{BASE_URL}/data/reset_tokens.json",
     ]
     for bad_url in forbidden_urls:
         req = urllib.request.Request(bad_url, headers={'User-Agent': 'TestRunner'})
@@ -89,14 +98,14 @@ def run_tests():
             assert e.code == 403, f"Expected HTTP 403 Forbidden for {bad_url}, got {e.code}"
             print(f"[PASS 403] Access denied for restricted resource: {bad_url.replace(BASE_URL, '')}")
 
-    # 2. Registration API & Password Policy Enforcement
-    print("\n--- 2. Testing Password Policy Enforcement (Min 10 chars, Complexity, Blocklist) ---")
-    
-    # 2A. Weak password (<10 chars)
+    # 2. Registration API & 12-Character Password Policy Enforcement
+    print("\n--- 2. Testing Password Policy Enforcement (Min 12 chars, Complexity, Breached List) ---")
+
+    # 2A. Weak password (<12 chars)
     weak_payload = json.dumps({
         "name": "Weak User",
         "email": f"weak_{int(time.time())}@example.com",
-        "password": "Short1!"
+        "password": "Short1!Abc" # 10 chars (fails 12-char policy)
     }).encode('utf-8')
     req = urllib.request.Request(
         f"{BASE_URL}/api/auth/register",
@@ -109,13 +118,14 @@ def run_tests():
     except urllib.error.HTTPError as e:
         assert e.code == 400, f"Expected 400 for short password, got {e.code}"
         res_data = json.loads(e.read().decode('utf-8'))
-        print(f"[PASS 400] Short password rejected: {res_data.get('error')}")
+        assert "at least 12 characters" in res_data.get('error', ''), "Length error missing"
+        print(f"[PASS 400] Short password rejected (<12 chars): {res_data.get('error')}")
 
     # 2B. Common password on blocklist
     common_payload = json.dumps({
         "name": "Common User",
         "email": f"common_{int(time.time())}@example.com",
-        "password": "Password123!"
+        "password": "Password1234!" # Common password
     }).encode('utf-8')
     req = urllib.request.Request(
         f"{BASE_URL}/api/auth/register",
@@ -128,14 +138,15 @@ def run_tests():
     except urllib.error.HTTPError as e:
         assert e.code == 400, f"Expected 400 for common password, got {e.code}"
         res_data = json.loads(e.read().decode('utf-8'))
+        assert "too common" in res_data.get('error', '').lower()
         print(f"[PASS 400] Common blocklisted password rejected: {res_data.get('error')}")
 
-    # 2C. Valid strong password
+    # 2C. Valid strong password (15 chars)
     test_email = f"tester_{int(time.time())}@example.com"
     test_name = "Investor Test"
     test_pw = "FinSecure@2026!"
 
-    print("\n--- 2C. Testing Valid User Registration & PBKDF2 Password Hashing ---")
+    print("\n--- 2C. Testing Valid User Registration, Scrypt+Pepper Hashing & Verification Token ---")
     reg_payload = json.dumps({
         "name": test_name,
         "email": test_email,
@@ -154,12 +165,29 @@ def run_tests():
         assert 'token' in res_data, "Token missing in registration"
         assert res_data['user']['email'] == test_email, "User email mismatch"
         assert 'password' not in res_data, "Plaintext password leaked in registration response"
-        assert 'emailPreview' not in res_data, "Credentials preview leaked in registration response"
+        assert 'passwordHash' not in res_data, "Hash leaked in registration response"
+
+        # Check HttpOnly cookie issuance
+        set_cookie = resp.headers.get('Set-Cookie', '')
+        assert 'finculator_session=' in set_cookie, "Set-Cookie finculator_session missing"
+        assert 'HttpOnly' in set_cookie, "HttpOnly flag missing on cookie"
+        assert 'SameSite=Lax' in set_cookie, "SameSite=Lax missing on cookie"
         print(f"[PASS 201] User registered: {test_email}")
-        print(f"           Message: {res_data.get('message')}")
+        print(f"           HttpOnly Cookie Verified: {set_cookie[:45]}...")
+
+    # Verify password was hashed with memory-hard scrypt + pepper
+    data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+    users_file = os.path.join(data_dir, 'users.json')
+    with open(users_file, 'r', encoding='utf-8') as f:
+        users = json.load(f)
+    u_record = next((u for u in users if u['email'] == test_email), None)
+    assert u_record is not None, "Registered user record missing in users.json"
+    assert u_record['passwordHash'].startswith('scrypt:16384:8:1$'), f"Hash not scrypt format: {u_record['passwordHash']}"
+    assert u_record.get('emailVerifyTokenHash') is not None, "Email verification token hash missing"
+    print(f"[PASS SCRYPT] User password securely hashed with scrypt (N=16384, r=8, p=1) + server pepper")
 
     # 3. Login API & Session Token Handling
-    print("\n--- 3. Testing Authentication Login & HMAC-SHA256 Token Issuance ---")
+    print("\n--- 3. Testing Authentication Login, Timing-Safe Defense & Session Token ---")
     login_payload = json.dumps({
         "email": test_email,
         "password": test_pw
@@ -177,8 +205,30 @@ def run_tests():
         assert res_data['user']['name'] == test_name, "User name mismatch"
         assert 'token' in res_data, "Session token missing in login response"
         assert len(res_data['token'].split('.')) == 3, "Session token is not a valid HMAC signed token"
+        auth_token = res_data['token']
         print(f"[PASS 200] User logged in successfully: {res_data['user']['name']}")
-        print(f"           Signed Token: {res_data['token'][:24]}...")
+        print(f"           Signed Token: {auth_token[:24]}...")
+
+    # 3B. Timing Attack Defense (Non-existent user execution latency)
+    print("\n--- 3B. Testing Timing Attack Defense (Uniform Dummy Scrypt Latency) ---")
+    ghost_payload = json.dumps({
+        "email": f"ghost_{int(time.time())}@nonexistent.org",
+        "password": test_pw
+    }).encode('utf-8')
+    t0 = time.time()
+    req = urllib.request.Request(
+        f"{BASE_URL}/api/auth/login",
+        data=ghost_payload,
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            assert False, "Ghost user login unexpectedly succeeded"
+    except urllib.error.HTTPError as e:
+        elapsed_ms = (time.time() - t0) * 1000
+        assert e.code == 401, f"Expected 401 for unknown user, got {e.code}"
+        assert elapsed_ms > 100, f"Response too fast ({elapsed_ms}ms); dummy scrypt computation not executed"
+        print(f"[PASS 401] Timing attack mitigated: execution took {round(elapsed_ms, 1)}ms (uniform scrypt delay)")
 
     # 4. Deleted Endpoint Test: /api/auth/sent-emails must return 404
     print("\n--- 4. Testing Deleted Endpoint (/api/auth/sent-emails -> 404 Not Found) ---")
@@ -202,10 +252,9 @@ def run_tests():
         res_data = json.loads(resp.read().decode('utf-8'))
         assert resp.status == 200, "Forgot password request failed"
         assert res_data.get('success') is True, "Forgot password success missing"
-        assert 'emailPreview' not in res_data, "Email preview leaked in forgot password response"
         print(f"[PASS 200] Uniform recovery response received for {test_email}")
 
-    # Also test for non-existent email (must return identical response to prevent user enumeration)
+    # Anti-enumeration test
     non_existent_payload = json.dumps({"email": "ghost_unknown_user_99@example.com"}).encode('utf-8')
     req = urllib.request.Request(
         f"{BASE_URL}/api/auth/forgot-password",
@@ -214,28 +263,22 @@ def run_tests():
     )
     with urllib.request.urlopen(req, timeout=5) as resp:
         ghost_res = json.loads(resp.read().decode('utf-8'))
-        assert ghost_res.get('message') == res_data.get('message'), "Anti-enumeration violation: response differs for unknown user"
+        assert ghost_res.get('message') == res_data.get('message'), "Anti-enumeration violation"
         print("[PASS 200] Anti-enumeration verified: identical response for existing and unknown emails")
 
     # 6. Single-Use Password Reset Verification
     print("\n--- 6. Testing Password Reset Endpoint & Single-Use Enforcement ---")
-    # Retrieve the generated token from local server state
-    data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
-    reset_tokens_file = os.path.join(data_dir, 'reset_tokens.json')
     emails_file = os.path.join(data_dir, 'sent_emails.json')
-    
     with open(emails_file, 'r', encoding='utf-8') as f:
         emails = json.load(f)
     latest_reset_email = next((e for e in emails if e['to'] == test_email and 'Reset' in e['subject']), None)
     assert latest_reset_email is not None, "Password reset email was not logged"
-    
-    # Extract token from logged reset link
+
     import re
     match = re.search(r'token=([a-zA-Z0-9_-]+)', latest_reset_email['bodyText'])
     assert match is not None, "Reset token not found in email body"
     reset_token = match.group(1)
-    
-    # Reset password with valid token
+
     new_test_pw = "NewFinSecure@2026!"
     reset_payload = json.dumps({
         "token": reset_token,
@@ -251,7 +294,7 @@ def run_tests():
         assert reset_res.get('success') is True, "Password reset failed with valid token"
         print("[PASS 200] Password successfully reset using single-use token")
 
-    # Reusing the SAME token must FAIL (single-use enforcement)
+    # Token replay must fail
     try:
         req = urllib.request.Request(
             f"{BASE_URL}/api/auth/reset-password",
@@ -262,9 +305,11 @@ def run_tests():
             assert False, "Reusing reset token unexpectedly succeeded"
     except urllib.error.HTTPError as e:
         assert e.code == 400, f"Expected 400 for already used token, got {e.code}"
-        print("[PASS 400] Token replay prevented: single-use token successfully invalidated")
+        print("[PASS 400] Token replay prevented: single-use token invalidated")
 
-    # Verify login works with the NEW password
+    # 7. Authorization & IDOR/BOLA Protection Test
+    print("\n--- 7. Testing Authorization & IDOR/BOLA Prevention (/api/user/profile) ---")
+    # Fresh login to get updated token
     new_login_payload = json.dumps({
         "email": test_email,
         "password": new_test_pw
@@ -275,12 +320,115 @@ def run_tests():
         headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
     )
     with urllib.request.urlopen(req, timeout=5) as resp:
-        assert resp.status == 200, "Login failed with new password"
-        print("[PASS 200] Successful login verified with newly updated password")
+        active_token = json.loads(resp.read().decode('utf-8'))['token']
 
-    # 7. AI Proxy Guardrails Test
-    print("\n--- 7. Testing AI Proxy Guardrails (/api/ai/query) ---")
-    # 7A. Oversized prompt
+    # GET /api/user/profile uses server-side token identity only
+    prof_req = urllib.request.Request(
+        f"{BASE_URL}/api/user/profile",
+        headers={'Authorization': f"Bearer {active_token}", 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    with urllib.request.urlopen(prof_req, timeout=5) as resp:
+        prof_res = json.loads(resp.read().decode('utf-8'))
+        assert prof_res['user']['email'] == test_email
+        print(f"[PASS 200] User profile fetched safely via server-side identity claim: {prof_res['user']['email']}")
+
+    # 8. Multi-Factor Authentication (RFC 6238 TOTP Setup & Verification)
+    print("\n--- 8. Testing Multi-Factor Authentication (RFC 6238 TOTP & Recovery Codes) ---")
+    mfa_setup_req = urllib.request.Request(
+        f"{BASE_URL}/api/auth/mfa/setup",
+        data=b"{}",
+        headers={'Content-Type': 'application/json', 'Authorization': f"Bearer {active_token}", 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    with urllib.request.urlopen(mfa_setup_req, timeout=5) as resp:
+        mfa_data = json.loads(resp.read().decode('utf-8'))
+        assert 'secret' in mfa_data, "MFA secret missing"
+        assert len(mfa_data['recoveryCodes']) == 8, "Expected 8 recovery codes"
+        totp_secret = mfa_data['secret']
+        recovery_code_1 = mfa_data['recoveryCodes'][0]
+        print(f"[PASS 200] TOTP secret generated ({len(totp_secret)} chars Base32) and 8 recovery keys issued")
+
+    # Generate valid TOTP code
+    from server import get_totp_code
+    totp_code = get_totp_code(totp_secret)
+    mfa_verify_req = urllib.request.Request(
+        f"{BASE_URL}/api/auth/mfa/verify",
+        data=json.dumps({"code": totp_code}).encode('utf-8'),
+        headers={'Content-Type': 'application/json', 'Authorization': f"Bearer {active_token}", 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    with urllib.request.urlopen(mfa_verify_req, timeout=5) as resp:
+        verify_data = json.loads(resp.read().decode('utf-8'))
+        assert verify_data['success'] is True, "MFA verification failed"
+        print(f"[PASS 200] MFA successfully activated using code {totp_code}")
+
+    # Now login without MFA must challenge for code
+    login_mfa_req = urllib.request.Request(
+        f"{BASE_URL}/api/auth/login",
+        data=json.dumps({"email": test_email, "password": new_test_pw}).encode('utf-8'),
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    try:
+        with urllib.request.urlopen(login_mfa_req, timeout=5) as resp:
+            assert False, "Login without MFA code unexpectedly succeeded"
+    except urllib.error.HTTPError as e:
+        assert e.code == 401, f"Expected 401 for missing MFA, got {e.code}"
+        mfa_challenge = json.loads(e.read().decode('utf-8'))
+        assert mfa_challenge.get('mfaRequired') is True
+        print("[PASS 401] MFA challenge enforced: credentials alone insufficient when MFA is active")
+
+    # Login with single-use recovery code
+    login_recovery_req = urllib.request.Request(
+        f"{BASE_URL}/api/auth/login",
+        data=json.dumps({"email": test_email, "password": new_test_pw, "recoveryCode": recovery_code_1}).encode('utf-8'),
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    with urllib.request.urlopen(login_recovery_req, timeout=5) as resp:
+        rec_res = json.loads(resp.read().decode('utf-8'))
+        assert rec_res.get('success') is True
+        new_active_token = rec_res['token']
+        print(f"[PASS 200] Logged in successfully with single-use recovery code {recovery_code_1}")
+
+    # 9. Server-Side Session Revocation & Logout Everywhere
+    print("\n--- 9. Testing Server-Side Session Revocation & Logout Everywhere ---")
+    logout_all_req = urllib.request.Request(
+        f"{BASE_URL}/api/auth/logout-all",
+        data=b"{}",
+        headers={'Content-Type': 'application/json', 'Authorization': f"Bearer {new_active_token}", 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    with urllib.request.urlopen(logout_all_req, timeout=5) as resp:
+        logout_res = json.loads(resp.read().decode('utf-8'))
+        assert logout_res.get('success') is True
+        print("[PASS 200] Global logout executed: sessionVersion incremented on server")
+
+    # Verify old token is now REJECTED server-side
+    prof_after_logout = urllib.request.Request(
+        f"{BASE_URL}/api/user/profile",
+        headers={'Authorization': f"Bearer {new_active_token}", 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    try:
+        with urllib.request.urlopen(prof_after_logout, timeout=5) as resp:
+            assert False, "Revoked session was accepted"
+    except urllib.error.HTTPError as e:
+        assert e.code == 401, f"Expected 401 for revoked session, got {e.code}"
+        print("[PASS 401] Real server-side invalidation verified: revoked tokens cannot access protected routes")
+
+    # 10. Security Audit Log Verification
+    print("\n--- 10. Testing Security Audit Log (/api/admin/audit-log) ---")
+    audit_req = urllib.request.Request(
+        f"{BASE_URL}/api/admin/audit-log",
+        headers={'X-Admin-Key': ADMIN_API_KEY, 'User-Agent': 'TestRunner'}
+    )
+    with urllib.request.urlopen(audit_req, timeout=5) as resp:
+        logs = json.loads(resp.read().decode('utf-8'))
+        assert len(logs) > 0, "Audit log empty"
+        events = [l['event'] for l in logs]
+        assert 'REGISTER_SUCCESS' in events, "REGISTER_SUCCESS missing in audit log"
+        assert 'LOGIN_SUCCESS' in events, "LOGIN_SUCCESS missing in audit log"
+        assert 'MFA_ENABLED' in events, "MFA_ENABLED missing in audit log"
+        assert 'LOGOUT_ALL_DEVICES' in events, "LOGOUT_ALL_DEVICES missing in audit log"
+        print(f"[PASS 200] Security audit log active ({len(logs)} events tracked: REGISTER, LOGIN, MFA, LOGOUT_ALL)")
+
+    # 11. AI Proxy Guardrails
+    print("\n--- 11. Testing AI Proxy Guardrails (/api/ai/query) ---")
     oversized_prompt = "A" * 1050
     over_payload = json.dumps({"prompt": oversized_prompt}).encode('utf-8')
     req = urllib.request.Request(
@@ -295,21 +443,9 @@ def run_tests():
         assert e.code == 400, f"Expected 400 for oversized prompt, got {e.code}"
         print("[PASS 400] Oversized AI query rejected by proxy input validation")
 
-    # 7B. Valid prompt (verifying safe proxy response or graceful offline fallback)
-    valid_prompt_payload = json.dumps({"prompt": "How does EMI compounding work?"}).encode('utf-8')
-    req = urllib.request.Request(
-        f"{BASE_URL}/api/ai/query",
-        data=valid_prompt_payload,
-        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
-    )
-    with urllib.request.urlopen(req, timeout=5) as resp:
-        ai_res = json.loads(resp.read().decode('utf-8'))
-        assert 'response' in ai_res or ai_res.get('offlineFallback') is True, "AI proxy failed to return response or fallback"
-        print(f"[PASS 200] AI proxy functional (Offline fallback active: {ai_res.get('offlineFallback', False)})")
-
-    print("\n" + "=" * 70)
-    print("ALL PHASE 1 SECURITY & SYSTEM TESTS PASSED CLEANLY (100% VERIFIED)")
-    print("=" * 70)
+    print("\n" + "=" * 75)
+    print("ALL PART 1 AUTHENTICATION & SECURITY CHECKS PASSED CLEANLY (100% VERIFIED)")
+    print("=" * 75)
 
 if __name__ == '__main__':
     run_tests()

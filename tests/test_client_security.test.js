@@ -5,29 +5,29 @@ import { validatePasswordPolicy } from '../js/utils/auth.js';
 import { FinBot } from '../js/components/chatbot.js';
 
 test('Security: validatePasswordPolicy enforces strict fintech standards', () => {
-  // Too short (< 10)
+  // Too short (< 12)
   assert.equal(validatePasswordPolicy('Ab1!').valid, false);
-  assert.match(validatePasswordPolicy('Ab1!').error, /at least 10 characters/);
+  assert.match(validatePasswordPolicy('Ab1!').error, /at least 12 characters/);
 
-  // Missing uppercase
-  assert.equal(validatePasswordPolicy('abcdefgh1!').valid, false);
-  assert.match(validatePasswordPolicy('abcdefgh1!').error, /uppercase/);
+  // Missing uppercase (14 chars)
+  assert.equal(validatePasswordPolicy('abcdefghijkl1!').valid, false);
+  assert.match(validatePasswordPolicy('abcdefghijkl1!').error, /uppercase/);
 
-  // Missing lowercase
-  assert.equal(validatePasswordPolicy('ABCDEFGH1!').valid, false);
-  assert.match(validatePasswordPolicy('ABCDEFGH1!').error, /lowercase/);
+  // Missing lowercase (14 chars)
+  assert.equal(validatePasswordPolicy('ABCDEFGHIJKL1!').valid, false);
+  assert.match(validatePasswordPolicy('ABCDEFGHIJKL1!').error, /lowercase/);
 
-  // Missing digit
-  assert.equal(validatePasswordPolicy('Abcdefghij!').valid, false);
-  assert.match(validatePasswordPolicy('Abcdefghij!').error, /digit/);
+  // Missing digit (13 chars)
+  assert.equal(validatePasswordPolicy('Abcdefghijkl!').valid, false);
+  assert.match(validatePasswordPolicy('Abcdefghijkl!').error, /digit/);
 
-  // Missing special char
-  assert.equal(validatePasswordPolicy('Abcdefghij1').valid, false);
-  assert.match(validatePasswordPolicy('Abcdefghij1').error, /special character/);
+  // Missing special char (13 chars)
+  assert.equal(validatePasswordPolicy('Abcdefghijkl1').valid, false);
+  assert.match(validatePasswordPolicy('Abcdefghijkl1').error, /special character/);
 
   // Common password in blocklist
-  assert.equal(validatePasswordPolicy('Password123!').valid, false);
-  assert.match(validatePasswordPolicy('Password123!').error, /too common/);
+  assert.equal(validatePasswordPolicy('Password123456!').valid, false);
+  assert.match(validatePasswordPolicy('Password123456!').error, /too common/);
 
   // Valid strong password
   assert.equal(validatePasswordPolicy('FinSecure@2026!').valid, true);

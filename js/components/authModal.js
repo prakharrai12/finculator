@@ -193,13 +193,13 @@ export class AuthModal {
           <div class="auth-form-group">
             <label class="auth-label" for="auth-signup-pw">Create Password</label>
             <div class="auth-input-wrap">
-              <input type="password" id="auth-signup-pw" class="auth-input" placeholder="Min 10 chars (upper, lower, digit, symbol)" minlength="10" required autocomplete="new-password" />
+              <input type="password" id="auth-signup-pw" class="auth-input" placeholder="Min 12 chars (upper, lower, digit, symbol)" minlength="12" required autocomplete="new-password" />
             </div>
           </div>
 
           <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; padding: 12px; margin-top: 0.75rem; font-size: 0.78rem; color: #38BDF8; line-height: 1.45; display: flex; align-items: flex-start; gap: 8px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0; margin-top: 2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            <div><strong>Zero-Knowledge Security:</strong> Passwords are cryptographically salted and hashed with PBKDF2. We never email, log, or store plaintext passwords.</div>
+            <div><strong>Zero-Knowledge Security:</strong> Passwords are cryptographically salted and hashed with scrypt & server pepper. We never email, log, or store plaintext passwords.</div>
           </div>
 
           <button type="submit" class="auth-submit-btn" id="btn-submit-signup">

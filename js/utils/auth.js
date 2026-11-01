@@ -1,7 +1,8 @@
 /**
  * Finculator Authentication & Credentials Management Engine
  * Secure REST API client with zero client-side password caching.
- * Enforces client-first privacy and strict password validation.
+ * Enforces client-first privacy, 12-character minimum password policy,
+ * and HttpOnly cookie integration with server-side revocation.
  */
 
 import { migrateGuestSessionToAccount } from './storage.js';
@@ -9,14 +10,16 @@ import { migrateGuestSessionToAccount } from './storage.js';
 const AUTH_STORAGE_KEY = 'finculator_auth_session';
 
 const COMMON_PASSWORDS = new Set([
-  'password', 'password123', '12345678', '123456789', '1234567890',
-  'qwertyuiop', 'admin123', 'letmein123', 'welcome123', 'finculator',
-  'finculator123', 'iloveyou', 'sunshine', 'princess', 'football'
+  'password', 'password123', 'password1234', '12345678', '123456789',
+  '1234567890', '123456789012', 'qwertyuiop', 'qwerty123456', 'admin123456',
+  'letmein12345', 'welcome12345', 'welcome123456', 'finculator', 'finculator12',
+  'finculator123', 'iloveyou1234', 'sunshine1234', 'princess1234', 'football1234',
+  'monkey123456', 'dragon123456', 'master123456', 'shadow123456', 'superman1234'
 ]);
 
 export function validatePasswordPolicy(password) {
-  if (!password || password.length < 10) {
-    return { valid: false, error: 'Password must be at least 10 characters long.' };
+  if (!password || password.length < 12) {
+    return { valid: false, error: 'Password must be at least 12 characters long.' };
   }
   if (password.length > 128) {
     return { valid: false, error: 'Password must not exceed 128 characters.' };
@@ -63,6 +66,8 @@ class AuthService {
       name: user.name,
       email: user.email,
       role: user.role || 'user',
+      emailVerified: !!user.emailVerified,
+      mfaEnabled: !!user.mfaEnabled,
       token
     };
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(this.currentUser));
@@ -127,6 +132,7 @@ class AuthService {
 
     const res = await fetch('/api/auth/register', {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         'X-Finculator-CSRF': '1'
@@ -144,9 +150,9 @@ class AuthService {
   }
 
   /**
-   * Log In
+   * Log In (Supports TOTP or Recovery Code if MFA enabled)
    */
-  async login({ email, password }) {
+  async login({ email, password, totpCode, recoveryCode }) {
     email = (email || '').trim().toLowerCase();
 
     if (!email || !password) {
@@ -155,15 +161,19 @@ class AuthService {
 
     const res = await fetch('/api/auth/login', {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         'X-Finculator-CSRF': '1'
       },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password, totpCode, recoveryCode })
     });
 
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
+      if (data.mfaRequired) {
+        return { mfaRequired: true, error: data.error };
+      }
       throw new Error(data.error || 'Invalid credentials or authentication server unavailable.');
     }
 
@@ -182,6 +192,7 @@ class AuthService {
 
     const res = await fetch('/api/auth/forgot-password', {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         'X-Finculator-CSRF': '1'
@@ -209,6 +220,7 @@ class AuthService {
 
     const res = await fetch('/api/auth/reset-password', {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         'X-Finculator-CSRF': '1'
@@ -225,10 +237,170 @@ class AuthService {
   }
 
   /**
-   * Log out
+   * Verify email address with one-time token
    */
-  logout() {
+  async verifyEmail({ token }) {
+    if (!token) throw new Error('Verification token is required.');
+
+    const res = await fetch('/api/auth/verify-email', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Finculator-CSRF': '1'
+      },
+      body: JSON.stringify({ token })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.error || 'Email verification failed or token expired.');
+    }
+
+    if (this.currentUser) {
+      this.currentUser.emailVerified = true;
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(this.currentUser));
+      this.broadcast();
+    }
+
+    return data;
+  }
+
+  /**
+   * Fetch user profile (Server-side session authenticated, IDOR-protected)
+   */
+  async getProfile() {
+    const res = await fetch('/api/user/profile', {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Authorization': this.currentUser?.token ? `Bearer ${this.currentUser.token}` : '',
+        'X-Finculator-CSRF': '1'
+      }
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to load profile.');
+    }
+
+    return data.user;
+  }
+
+  /**
+   * Change password with re-authentication
+   */
+  async changePassword({ currentPassword, newPassword }) {
+    const policyCheck = validatePasswordPolicy(newPassword);
+    if (!policyCheck.valid) {
+      throw new Error(policyCheck.error);
+    }
+
+    const res = await fetch('/api/user/change-password', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': this.currentUser?.token ? `Bearer ${this.currentUser.token}` : '',
+        'X-Finculator-CSRF': '1'
+      },
+      body: JSON.stringify({ currentPassword, newPassword })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to change password.');
+    }
+
+    return data;
+  }
+
+  /**
+   * Setup MFA TOTP (Returns secret, URI, and recovery codes)
+   */
+  async setupMFA() {
+    const res = await fetch('/api/auth/mfa/setup', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': this.currentUser?.token ? `Bearer ${this.currentUser.token}` : '',
+        'X-Finculator-CSRF': '1'
+      }
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to initialize MFA setup.');
+    }
+
+    return data;
+  }
+
+  /**
+   * Verify and activate MFA
+   */
+  async verifyMFA({ code }) {
+    const res = await fetch('/api/auth/mfa/verify', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': this.currentUser?.token ? `Bearer ${this.currentUser.token}` : '',
+        'X-Finculator-CSRF': '1'
+      },
+      body: JSON.stringify({ code })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.error || 'Invalid authenticator code.');
+    }
+
+    if (this.currentUser) {
+      this.currentUser.mfaEnabled = true;
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(this.currentUser));
+      this.broadcast();
+    }
+
+    return data;
+  }
+
+  /**
+   * Log out (Revokes server session and clears client storage)
+   */
+  async logout() {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Authorization': this.currentUser?.token ? `Bearer ${this.currentUser.token}` : '',
+          'X-Finculator-CSRF': '1'
+        }
+      });
+    } catch (e) {
+      console.warn('Server logout notice:', e);
+    }
     this.clearSession();
+  }
+
+  /**
+   * Logout everywhere across all devices
+   */
+  async logoutAll() {
+    const res = await fetch('/api/auth/logout-all', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Authorization': this.currentUser?.token ? `Bearer ${this.currentUser.token}` : '',
+        'X-Finculator-CSRF': '1'
+      }
+    });
+
+    const data = await res.json().catch(() => ({}));
+    this.clearSession();
+    return data;
   }
 }
 

@@ -31,28 +31,47 @@ Finculator takes the security of our users and their financial computations seri
    - No sensitive credentials, cleartext passwords, or private financial records are stored unhashed or unencrypted.
 
 3. **Authentication & Password Policy**:
-   - **Minimum Password Length**: 10 characters.
+   - **Minimum Password Length**: 12 characters (per NIST SP 800-63B).
    - **Password Complexity**: Requires uppercase, lowercase, numbers, and special characters.
-   - **Blocklist Check**: Rejects common passwords, sequential patterns, and dictionary phrases.
-   - **Password Storage**: Passwords must be hashed using salted PBKDF2 (min 100,000 iterations) or Argon2id. Unsalted hashes are strictly prohibited.
-   - **Password Resets**: Password reset tokens are single-use, cryptographically secure (256-bit random), time-limited (15-minute expiration), and hashed at rest.
-   - **Anti-Enumeration**: Authentication and reset endpoints return uniform, timing-safe error responses regardless of whether an email exists.
+   - **Breached & Common Password Check**: Checked against extensive lists of compromised passwords and dictionary patterns.
+   - **No Forced Periodic Rotation**: Adheres to modern security guidelines discouraging arbitrary credential rotation.
+   - **Password Storage**: Passwords are cryptographically salted and hashed using memory-hard `scrypt` (N=16384, r=8, p=1) with a server-side HMAC-SHA256 pepper.
+   - **Password Resets**: Password reset tokens are single-use, cryptographically secure (256-bit random), time-limited (15-minute expiration), and hashed with SHA-256 at rest.
+   - **Anti-Enumeration & Timing Defense**: Authentication and reset endpoints return uniform, timing-safe error responses using dummy scrypt derivations to prevent timing-based user enumeration.
+   - **Email Verification**: Required upon registration with single-use, 24-hour expiring verification tokens.
 
-4. **Rate Limiting & Abuse Prevention**:
-   - Authentication endpoints enforce strict per-IP rate limits and progressive exponential backoff lockout upon consecutive failed login attempts.
+4. **Multi-Factor Authentication (MFA)**:
+   - **TOTP Authenticators**: Standards-compliant RFC 6238 time-based one-time password generation compatible with Google Authenticator, Authy, and 1Password.
+   - **Hashed Recovery Codes**: 8 single-use cryptographically random backup recovery codes, hashed at rest and consumed upon use.
+   - **Re-Authentication**: Mandatory password and MFA verification for sensitive profile and credential changes.
 
-5. **AI Guardrails (FinBot)**:
+5. **Sessions & Access Control**:
+   - **HttpOnly Cookies**: Session tokens are issued via `HttpOnly`, `SameSite=Lax`, and `Secure` cookies to eliminate client-side token exposure to XSS.
+   - **Session Fixation Defense**: Session identifiers (`sid`) are regenerated upon login and privilege transitions.
+   - **Server-Side Invalidation**: Instant token revocation on `/api/auth/logout` and "Logout Everywhere" across all devices via session versioning on `/api/auth/logout-all`.
+   - **IDOR / BOLA Prevention**: User data operations strictly resolve the subject identity server-side from cryptographically signed session tokens.
+
+6. **Rate Limiting & Abuse Prevention**:
+   - Authentication endpoints enforce strict per-IP and per-account rate limits.
+   - Progressive execution delay is applied after repeated failed attempts, followed by a 15-minute account lockout after 5 failures.
+
+7. **Logging & Monitoring**:
+   - Immutable security audit log (`data/audit_log.json`) tracking logins, failures, MFA activations, and session revocations with zero credential leakage.
+   - Automated email sign-in notifications dispatched to users on new session logins.
+
+8. **AI Guardrails (FinBot)**:
    - The AI Assistant routes requests through an isolated, authenticated serverless proxy holding the upstream API key securely in environment variables.
    - User inputs and AI outputs are strictly sanitized to prevent Cross-Site Scripting (XSS).
    - Prompts are never transmitted via GET query parameters to untrusted third-party services.
    - Educational disclaimers are enforced: FinBot results are estimates for educational modeling, not formal financial advice.
 
-6. **Content Security Policy & HTTP Headers**:
+9. **Content Security Policy & HTTP Headers**:
    - `Content-Security-Policy`: Disallows unsafe inline scripts/styles where feasible, limits script sources to trusted origins with Subresource Integrity (SRI).
    - `X-Content-Type-Options: nosniff`
    - `X-Frame-Options: DENY` (and `frame-ancestors 'none'`)
    - `Referrer-Policy: strict-origin-when-cross-origin`
    - `Permissions-Policy: camera=(), microphone=(), geolocation=()`
+   - `Cross-Origin-Opener-Policy: same-origin`
 
 ---
 

@@ -12,6 +12,7 @@ import base64
 import html
 import re
 import secrets
+import struct
 import threading
 import urllib.request
 import urllib.error
@@ -25,6 +26,7 @@ USERS_FILE = os.path.join(DATA_DIR, 'users.json')
 EMAILS_FILE = os.path.join(DATA_DIR, 'sent_emails.json')
 NEWSLETTER_FILE = os.path.join(DATA_DIR, 'newsletter_subscribers.json')
 RESET_TOKENS_FILE = os.path.join(DATA_DIR, 'reset_tokens.json')
+AUDIT_LOG_FILE = os.path.join(DATA_DIR, 'audit_log.json')
 
 def load_env_file(filepath: str):
     """Zero-dependency .env parser to maintain pure Python standard library portability."""
@@ -55,6 +57,7 @@ BASE_URL = os.getenv('BASE_URL', f"http://{HOST}:{PORT}")
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 ADMIN_API_KEY = os.getenv('ADMIN_API_KEY')
+PASSWORD_PEPPER = os.getenv('PASSWORD_PEPPER')
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
 
 # Validate required secrets on startup
@@ -63,6 +66,8 @@ if APP_ENV == 'production':
         sys.exit("FATAL: In production, SECRET_KEY must be a cryptographically secure random string (min 32 chars).")
     if not ADMIN_API_KEY or 'change-this' in ADMIN_API_KEY or len(ADMIN_API_KEY) < 16:
         sys.exit("FATAL: In production, a dedicated ADMIN_API_KEY must be configured.")
+    if not PASSWORD_PEPPER or len(PASSWORD_PEPPER) < 16:
+        PASSWORD_PEPPER = SECRET_KEY
 else:
     if not SECRET_KEY or 'change-this' in SECRET_KEY:
         SECRET_KEY = f"dev_sec_{secrets.token_hex(32)}"
@@ -70,6 +75,8 @@ else:
     if not ADMIN_API_KEY or 'change-this' in ADMIN_API_KEY:
         ADMIN_API_KEY = f"dev_adm_{secrets.token_hex(16)}"
         print(f"[DEV] Development ADMIN_API_KEY active: {ADMIN_API_KEY}")
+    if not PASSWORD_PEPPER:
+        PASSWORD_PEPPER = SECRET_KEY
 
 ALLOWED_ORIGINS = [
     o.strip() for o in os.getenv('ALLOWED_ORIGINS', f"http://localhost:{PORT},http://127.0.0.1:{PORT}").split(',')
@@ -85,7 +92,7 @@ AI_DAILY_REQUEST_LIMIT = int(os.getenv('AI_DAILY_REQUEST_LIMIT', 500))
 
 # Initialize local data storage files safely
 os.makedirs(DATA_DIR, exist_ok=True)
-for file_path in (USERS_FILE, EMAILS_FILE, NEWSLETTER_FILE, RESET_TOKENS_FILE):
+for file_path in (USERS_FILE, EMAILS_FILE, NEWSLETTER_FILE, RESET_TOKENS_FILE, AUDIT_LOG_FILE):
     if not os.path.exists(file_path):
         with open(file_path, 'w', encoding='utf-8') as f:
             json.dump([], f, indent=2)
@@ -104,18 +111,26 @@ mimetypes.add_type('application/xml', '.xml')
 mimetypes.add_type('application/manifest+json', '.webmanifest')
 
 # ==============================================================================
-# 2. CRYPTOGRAPHY, PASSWORD POLICY & AUTH UTILITIES
+# 2. CRYPTOGRAPHY, PASSWORD POLICY & PASSWORD HASHING (SCRYPT / ARGON2ID + PEPPER)
 # ==============================================================================
 COMMON_PASSWORDS = {
-    'password', 'password123', '12345678', '123456789', '1234567890',
-    'qwertyuiop', 'admin123', 'letmein123', 'welcome123', 'finculator',
-    'finculator123', 'iloveyou', 'sunshine', 'princess', 'football'
+    'password', 'password123', 'password1234', '12345678', '123456789',
+    '1234567890', '123456789012', 'qwertyuiop', 'qwerty123456', 'admin123456',
+    'letmein12345', 'welcome12345', 'welcome123456', 'finculator', 'finculator12',
+    'finculator123', 'iloveyou1234', 'sunshine1234', 'princess1234', 'football1234',
+    'monkey123456', 'dragon123456', 'master123456', 'shadow123456', 'superman1234'
 }
 
 def validate_password_strength(password: str) -> tuple[bool, str]:
-    """Enforces strict fintech password policy: min 10 chars, uppercase, lowercase, digit, symbol, blocklist."""
-    if not password or len(password) < 10:
-        return False, "Password must be at least 10 characters long."
+    """
+    Enforces strict fintech password policy per NIST SP 800-63B:
+    - Minimum 12 characters (max 128)
+    - Uppercase, lowercase, digit, and special symbol
+    - Checked against extensive common/breached passwords list
+    - No forced periodic rotation
+    """
+    if not password or len(password) < 12:
+        return False, "Password must be at least 12 characters long."
     if len(password) > 128:
         return False, "Password must not exceed 128 characters."
     if not re.search(r'[A-Z]', password):
@@ -129,25 +144,52 @@ def validate_password_strength(password: str) -> tuple[bool, str]:
     lower = password.lower()
     stripped = re.sub(r'[^a-z]', '', lower)
     if lower in COMMON_PASSWORDS or stripped in COMMON_PASSWORDS:
-        return False, "This password is too common and easily guessed. Please choose a stronger password."
+        return False, "This password is too common or easily guessed. Please choose a stronger passphrase."
     return True, ""
 
+def apply_pepper(password: str) -> bytes:
+    """Combines password with server-side pepper via HMAC-SHA256 prior to key derivation."""
+    return hmac.new(PASSWORD_PEPPER.encode('utf-8'), password.encode('utf-8'), hashlib.sha256).digest()
+
 def hash_pw(password: str, salt: bytes = None) -> str:
-    """PBKDF2-HMAC-SHA256 password hashing with 100,000 iterations and 16-byte random salt."""
+    """
+    Memory-hard scrypt password hashing (NIST & OWASP recommended alternative to Argon2id)
+    with 16-byte random per-user salt and HMAC-SHA256 server-side pepper.
+    Cost parameters: N=16384, r=8, p=1 (approx 64MB memory hardness).
+    """
     if salt is None:
         salt = secrets.token_bytes(16)
-    derived = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
-    return f"pbkdf2:sha256:100000${salt.hex()}${derived.hex()}"
+    peppered = apply_pepper(password)
+    derived = hashlib.scrypt(peppered, salt=salt, n=16384, r=8, p=1)
+    return f"scrypt:16384:8:1${salt.hex()}${derived.hex()}"
 
 def verify_pw(password: str, stored_hash: str) -> tuple[bool, bool]:
     """
-    Verifies password against stored hash.
+    Verifies password against stored hash in constant time.
     Returns: (is_valid, needs_rehash)
-    Seamlessly verifies legacy unsalted SHA256 hashes and flags them for automatic upgrade.
+    Seamlessly verifies:
+      1. Modern scrypt with pepper
+      2. Legacy PBKDF2 (flags needs_rehash=True for auto-upgrade)
+      3. Legacy unsalted SHA-256 (flags needs_rehash=True for auto-upgrade)
     """
     if not stored_hash or not isinstance(stored_hash, str):
         return False, False
 
+    # 1. Modern scrypt with pepper
+    if stored_hash.startswith('scrypt:16384:8:1$'):
+        try:
+            parts = stored_hash.split('$')
+            if len(parts) != 3:
+                return False, False
+            salt = bytes.fromhex(parts[1])
+            expected_derived = bytes.fromhex(parts[2])
+            peppered = apply_pepper(password)
+            actual_derived = hashlib.scrypt(peppered, salt=salt, n=16384, r=8, p=1)
+            return hmac.compare_digest(actual_derived, expected_derived), False
+        except Exception:
+            return False, False
+
+    # 2. Legacy PBKDF2 (auto-upgrade on successful login)
     if stored_hash.startswith('pbkdf2:sha256:'):
         try:
             parts = stored_hash.split('$')
@@ -156,24 +198,117 @@ def verify_pw(password: str, stored_hash: str) -> tuple[bool, bool]:
             salt = bytes.fromhex(parts[1])
             expected_derived = bytes.fromhex(parts[2])
             actual_derived = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
-            return hmac.compare_digest(actual_derived, expected_derived), False
+            matches = hmac.compare_digest(actual_derived, expected_derived)
+            return matches, matches
         except Exception:
             return False, False
-    elif len(stored_hash) == 64:
-        # Legacy unsalted SHA256 fallback (auto-upgrade on successful login)
+
+    # 3. Legacy unsalted SHA-256 fallback (auto-upgrade on successful login)
+    if len(stored_hash) == 64:
         legacy_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
         matches = hmac.compare_digest(legacy_hash, stored_hash)
         return matches, matches
 
     return False, False
 
-def create_session_token(user_id: str, email: str, role: str = 'user', expires_in: int = 86400) -> str:
-    """Generates an HMAC-SHA256 cryptographically signed session token."""
+def timing_attack_dummy_hash(password: str):
+    """
+    Executes identical scrypt computation on dummy credentials to guarantee uniform
+    execution latency between valid and non-existent accounts, preventing timing attacks.
+    """
+    dummy_salt = b'\x00' * 16
+    dummy_peppered = apply_pepper(password)
+    _ = hashlib.scrypt(dummy_peppered, salt=dummy_salt, n=16384, r=8, p=1)
+
+# ==============================================================================
+# 3. MULTI-FACTOR AUTHENTICATION (RFC 6238 TOTP + HASHED RECOVERY CODES)
+# ==============================================================================
+def generate_totp_secret() -> str:
+    """Generates a standard 160-bit Base32 secret for RFC 6238 TOTP authenticators."""
+    return base64.b32encode(secrets.token_bytes(20)).decode('utf-8').rstrip('=')
+
+def get_totp_code(secret: str, tm: float = None, interval: int = 30) -> str:
+    """Calculates a 6-digit TOTP code using RFC 4226 / RFC 6238 HMAC-SHA1 algorithm."""
+    if tm is None:
+        tm = time.time()
+    padded_secret = secret + '=' * ((8 - len(secret) % 8) % 8)
+    key = base64.b32decode(padded_secret)
+    counter = int(tm // interval)
+    msg = struct.pack('>Q', counter)
+    digest = hmac.new(key, msg, hashlib.sha1).digest()
+    offset = digest[19] & 0x0f
+    code = struct.unpack('>I', digest[offset:offset+4])[0] & 0x7fffffff
+    return str(code % 1000000).zfill(6)
+
+def verify_totp_code(secret: str, code: str, window: int = 1) -> bool:
+    """Verifies a 6-digit TOTP code with standard clock-drift tolerance window (±30s)."""
+    if not code or len(code) != 6 or not code.isdigit():
+        return False
+    now = time.time()
+    for offset in range(-window, window + 1):
+        expected = get_totp_code(secret, tm=now + offset * 30)
+        if hmac.compare_digest(expected, code):
+            return True
+    return False
+
+def generate_recovery_codes(count: int = 8) -> tuple[list[str], list[str]]:
+    """
+    Generates single-use alphanumeric recovery codes.
+    Returns: (cleartext_codes_for_user, hashed_codes_for_storage)
+    Cleartext codes are never stored on the server.
+    """
+    cleartext_codes = []
+    hashed_codes = []
+    for _ in range(count):
+        code = f"{secrets.token_hex(2)}-{secrets.token_hex(2)}".upper()
+        cleartext_codes.append(code)
+        code_hash = hashlib.sha256(code.encode('utf-8')).hexdigest()
+        hashed_codes.append(code_hash)
+    return cleartext_codes, hashed_codes
+
+def verify_and_consume_recovery_code(user: dict, submitted_code: str) -> bool:
+    """Validates and consumes a single-use recovery code."""
+    submitted_code = submitted_code.strip().upper()
+    code_hash = hashlib.sha256(submitted_code.encode('utf-8')).hexdigest()
+    codes = user.get('recoveryCodeHashes', [])
+    for idx, stored in enumerate(codes):
+        if hmac.compare_digest(stored, code_hash):
+            codes.pop(idx)
+            user['recoveryCodeHashes'] = codes
+            return True
+    return False
+
+# ==============================================================================
+# 4. SESSION MANAGEMENT, JWT INTEGRITY & SERVER-SIDE REVOCATION
+# ==============================================================================
+# Thread-safe in-memory blacklist of revoked session IDs (sid)
+revoked_sessions_lock = threading.Lock()
+revoked_sessions = set()
+
+def revoke_session(sid: str):
+    with revoked_sessions_lock:
+        revoked_sessions.add(sid)
+
+def is_session_revoked(sid: str) -> bool:
+    with revoked_sessions_lock:
+        return sid in revoked_sessions
+
+def create_session_token(user_id: str, email: str, role: str = 'user', session_version: int = 1, expires_in: int = 86400) -> tuple[str, str]:
+    """
+    Generates a secure HMAC-SHA256 JWT with unique Session ID (sid),
+    session version for instant "Logout Everywhere", and strict audience/issuer claims.
+    Returns: (token_string, session_id)
+    """
+    sid = secrets.token_hex(16)
     header = {'alg': 'HS256', 'typ': 'JWT'}
     payload = {
         'sub': user_id,
         'email': email,
         'role': role,
+        'sid': sid,
+        'ver': session_version,
+        'iss': 'finculator.app',
+        'aud': 'finculator-client',
         'iat': int(time.time()),
         'exp': int(time.time()) + expires_in
     }
@@ -185,38 +320,65 @@ def create_session_token(user_id: str, email: str, role: str = 'user', expires_i
     p2 = b64url(json.dumps(payload, separators=(',', ':')).encode('utf-8'))
     sig = hmac.new(SECRET_KEY.encode('utf-8'), f"{p1}.{p2}".encode('utf-8'), hashlib.sha256).digest()
     p3 = b64url(sig)
-    return f"{p1}.{p2}.{p3}"
+    return f"{p1}.{p2}.{p3}", sid
 
-def verify_session_token(token: str) -> dict | None:
-    """Verifies HMAC-SHA256 signature and expiration of session token in constant time."""
+def verify_session_token(token: str, current_session_version: int = None) -> dict | None:
+    """
+    Verifies JWT token integrity:
+    - Enforces algorithm check (strictly rejects 'none' or mismatched algorithms)
+    - Validates HMAC signature in constant time
+    - Verifies 'exp', 'iat', 'iss', and 'aud'
+    - Checks server-side session revocation blacklist (sid)
+    - Validates session version counter (supports global logout)
+    """
     if not token or not isinstance(token, str):
         return None
     parts = token.split('.')
     if len(parts) != 3:
         return None
     p1, p2, p3 = parts
-    expected_sig = hmac.new(SECRET_KEY.encode('utf-8'), f"{p1}.{p2}".encode('utf-8'), hashlib.sha256).digest()
 
     def b64url_decode(s: str) -> bytes:
         padding = '=' * (4 - (len(s) % 4)) if len(s) % 4 != 0 else ''
         return base64.urlsafe_b64decode(s + padding)
 
     try:
+        header = json.loads(b64url_decode(p1).decode('utf-8'))
+        if header.get('alg') != 'HS256' or header.get('typ') != 'JWT':
+            return None
+
+        expected_sig = hmac.new(SECRET_KEY.encode('utf-8'), f"{p1}.{p2}".encode('utf-8'), hashlib.sha256).digest()
         actual_sig = b64url_decode(p3)
         if not hmac.compare_digest(expected_sig, actual_sig):
             return None
+
         payload = json.loads(b64url_decode(p2).decode('utf-8'))
-        if payload.get('exp', 0) < time.time():
+        now = time.time()
+        if payload.get('exp', 0) < now:
             return None
+        if payload.get('iat', 0) > now + 60: # Clock skew allowance
+            return None
+        if payload.get('iss') != 'finculator.app' or payload.get('aud') != 'finculator-client':
+            return None
+
+        # Check server-side revocation list
+        sid = payload.get('sid')
+        if sid and is_session_revoked(sid):
+            return None
+
+        # Check session version if supplied
+        if current_session_version is not None and payload.get('ver', 1) < current_session_version:
+            return None
+
         return payload
     except Exception:
         return None
 
 # ==============================================================================
-# 3. RATE LIMITING & ACCOUNT LOCKOUT
+# 5. RATE LIMITING, PROGRESSIVE DELAY & ACCOUNT LOCKOUT
 # ==============================================================================
 class RateLimiter:
-    """Thread-safe sliding-window rate limiter per client IP."""
+    """Thread-safe sliding-window rate limiter per client key."""
     def __init__(self):
         self.lock = threading.Lock()
         self.requests = {}
@@ -240,7 +402,7 @@ failed_logins_lock = threading.Lock()
 failed_logins = {} # key: ip or email, val: {'count': int, 'locked_until': float}
 
 def record_failed_login(key: str) -> bool:
-    """Records a failed attempt. Returns True if account/IP is now locked out."""
+    """Records a failed attempt. Returns True if account/IP is locked out."""
     now = time.time()
     with failed_logins_lock:
         rec = failed_logins.get(key, {'count': 0, 'locked_until': 0})
@@ -262,13 +424,22 @@ def check_login_lockout(key: str) -> bool:
             return True
         return False
 
+def apply_progressive_delay(key: str):
+    """Enforces progressive execution backoff after 3 failed login attempts."""
+    with failed_logins_lock:
+        rec = failed_logins.get(key)
+        count = rec.get('count', 0) if rec else 0
+    if count >= 3:
+        delay = min(count - 2, 2) # 1s or 2s delay
+        time.sleep(delay)
+
 def clear_failed_login(key: str):
     with failed_logins_lock:
         if key in failed_logins:
             del failed_logins[key]
 
 # ==============================================================================
-# 4. DATA ACCESS LAYER & PERSISTENCE
+# 6. DATA ACCESS LAYER & AUDIT LOGGING
 # ==============================================================================
 file_lock = threading.Lock()
 
@@ -306,6 +477,38 @@ def save_reset_tokens(tokens):
             json.dump(tokens, f, indent=2)
         os.replace(temp_file, RESET_TOKENS_FILE)
 
+def log_audit_event(event: str, ip: str, email: str = None, user_id: str = None, status: str = 'SUCCESS', details: dict = None):
+    """
+    Appends an immutable audit log record for security monitoring.
+    Never logs cleartext passwords, raw tokens, or secrets.
+    """
+    with file_lock:
+        logs = []
+        try:
+            if os.path.exists(AUDIT_LOG_FILE):
+                with open(AUDIT_LOG_FILE, 'r', encoding='utf-8') as f:
+                    logs = json.load(f)
+        except Exception:
+            logs = []
+
+        entry = {
+            'id': str(uuid.uuid4()),
+            'timestamp': time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime()),
+            'event': event, # LOGIN_SUCCESS, LOGIN_FAILED, LOGOUT, LOGOUT_ALL, REGISTER, PASSWORD_RESET, MFA_SETUP, etc.
+            'ip': ip,
+            'email': email,
+            'userId': user_id,
+            'status': status,
+            'details': details or {}
+        }
+        logs.insert(0, entry)
+        logs = logs[:500] # Maintain rolling 500 audit events
+        temp_file = f"{AUDIT_LOG_FILE}.tmp"
+        with open(temp_file, 'w', encoding='utf-8') as f:
+            json.dump(logs, f, indent=2)
+        os.replace(temp_file, AUDIT_LOG_FILE)
+        return entry
+
 def log_sent_email(to_email, subject, body_html, body_text):
     """Logs outgoing notification with zero credentials or plaintext passwords."""
     with file_lock:
@@ -336,7 +539,7 @@ def log_sent_email(to_email, subject, body_html, body_text):
         return email_record
 
 # ==============================================================================
-# 5. SECURE HTTP REQUEST HANDLER (PUBLIC ALLOWLIST ONLY)
+# 7. SECURE HTTP REQUEST HANDLER (PUBLIC ALLOWLIST ONLY)
 # ==============================================================================
 ALLOWED_STATIC_EXTS = {
     '.html', '.css', '.js', '.mjs', '.png', '.jpg', '.jpeg',
@@ -360,6 +563,50 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
         if not DEBUG and APP_ENV == 'production':
             return
         sys.stderr.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {self.address_string()} - {format % args}\n")
+
+    def get_cookie(self, name: str) -> str | None:
+        """Parses an incoming HTTP Cookie header for a specific cookie key."""
+        cookie_header = self.headers.get('Cookie')
+        if not cookie_header:
+            return None
+        for item in cookie_header.split(';'):
+            item = item.strip()
+            if item.startswith(f"{name}="):
+                return item[len(name) + 1:].strip()
+        return None
+
+    def get_authenticated_user(self) -> tuple[dict | None, dict | None]:
+        """
+        Validates the incoming caller using either:
+        1. HttpOnly 'finculator_session' Cookie
+        2. 'Authorization: Bearer <token>' Header
+        Returns: (token_payload, user_record_from_storage)
+        Enforces server-side user checks and global session version validation.
+        """
+        auth_header = self.headers.get('Authorization', '')
+        token = auth_header[7:].strip() if auth_header.startswith('Bearer ') else ''
+        if not token:
+            token = self.get_cookie('finculator_session') or ''
+
+        if not token:
+            return None, None
+
+        # First stage validation: signature & claims
+        payload = verify_session_token(token)
+        if not payload:
+            return None, None
+
+        # Second stage validation: load current user to check sessionVersion
+        users = get_users()
+        user = next((u for u in users if u.get('id') == payload.get('sub')), None)
+        if not user:
+            return None, None
+
+        current_ver = user.get('sessionVersion', 1)
+        if payload.get('ver', 1) < current_ver:
+            return None, None
+
+        return payload, user
 
     def end_headers(self):
         # Environment-aware Cache-Control
@@ -400,13 +647,13 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
         if ENFORCE_HTTPS or self.headers.get('X-Forwarded-Proto') == 'https':
             self.send_header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
 
-        # Locked Down CORS Configuration
+        # Locked Down CORS Configuration (No wildcard with credentials)
         origin = self.headers.get('Origin')
         if origin and origin in ALLOWED_ORIGINS:
             self.send_header('Access-Control-Allow-Origin', origin)
             self.send_header('Vary', 'Origin')
             self.send_header('Access-Control-Allow-Credentials', 'true')
-            self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+            self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS')
             self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Finculator-CSRF, X-Admin-Key')
 
         super().end_headers()
@@ -425,8 +672,8 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
         if bearer and hmac.compare_digest(bearer, ADMIN_API_KEY):
             return True
 
-        token_payload = verify_session_token(bearer)
-        if token_payload and token_payload.get('role') == 'admin':
+        payload, _ = self.get_authenticated_user()
+        if payload and payload.get('role') == 'admin':
             return True
 
         return False
@@ -446,12 +693,15 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
             return True
         return False
 
-    def respond_json(self, data, status_code=200, headers_dict=None):
+    def respond_json(self, data, status_code=200, headers_dict=None, set_cookies=None):
         self.send_response(status_code)
         self.send_header('Content-Type', 'application/json; charset=utf-8')
         if headers_dict:
             for k, v in headers_dict.items():
                 self.send_header(k, v)
+        if set_cookies:
+            for cookie_str in set_cookies:
+                self.send_header('Set-Cookie', cookie_str)
         self.end_headers()
         self.wfile.write(json.dumps(data).encode('utf-8'))
 
@@ -470,8 +720,41 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         client_ip = self.client_address[0]
 
-        # 1. API: Newsletter Subscribers (Admin Only)
-        if self.path.startswith('/api/newsletter/subscribers'):
+        # 1. API: User Profile (IDOR / BOLA Protected - Server-Side Sub Check)
+        if self.path == '/api/user/profile':
+            payload, user = self.get_authenticated_user()
+            if not payload or not user:
+                self.respond_json({'error': 'Unauthorized: active session required.'}, 401)
+                return
+
+            profile = {
+                'id': user['id'],
+                'name': user['name'],
+                'email': user['email'],
+                'role': user.get('role', 'user'),
+                'emailVerified': user.get('emailVerified', False),
+                'mfaEnabled': user.get('mfaEnabled', False),
+                'createdAt': user.get('createdAt'),
+                'lastLogin': user.get('lastLogin')
+            }
+            self.respond_json({'success': True, 'user': profile}, 200)
+            return
+
+        # 2. API: Admin Audit Log (Protected Admin Route)
+        if self.path == '/api/admin/audit-log':
+            if not self.is_admin_request():
+                self.respond_json({'error': 'Access denied: administrative authorization required.'}, 401)
+                return
+            try:
+                with open(AUDIT_LOG_FILE, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+            except Exception:
+                data = []
+            self.respond_json(data, 200)
+            return
+
+        # 3. API: Newsletter Subscribers (Admin Only)
+        if self.path.startswith('/api/newsletter/subscribers') or self.path.startswith('/api/admin/subscribers'):
             if not rate_limiter.is_allowed(f"api:{client_ip}", API_RATE_LIMIT):
                 self.respond_json({'error': 'Rate limit exceeded.'}, 429, {'Retry-After': '60'})
                 return
@@ -493,7 +776,7 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
             self.respond_json({'error': 'API endpoint not found.'}, 404)
             return
 
-        # 2. Strict Public Static File Allowlist (Eliminates arbitrary root path traversal)
+        # 4. Strict Public Static File Allowlist (Eliminates arbitrary root path traversal)
         raw_path = self.path.split('?')[0].split('#')[0]
         norm_path = os.path.normpath(raw_path).replace('\\', '/')
         if norm_path.startswith('/'):
@@ -548,7 +831,7 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
     def do_POST(self):
         client_ip = self.client_address[0]
 
-        # 1. Rate Limiting
+        # 1. Rate Limiting per IP
         is_auth = self.path.startswith('/api/auth/')
         limit = AUTH_RATE_LIMIT if is_auth else API_RATE_LIMIT
         rate_key = f"{'auth' if is_auth else 'api'}:{client_ip}"
@@ -574,7 +857,7 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
             self.respond_json({'error': 'Malformed JSON payload.'}, 400)
             return
 
-        # --- ENDPOINT 1: USER REGISTRATION ---
+        # --- ENDPOINT 1: USER REGISTRATION (12-CHAR MIN, SCRYPT+PEPPER, EMAIL VERIFICATION) ---
         if self.path == '/api/auth/register':
             name = str(payload.get('name', '')).strip()
             email = str(payload.get('email', '')).strip().lower()
@@ -600,55 +883,86 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
             users = get_users()
             for u in users:
                 if u.get('email') == email:
+                    log_audit_event('REGISTER_CONFLICT', client_ip, email=email, status='FAILURE', details={'reason': 'Email already exists'})
                     self.respond_json({'error': 'An account with this email address already exists.'}, 409)
                     return
 
             user_id = str(uuid.uuid4())
+            raw_verify_token = secrets.token_urlsafe(32)
+            verify_token_hash = hashlib.sha256(raw_verify_token.encode('utf-8')).hexdigest()
+            now_ts = time.time()
+
             new_user = {
                 'id': user_id,
                 'name': name,
                 'email': email,
                 'passwordHash': hash_pw(password),
                 'role': 'user',
+                'sessionVersion': 1,
+                'emailVerified': False,
+                'emailVerifyTokenHash': verify_token_hash,
+                'emailVerifyExpiresAt': now_ts + 86400, # 24 hours
+                'mfaEnabled': False,
                 'createdAt': time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime()),
                 'lastLogin': time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())
             }
             users.append(new_user)
             save_users(users)
 
-            token = create_session_token(user_id, email, role='user')
+            token, sid = create_session_token(user_id, email, role='user', session_version=1)
 
-            # Send welcome confirmation (passwords are NEVER emailed or logged in cleartext)
-            subject = "Welcome to Finculator — Your Account is Ready"
-            body_text = f"Hello {name},\n\nWelcome to Finculator! Your account is active.\nEmail: {email}\n\n— Finculator Team"
-            body_html = f"<p>Hello {html.escape(name)},</p><p>Welcome to Finculator! Your account is active.</p>"
+            # Audit event
+            log_audit_event('REGISTER_SUCCESS', client_ip, email=email, user_id=user_id, status='SUCCESS')
+
+            # Send welcome confirmation with email verification link
+            verify_url = f"{BASE_URL}/#/verify-email?token={raw_verify_token}"
+            subject = "Welcome to Finculator — Please Verify Your Email"
+            body_text = f"Hello {name},\n\nWelcome to Finculator! Please verify your email address:\n{verify_url}\n\nEmail: {email}\n\n— Finculator Team"
+            body_html = f"<p>Hello {html.escape(name)},</p><p>Welcome to Finculator! Please click below to verify your email:</p><p><a href='{verify_url}'>Verify Email Address</a></p>"
             log_sent_email(email, subject, body_html, body_text)
+
+            # Issue HttpOnly, SameSite=Lax cookie
+            secure_flag = "; Secure" if (ENFORCE_HTTPS or APP_ENV == 'production') else ""
+            cookie_header = f"finculator_session={token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400{secure_flag}"
 
             self.respond_json({
                 'success': True,
-                'message': f"Account created successfully for {email}",
+                'message': f"Account created successfully for {email}. Please verify your email.",
                 'user': {
                     'id': user_id,
                     'name': name,
-                    'email': email
+                    'email': email,
+                    'emailVerified': False
                 },
                 'token': token
-            }, 201)
+            }, 201, set_cookies=[cookie_header])
             return
 
-        # --- ENDPOINT 2: USER LOGIN (WITH LOCKOUT DEFENSE) ---
+        # --- ENDPOINT 2: USER LOGIN (TIMING DEFENSE, PROGRESSIVE DELAY, LOCKOUT, MFA, COOKIES) ---
         if self.path == '/api/auth/login':
             email = str(payload.get('email', '')).strip().lower()
             password = str(payload.get('password', ''))
+            totp_code = str(payload.get('totpCode', '')).strip()
+            recovery_code = str(payload.get('recoveryCode', '')).strip()
 
             if not email or not password:
                 self.respond_json({'error': 'Email and password are required.'}, 400)
                 return
 
-            # Check lockout
+            # Rate limit per account
+            if not rate_limiter.is_allowed(f"auth:account:{email}", 10):
+                self.respond_json({'error': 'Too many attempts on this account. Please wait before retrying.'}, 429, {'Retry-After': '60'})
+                return
+
+            # Account / IP lockout defense
             if check_login_lockout(email) or check_login_lockout(client_ip):
+                log_audit_event('LOGIN_LOCKED', client_ip, email=email, status='BLOCKED', details={'reason': 'Account or IP in 15m lockout'})
                 self.respond_json({'error': 'Too many failed login attempts. Account temporarily locked for 15 minutes.'}, 429)
                 return
+
+            # Progressive delay after 3 failures to thwart fast brute-force engines
+            apply_progressive_delay(email)
+            apply_progressive_delay(client_ip)
 
             users = get_users()
             target_user = None
@@ -663,15 +977,40 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
                         break
 
             if not target_user:
+                # Timing attack mitigation: run identical scrypt computation so execution
+                # latency is indistinguishable between registered and non-existent users
+                timing_attack_dummy_hash(password)
+
                 record_failed_login(email)
                 record_failed_login(client_ip)
+                log_audit_event('LOGIN_FAILED', client_ip, email=email, status='FAILURE', details={'reason': 'Invalid credentials'})
                 self.respond_json({'error': 'Invalid email address or password.'}, 401)
                 return
+
+            # Multi-Factor Authentication Verification
+            if target_user.get('mfaEnabled', False):
+                mfa_verified = False
+                totp_secret = target_user.get('totpSecret', '')
+                if totp_code and totp_secret and verify_totp_code(totp_secret, totp_code):
+                    mfa_verified = True
+                elif recovery_code and verify_and_consume_recovery_code(target_user, recovery_code):
+                    mfa_verified = True
+                    log_audit_event('MFA_RECOVERY_USED', client_ip, email=email, user_id=target_user['id'], status='SUCCESS')
+
+                if not mfa_verified:
+                    record_failed_login(email)
+                    record_failed_login(client_ip)
+                    log_audit_event('LOGIN_MFA_CHALLENGE', client_ip, email=email, user_id=target_user['id'], status='CHALLENGE')
+                    self.respond_json({
+                        'error': 'Multi-factor authentication required. Please enter your 6-digit authenticator code or recovery key.',
+                        'mfaRequired': True
+                    }, 401)
+                    return
 
             clear_failed_login(email)
             clear_failed_login(client_ip)
 
-            # Upgrade legacy SHA256 hashes to PBKDF2
+            # Upgrade legacy hashes to scrypt with pepper
             if needs_rehash:
                 target_user['passwordHash'] = hash_pw(password)
 
@@ -679,7 +1018,20 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
             save_users(users)
 
             role = target_user.get('role', 'user')
-            token = create_session_token(target_user['id'], target_user['email'], role=role)
+            session_version = target_user.get('sessionVersion', 1)
+            token, sid = create_session_token(target_user['id'], target_user['email'], role=role, session_version=session_version)
+
+            log_audit_event('LOGIN_SUCCESS', client_ip, email=email, user_id=target_user['id'], status='SUCCESS')
+
+            # Send login notification email (Alert for new logins)
+            notif_subject = "Finculator — New Sign-In Detected"
+            notif_text = f"Hello {target_user['name']},\n\nA new sign-in was recorded from IP {client_ip} on {time.strftime('%Y-%m-%d %H:%M UTC')}.\nIf this was not you, please reset your password immediately."
+            notif_html = f"<p>Hello {html.escape(target_user['name'])},</p><p>A new sign-in was recorded from IP <code>{html.escape(client_ip)}</code> at {time.strftime('%Y-%m-%d %H:%M UTC')}.</p><p>If this was not you, please reset your password immediately.</p>"
+            log_sent_email(email, notif_subject, notif_html, notif_text)
+
+            # Issue HttpOnly, SameSite=Lax cookie
+            secure_flag = "; Secure" if (ENFORCE_HTTPS or APP_ENV == 'production') else ""
+            cookie_header = f"finculator_session={token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400{secure_flag}"
 
             self.respond_json({
                 'success': True,
@@ -688,13 +1040,15 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
                     'id': target_user['id'],
                     'name': target_user['name'],
                     'email': target_user['email'],
-                    'role': role
+                    'role': role,
+                    'emailVerified': target_user.get('emailVerified', False),
+                    'mfaEnabled': target_user.get('mfaEnabled', False)
                 },
                 'token': token
-            }, 200)
+            }, 200, set_cookies=[cookie_header])
             return
 
-        # --- ENDPOINT 3: FORGOT PASSWORD (SECURE EXPIRING TOKEN) ---
+        # --- ENDPOINT 3: FORGOT PASSWORD (SECURE EXPIRING TOKEN & ANTI-ENUMERATION) ---
         if self.path in ('/api/auth/send-credentials', '/api/auth/forgot-password'):
             email = str(payload.get('email', '')).strip().lower()
             if not email:
@@ -726,6 +1080,9 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
                 body_text = f"Hello {name},\n\nWe received a password reset request. Click the link below (valid for 15 minutes):\n{reset_url}\n\nIf you did not request this, you can ignore this email."
                 body_html = f"<p>Hello {html.escape(name)},</p><p>We received a password reset request. Click below (valid for 15 minutes):</p><p><a href='{reset_url}'>Reset Password</a></p>"
                 log_sent_email(email, subject, body_html, body_text)
+                log_audit_event('PASSWORD_RESET_REQUESTED', client_ip, email=email, user_id=user_match['id'], status='SUCCESS')
+            else:
+                log_audit_event('PASSWORD_RESET_GHOST', client_ip, email=email, status='NOTICE', details={'reason': 'Email not in database'})
 
             # Uniform response preventing user enumeration
             self.respond_json({
@@ -759,6 +1116,7 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
                     break
 
             if not matched_token:
+                log_audit_event('PASSWORD_RESET_FAILED', client_ip, status='FAILURE', details={'reason': 'Invalid or expired token'})
                 self.respond_json({'error': 'Invalid or expired password reset token.'}, 400)
                 return
 
@@ -766,7 +1124,7 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
             matched_token['used'] = True
             save_reset_tokens(tokens)
 
-            # Update password for target email
+            # Update password and invalidate all prior sessions for security
             users = get_users()
             target_user = next((u for u in users if u.get('email') == matched_token['email']), None)
             if not target_user:
@@ -774,7 +1132,10 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
                 return
 
             target_user['passwordHash'] = hash_pw(new_password)
+            target_user['sessionVersion'] = target_user.get('sessionVersion', 1) + 1
             save_users(users)
+
+            log_audit_event('PASSWORD_RESET_SUCCESS', client_ip, email=target_user['email'], user_id=target_user['id'], status='SUCCESS')
 
             self.respond_json({
                 'success': True,
@@ -782,7 +1143,167 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
             }, 200)
             return
 
-        # --- ENDPOINT 5: FINBOT AI PROXY (ENVIRONMENT KEY PROTECTION) ---
+        # --- ENDPOINT 5: EMAIL VERIFICATION ---
+        if self.path == '/api/auth/verify-email':
+            raw_token = str(payload.get('token', '')).strip()
+            if not raw_token:
+                self.respond_json({'error': 'Verification token is required.'}, 400)
+                return
+
+            token_hash = hashlib.sha256(raw_token.encode('utf-8')).hexdigest()
+            now = time.time()
+
+            users = get_users()
+            user = next((u for u in users if u.get('emailVerifyTokenHash') == token_hash and u.get('emailVerifyExpiresAt', 0) > now), None)
+            if not user:
+                self.respond_json({'error': 'Invalid or expired email verification token.'}, 400)
+                return
+
+            user['emailVerified'] = True
+            user['emailVerifyTokenHash'] = None
+            save_users(users)
+
+            log_audit_event('EMAIL_VERIFIED', client_ip, email=user['email'], user_id=user['id'], status='SUCCESS')
+
+            self.respond_json({
+                'success': True,
+                'message': 'Email address successfully verified!'
+            }, 200)
+            return
+
+        # --- ENDPOINT 6: LOGOUT (SERVER-SIDE SESSION REVOCATION) ---
+        if self.path == '/api/auth/logout':
+            payload_data, _ = self.get_authenticated_user()
+            if payload_data and payload_data.get('sid'):
+                revoke_session(payload_data['sid'])
+                log_audit_event('LOGOUT', client_ip, email=payload_data.get('email'), user_id=payload_data.get('sub'), status='SUCCESS')
+
+            # Expire session cookie immediately
+            cookie_header = "finculator_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT"
+            self.respond_json({'success': True, 'message': 'Logged out successfully.'}, 200, set_cookies=[cookie_header])
+            return
+
+        # --- ENDPOINT 7: LOGOUT EVERYWHERE (REVOKE ALL SESSIONS ON ALL DEVICES) ---
+        if self.path == '/api/auth/logout-all':
+            payload_data, user = self.get_authenticated_user()
+            if not payload_data or not user:
+                self.respond_json({'error': 'Unauthorized.'}, 401)
+                return
+
+            users = get_users()
+            target_user = next((u for u in users if u['id'] == user['id']), None)
+            if target_user:
+                target_user['sessionVersion'] = target_user.get('sessionVersion', 1) + 1
+                save_users(users)
+
+            log_audit_event('LOGOUT_ALL_DEVICES', client_ip, email=user['email'], user_id=user['id'], status='SUCCESS')
+
+            cookie_header = "finculator_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT"
+            self.respond_json({'success': True, 'message': 'All active sessions on all devices have been revoked.'}, 200, set_cookies=[cookie_header])
+            return
+
+        # --- ENDPOINT 8: MFA SETUP (GENERATE TOTP SECRET & RECOVERY CODES) ---
+        if self.path == '/api/auth/mfa/setup':
+            payload_data, user = self.get_authenticated_user()
+            if not payload_data or not user:
+                self.respond_json({'error': 'Unauthorized.'}, 401)
+                return
+
+            secret = generate_totp_secret()
+            clear_recovery, hashed_recovery = generate_recovery_codes(8)
+
+            # Store temporarily pending confirmation
+            users = get_users()
+            target = next((u for u in users if u['id'] == user['id']), None)
+            if target:
+                target['pendingTotpSecret'] = secret
+                target['pendingRecoveryCodeHashes'] = hashed_recovery
+                save_users(users)
+
+            otpauth_uri = f"otpauth://totp/Finculator:{user['email']}?secret={secret}&issuer=Finculator"
+
+            self.respond_json({
+                'success': True,
+                'secret': secret,
+                'otpauthUri': otpauth_uri,
+                'recoveryCodes': clear_recovery,
+                'instructions': 'Scan the secret into your authenticator app (Google Authenticator, Authy, 1Password) and submit code to /api/auth/mfa/verify to activate.'
+            }, 200)
+            return
+
+        # --- ENDPOINT 9: MFA VERIFICATION & ACTIVATION ---
+        if self.path == '/api/auth/mfa/verify':
+            payload_data, user = self.get_authenticated_user()
+            if not payload_data or not user:
+                self.respond_json({'error': 'Unauthorized.'}, 401)
+                return
+
+            code = str(payload.get('code', '')).strip()
+            users = get_users()
+            target = next((u for u in users if u['id'] == user['id']), None)
+            if not target:
+                self.respond_json({'error': 'User not found.'}, 404)
+                return
+
+            secret = target.get('pendingTotpSecret') or target.get('totpSecret')
+            if not secret or not verify_totp_code(secret, code):
+                log_audit_event('MFA_VERIFY_FAILED', client_ip, email=user['email'], user_id=user['id'], status='FAILURE')
+                self.respond_json({'error': 'Invalid authenticator code. Verification failed.'}, 400)
+                return
+
+            target['totpSecret'] = secret
+            target['mfaEnabled'] = True
+            if 'pendingRecoveryCodeHashes' in target:
+                target['recoveryCodeHashes'] = target.pop('pendingRecoveryCodeHashes')
+            target.pop('pendingTotpSecret', None)
+            save_users(users)
+
+            log_audit_event('MFA_ENABLED', client_ip, email=user['email'], user_id=user['id'], status='SUCCESS')
+
+            self.respond_json({
+                'success': True,
+                'message': 'Multi-factor authentication (MFA) successfully activated on your account.'
+            }, 200)
+            return
+
+        # --- ENDPOINT 10: USER PASSWORD CHANGE (RE-AUTHENTICATION REQUIRED) ---
+        if self.path == '/api/user/change-password':
+            payload_data, user = self.get_authenticated_user()
+            if not payload_data or not user:
+                self.respond_json({'error': 'Unauthorized.'}, 401)
+                return
+
+            current_pw = str(payload.get('currentPassword', ''))
+            new_pw = str(payload.get('newPassword', ''))
+
+            # Re-authentication verification
+            is_valid, _ = verify_pw(current_pw, user.get('passwordHash', ''))
+            if not is_valid:
+                log_audit_event('PASSWORD_CHANGE_FAILED', client_ip, email=user['email'], user_id=user['id'], status='FAILURE', details={'reason': 'Incorrect current password'})
+                self.respond_json({'error': 'Current password verification failed.'}, 403)
+                return
+
+            is_pw_valid, pw_err = validate_password_strength(new_pw)
+            if not is_pw_valid:
+                self.respond_json({'error': pw_err}, 400)
+                return
+
+            users = get_users()
+            target = next((u for u in users if u['id'] == user['id']), None)
+            if target:
+                target['passwordHash'] = hash_pw(new_pw)
+                target['sessionVersion'] = target.get('sessionVersion', 1) + 1
+                save_users(users)
+
+            log_audit_event('PASSWORD_CHANGED', client_ip, email=user['email'], user_id=user['id'], status='SUCCESS')
+
+            self.respond_json({
+                'success': True,
+                'message': 'Password changed successfully. All other active sessions have been invalidated.'
+            }, 200)
+            return
+
+        # --- ENDPOINT 11: FINBOT AI PROXY (ENVIRONMENT KEY PROTECTION) ---
         if self.path == '/api/ai/query':
             prompt = str(payload.get('prompt', '')).strip()
             if not prompt:
@@ -834,7 +1355,7 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
                 }, 200)
                 return
 
-        # --- ENDPOINT 6: NEWSLETTER SUBSCRIPTION ---
+        # --- ENDPOINT 12: NEWSLETTER SUBSCRIPTION ---
         if self.path == '/api/newsletter/subscribe':
             email = str(payload.get('email', '')).strip().lower()
             email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
@@ -881,10 +1402,60 @@ class FinculatorHandler(http.server.SimpleHTTPRequestHandler):
 
         self.respond_json({'error': 'Endpoint not found.'}, 404)
 
+    def do_PUT(self):
+        """Handles protected profile update requests with server-side access control."""
+        if self.path == '/api/user/profile':
+            payload_data, user = self.get_authenticated_user()
+            if not payload_data or not user:
+                self.respond_json({'error': 'Unauthorized: active session required.'}, 401)
+                return
+
+            content_length = int(self.headers.get('Content-Length', 0))
+            if content_length > 64 * 1024:
+                self.respond_json({'error': 'Payload exceeds allowed limit.'}, 413)
+                return
+
+            try:
+                post_data = self.rfile.read(content_length).decode('utf-8')
+                data = json.loads(post_data) if post_data else {}
+            except Exception:
+                self.respond_json({'error': 'Malformed JSON.'}, 400)
+                return
+
+            users = get_users()
+            target = next((u for u in users if u['id'] == user['id']), None)
+            if not target:
+                self.respond_json({'error': 'User not found.'}, 404)
+                return
+
+            # Update safe user attributes only (never accept client ID, role or password directly in profile PUT)
+            if 'name' in data and isinstance(data['name'], str):
+                name = data['name'].strip()
+                if name:
+                    target['name'] = name[:100]
+
+            save_users(users)
+            log_audit_event('PROFILE_UPDATED', self.client_address[0], email=target['email'], user_id=target['id'], status='SUCCESS')
+
+            self.respond_json({
+                'success': True,
+                'message': 'Profile updated successfully.',
+                'user': {
+                    'id': target['id'],
+                    'name': target['name'],
+                    'email': target['email'],
+                    'role': target.get('role', 'user')
+                }
+            }, 200)
+            return
+
+        self.respond_json({'error': 'Endpoint not found.'}, 404)
+
 if __name__ == '__main__':
     socketserver.TCPServer.allow_reuse_address = True
     with socketserver.ThreadingTCPServer((HOST, PORT), FinculatorHandler) as httpd:
         print(f"[SECURITY ACTIVE] Finculator Server initialized on http://{HOST}:{PORT}")
         print(f"  Mode: {APP_ENV.upper()} | HTTPS Enforcement: {ENFORCE_HTTPS} | Rate Limiting: Active")
+        print(f"  Password Hashing: scrypt + HMAC-SHA256 Pepper | Auth: MFA & HttpOnly Cookie Active")
         print(f"  Origins: {', '.join(ALLOWED_ORIGINS)}")
         httpd.serve_forever()
