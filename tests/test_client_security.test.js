@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { escapeHTML } from '../js/utils/formatters.js';
+import { escapeHTML, sanitizeURL, escapeJS } from '../js/utils/formatters.js';
 import { validatePasswordPolicy } from '../js/utils/auth.js';
 import { FinBot } from '../js/components/chatbot.js';
 
@@ -57,8 +57,38 @@ test('Security: escapeHTML neutralizes XSS payloads', () => {
   assert.equal(escapeHTML(0), '0');
 });
 
+test('Security: sanitizeURL prevents Open Redirects and script injection', () => {
+  // Protocol-relative attack
+  assert.equal(sanitizeURL('//evil.com/phish'), '/');
+  assert.equal(sanitizeURL('\\\\evil.com'), '/');
+
+  // JavaScript & data pseudo-schemes
+  assert.equal(sanitizeURL('javascript:alert(document.domain)'), '/');
+  assert.equal(sanitizeURL('JAVASCRIPT:alert(1)'), '/');
+  assert.equal(sanitizeURL('data:text/html,<script>alert(1)</script>'), '/');
+
+  // CRLF header injection
+  assert.equal(sanitizeURL('/emi-calculator\r\nSet-Cookie: pwn=1'), '/');
+
+  // Valid relative internal paths
+  assert.equal(sanitizeURL('/emi-calculator'), '/emi-calculator');
+  assert.equal(sanitizeURL('/sip-calculator?rate=12'), '/sip-calculator?rate=12');
+  assert.equal(sanitizeURL('/#/reset-password'), '/#/reset-password');
+});
+
+test('Security: escapeJS neutralizes JavaScript string context injection', () => {
+  const dangerous = 'hello"; alert(1); var x="';
+  const escaped = escapeJS(dangerous);
+  assert.ok(escaped.includes('\\"'));
+  assert.doesNotMatch(escaped, /(^|[^\\])"/);
+
+  const htmlInJs = '</script><script>alert(1)</script>';
+  const escapedHtml = escapeJS(htmlInJs);
+  assert.ok(escapedHtml.includes('\\x3C'));
+  assert.ok(escapedHtml.includes('\\x3E'));
+});
+
 test('Security: FinBot formatMarkdown sanitizes malicious inputs and restricts routes', () => {
-  // Create minimal mock instance to test formatMarkdown method
   const bot = Object.create(FinBot.prototype);
 
   // XSS injection in query response

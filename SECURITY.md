@@ -111,3 +111,56 @@ This section maps critical industry security concepts directly to Finculator's a
 | **Pen Test / Threat Modeling** | Hands-on vulnerability assessments and proactive architectural threat identification (e.g. STRIDE). | Comprehensive audit documented in [`AUDIT.md`](file:///AUDIT.md) evaluating threat vectors across authentication, data leakage, and financial calculation integrity. |
 | **Secrets Management** | Dedicated storage, isolation, and injection of sensitive keys and credentials. | Zero hardcoded keys; secrets managed via `.env` with `.env*` in `.gitignore` and injected into production deployments via Vercel Environment Variables. |
 | **Audit Trail** | Tamper-resistant, immutable log of critical security events and administrative actions. | High-fidelity audit log maintained in [`data/audit_log.json`](file:///data/audit_log.json) tracking logins, failures, MFA operations, and session revocations with zero credential leakage. |
+
+---
+
+## 5. Essential Security Filters & Production Safeguards
+
+Finculator implements all 9 essential defensive filter controls recommended for high-reliability financial systems:
+
+1. **Input Validation (Allowlist Filter)**:
+   - Server-side type, length, pattern, and range validation on all endpoints.
+   - User names limited to 100 characters; email addresses validated via RFC regex and capped at 254 characters; AI prompts capped at 1000 characters.
+   - Financial calculation parameters validated for non-negative values and acceptable numeric bounds.
+
+2. **Output Encoding / Sanitization**:
+   - `escapeHTML` escapes dynamic content across DOM nodes to eliminate XSS.
+   - `escapeJS` prevents string context breakout in script blocks.
+   - `sanitizeURL` rejects pseudo-schemes (`javascript:`, `data:`, `vbscript:`).
+
+3. **Parameterized Queries / Zero-SQL Architecture**:
+   - 100% of calculation math runs in pure client-side sandboxes and server operations use atomic JSON document storage.
+   - Eliminates all SQL injection (SQLi) vectors by design.
+
+4. **File Upload Filter**:
+   - Endpoint: `POST /api/portfolio/upload` enforces strict allowlists:
+     - MIME allowlist: `application/json`, `text/csv`.
+     - Extension allowlist: `.json`, `.csv`.
+     - Size limit: 2 MB payload ceiling (`413 Payload Too Large`).
+     - Content inspection: scans and rejects uploaded files containing embedded `<script>`, `<iframe>`, or HTML tags.
+     - Storage isolation: uploaded files are renamed to cryptographically random UUIDs and stored outside the web root (`data/imports/`).
+
+5. **Request Filters**:
+   - Payload limit: 1 MB maximum for standard JSON; 2 MB for portfolio uploads.
+   - Rate limiting: sliding-window tracking per IP and per account.
+   - Request timeout: 10-second upstream proxy ceiling on AI gateway requests.
+   - Blocked HTTP methods: `TRACE` and `TRACK` methods return `405 Method Not Allowed` with explicit `Allow` headers to eliminate Cross-Site Tracing (XST).
+
+6. **IP / Bot / Vulnerability Scanner Filters**:
+   - Automated vulnerability scanner User-Agents (`sqlmap`, `nikto`, `acunetix`, `dirbuster`, `nmap`) are blocked immediately with `403 Forbidden`.
+   - Thread-safe IP blocklist (`IP_BLOCKLIST`) to instantly sever abusive traffic.
+
+7. **Email Filters**:
+   - Disposable email blocking: screens against 30+ known throwaway burner domains (`mailinator.com`, `guerrillamail.com`, `tempmail.com`, etc.).
+   - Email format checking enforcing strict RFC standards.
+
+8. **Redirect Filter (Open Redirect Defense)**:
+   - `validate_redirect_url` inspects `?next=` and `redirect_uri` parameters:
+     - Permits strictly relative local paths (e.g. `/emi-calculator`, `/#/reset-password`).
+     - Neutralizes protocol-relative exploits (`//evil.com`), backslashes (`\\evil.com`), and non-whitelisted remote domains by defaulting safely to `/`.
+
+9. **Log Redaction Filter**:
+   - Automated regex scrubbing in `sanitize_log_message`:
+     - Passwords, tokens, API keys, and secrets replaced with `"[REDACTED]"`.
+     - Credit card numbers replaced with `"[CARD REDACTED]"`.
+     - CVV/CVC codes replaced with `"[REDACTED]"`.

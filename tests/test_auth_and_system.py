@@ -443,8 +443,126 @@ def run_tests():
         assert e.code == 400, f"Expected 400 for oversized prompt, got {e.code}"
         print("[PASS 400] Oversized AI query rejected by proxy input validation")
 
+    # 12. Disposable Email Filter
+    print("\n--- 12. Testing Disposable Email Filter (Anti-Burner Defense) ---")
+    burner_email = f"burner_{int(time.time())}@mailinator.com"
+    burner_payload = json.dumps({
+        "name": "Burner User",
+        "email": burner_email,
+        "password": "FinSecure@2026!"
+    }).encode('utf-8')
+    req = urllib.request.Request(
+        f"{BASE_URL}/api/auth/register",
+        data=burner_payload,
+        headers={'Content-Type': 'application/json', 'X-Finculator-CSRF': '1', 'User-Agent': 'TestRunner'}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            assert False, "Disposable email was unexpectedly accepted"
+    except urllib.error.HTTPError as e:
+        assert e.code == 400, f"Expected 400 for burner email, got {e.code}"
+        err_msg = json.loads(e.read().decode('utf-8')).get('error', '')
+        assert "disposable" in err_msg.lower(), "Expected disposable email error"
+        print(f"[PASS 400] Disposable email blocked: {burner_email} -> {err_msg}")
+
+    # 13. Blocked HTTP Methods Filter (TRACE / TRACK Method Defense)
+    print("\n--- 13. Testing Blocked HTTP Methods (TRACE / TRACK -> 405 Method Not Allowed) ---")
+    trace_req = urllib.request.Request(f"{BASE_URL}/", method='TRACE', headers={'User-Agent': 'TestRunner'})
+    try:
+        with urllib.request.urlopen(trace_req, timeout=5) as resp:
+            assert False, "TRACE method unexpectedly succeeded"
+    except urllib.error.HTTPError as e:
+        assert e.code == 405, f"Expected 405 Method Not Allowed for TRACE, got {e.code}"
+        print("[PASS 405] HTTP TRACE method strictly disabled (Cross-Site Tracing XST prevented)")
+
+    # 14. Malicious Scanner Bot Filter
+    print("\n--- 14. Testing Malicious Scanner & Automated Bot Defense ---")
+    scanner_req = urllib.request.Request(
+        f"{BASE_URL}/api/user/profile",
+        headers={'User-Agent': 'sqlmap/1.6.1#stable (http://sqlmap.org)'}
+    )
+    try:
+        with urllib.request.urlopen(scanner_req, timeout=5) as resp:
+            assert False, "Security scanner was not blocked"
+    except urllib.error.HTTPError as e:
+        assert e.code == 403, f"Expected 403 Forbidden for malicious scanner UA, got {e.code}"
+        print("[PASS 403] Automated vulnerability scanner blocked by User-Agent filter")
+
+    # 15. File Upload Filter (MIME, Extension, Payload Inspection)
+    print("\n--- 15. Testing File Upload Filter (/api/portfolio/upload) ---")
+    # 15A. Bad extension (.exe)
+    bad_upload_req = urllib.request.Request(
+        f"{BASE_URL}/api/portfolio/upload",
+        data=b"MZ binary content",
+        headers={
+            'Content-Type': 'application/json',
+            'X-File-Name': 'malware.exe',
+            'X-Finculator-CSRF': '1',
+            'User-Agent': 'TestRunner'
+        }
+    )
+    try:
+        with urllib.request.urlopen(bad_upload_req, timeout=5) as resp:
+            assert False, "Executable upload was accepted"
+    except urllib.error.HTTPError as e:
+        assert e.code == 400, f"Expected 400 for bad extension, got {e.code}"
+        print("[PASS 400] Unauthorized file extension (.exe) rejected by file upload filter")
+
+    # 15B. Embedded script in JSON payload
+    script_payload = b'{"name": "<script>alert(1)</script>"}'
+    script_upload_req = urllib.request.Request(
+        f"{BASE_URL}/api/portfolio/upload",
+        data=script_payload,
+        headers={
+            'Content-Type': 'application/json',
+            'X-File-Name': 'portfolio.json',
+            'X-Finculator-CSRF': '1',
+            'User-Agent': 'TestRunner'
+        }
+    )
+    try:
+        with urllib.request.urlopen(script_upload_req, timeout=5) as resp:
+            assert False, "Script tag upload was accepted"
+    except urllib.error.HTTPError as e:
+        assert e.code == 400, f"Expected 400 for script tag in file, got {e.code}"
+        print("[PASS 400] Malicious embedded script tag in upload rejected by content inspection")
+
+    # 15C. Valid JSON portfolio upload
+    valid_payload = json.dumps({"version": "1.0", "holdings": [{"symbol": "VOO", "shares": 10}]}).encode('utf-8')
+    valid_upload_req = urllib.request.Request(
+        f"{BASE_URL}/api/portfolio/upload",
+        data=valid_payload,
+        headers={
+            'Content-Type': 'application/json',
+            'X-File-Name': 'safe_portfolio.json',
+            'X-Finculator-CSRF': '1',
+            'User-Agent': 'TestRunner'
+        }
+    )
+    with urllib.request.urlopen(valid_upload_req, timeout=5) as resp:
+        up_res = json.loads(resp.read().decode('utf-8'))
+        assert resp.status == 201, "Valid upload failed"
+        assert up_res['success'] is True
+        print(f"[PASS 201] Valid portfolio JSON accepted and saved securely as UUID: {up_res['fileId']}")
+
+    # 16. Log Redaction & Open Redirect Filters
+    print("\n--- 16. Testing Log Redaction & Open Redirect Prevention Filters ---")
+    from server import sanitize_log_message, validate_redirect_url
+    log_sample = 'User login request: password="SuperSecretPassword123!" card="4111 2222 3333 4444" cvv=123'
+    redacted = sanitize_log_message(log_sample)
+    assert 'SuperSecretPassword123!' not in redacted, "Password not redacted in log"
+    assert '[REDACTED]' in redacted, "Redaction tag missing"
+    assert '[CARD REDACTED]' in redacted, "Card number not redacted"
+    print(f"[PASS LOG REDACTION] Log filter verified: {redacted}")
+
+    # Open Redirect filter tests
+    assert validate_redirect_url('//evil.com', ['http://127.0.0.1:3000']) == '/'
+    assert validate_redirect_url('javascript:alert(1)', ['http://127.0.0.1:3000']) == '/'
+    assert validate_redirect_url('/emi-calculator', ['http://127.0.0.1:3000']) == '/emi-calculator'
+    print("[PASS REDIRECT FILTER] Open redirect filter verified: relative URLs preserved, exploits neutralized")
+
     print("\n" + "=" * 75)
-    print("ALL PART 1 AUTHENTICATION & SECURITY CHECKS PASSED CLEANLY (100% VERIFIED)")
+    print("ALL PART 1 & PART 3 SECURITY FILTERS PASSED CLEANLY (100% VERIFIED)")
     print("=" * 75)
 
 if __name__ == '__main__':

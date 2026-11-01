@@ -1,6 +1,7 @@
 /**
- * Finculator Currency & Number Formatting Utilities (v2)
- * Supports full international & Indian Lakh/Crore localized numeral grouping
+ * Finculator Currency, Number & Security Formatting Utilities (v3)
+ * Supports full international & Indian Lakh/Crore localized numeral grouping,
+ * plus strict output encoding (HTML, JS, URL) to eliminate XSS & Open Redirects.
  */
 
 export const CURRENCIES = {
@@ -103,7 +104,7 @@ export function parseNumeric(input) {
 }
 
 /**
- * Escape HTML special characters to prevent Cross-Site Scripting (XSS)
+ * Output Encoding: Escape HTML special characters to prevent Cross-Site Scripting (XSS)
  * @param {string|any} str 
  * @returns {string}
  */
@@ -115,4 +116,45 @@ export function escapeHTML(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+/**
+ * Output Encoding: Sanitize URL to prevent Open Redirects and JavaScript execution (javascript:, data:)
+ * @param {string} url 
+ * @param {string} [fallback='/']
+ * @returns {string}
+ */
+export function sanitizeURL(url, fallback = '/') {
+  if (!url || typeof url !== 'string') return fallback;
+  const trimmed = url.trim();
+  if (/[\r\n]/.test(trimmed)) return fallback;
+  if (/^\/\//.test(trimmed) || /^\\\\/.test(trimmed)) return fallback;
+  if (/^(javascript|data|vbscript):/i.test(trimmed)) return fallback;
+  if (trimmed.startsWith('/') && !trimmed.startsWith('//')) return trimmed;
+  try {
+    if (typeof window !== 'undefined' && window.location) {
+      const parsed = new URL(trimmed, window.location.origin);
+      if (parsed.origin === window.location.origin) {
+        return parsed.pathname + parsed.search + parsed.hash;
+      }
+    }
+  } catch {}
+  return fallback;
+}
+
+/**
+ * Output Encoding: Escape JavaScript string literals to prevent script context breakout
+ * @param {string|any} str 
+ * @returns {string}
+ */
+export function escapeJS(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/</g, '\\x3C')
+    .replace(/>/g, '\\x3E');
 }
